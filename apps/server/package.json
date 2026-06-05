@@ -1,0 +1,14 @@
+{
+  "name": "@family-inventory/server",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Family pet inventory API scaffold",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "start:dev": "node --watch src/index.mjs",
+    "smoke:api": "node scripts/smoke-api.mjs",
+    "typecheck": "node --check src/index.mjs",
+    "lint": "echo 'lint not configured yet'"
+  }
+}

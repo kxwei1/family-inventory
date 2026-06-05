@@ -1,0 +1,287 @@
+// Family Inventory — Prisma schema
+//
+// Models the full inventory domain (products, batches, pets, family, members,
+// stock logs, reminders, restock plan, notification settings, profile). The
+// existing API contracts in @family-inventory/shared-types are derived from
+// the data shapes below; database migrations live in prisma/migrations.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum StockStatus {
+  ENOUGH
+  LOW
+  EMPTY
+}
+
+enum BatchStatus {
+  NORMAL
+  WARNING
+  EXPIRED
+}
+
+enum StockLogAction {
+  STOCK_IN
+  STOCK_OUT
+  ADJUST
+  EXPIRED
+  GIFT
+}
+
+enum FamilyRole {
+  ADMIN
+  MEMBER
+  GUEST
+}
+
+enum ReminderCategory {
+  SOON
+  EXPIRED
+  STOCK
+}
+
+enum ReminderTone {
+  WARNING
+  DANGER
+  INFO
+}
+
+model Family {
+  id           String   @id @default(cuid())
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  archived     Boolean  @default(false)
+
+  members      FamilyMember[]
+  address      FamilyAddress?
+  products     Product[]
+  pets         Pet[]
+  stockLogs    StockLog[]
+  reminders    Reminder[]
+  restock      RestockItem[]
+  notification NotificationSettings?
+
+  @@map("families")
+}
+
+model FamilyMember {
+  id        String     @id @default(cuid())
+  familyId  String
+  name      String
+  subtitle  String?
+  avatar    String?
+  role      FamilyRole @default(MEMBER)
+  isOwner   Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  family       Family     @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  stockLogs    StockLog[]
+
+  @@index([familyId])
+  @@map("family_members")
+}
+
+model FamilyAddress {
+  id          String   @id @default(cuid())
+  familyId    String   @unique
+  contactName String
+  phone       String
+  region      String
+  detail      String
+  notes       String?
+  updatedAt   DateTime @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@map("family_addresses")
+}
+
+model Product {
+  id              String      @id @default(cuid())
+  familyId        String
+  name            String
+  category        String
+  brand           String?
+  spec            String?
+  unit            String
+  quantity        Decimal     @default(0.000) @db.Decimal(12, 3)
+  status          StockStatus @default(EMPTY)
+  statusText      String?
+  image           String?
+  purchasePrice   Decimal?    @db.Decimal(12, 2)
+  purchaseChannel String?
+  location        String?
+  isOpened        Boolean     @default(false)
+  stockInDate     DateTime?
+  notes           String?     @db.Text
+  archived        Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  family    Family     @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  batches   ProductBatch[]
+  stockLogs StockLog[]
+
+  @@index([familyId])
+  @@index([category])
+  @@index([status])
+  @@map("products")
+}
+
+model ProductBatch {
+  id              String      @id @default(cuid())
+  productId       String
+  batchNo         String?
+  location        String?
+  quantity        Decimal     @default(0.000) @db.Decimal(12, 3)
+  initialQuantity Decimal     @default(0.000) @db.Decimal(12, 3)
+  productionDate  DateTime?
+  expiryDate      DateTime?
+  stockInDate     DateTime?
+  status          BatchStatus @default(NORMAL)
+  isOpened        Boolean     @default(false)
+  openedAt        DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_batches")
+}
+
+model StockLog {
+  id            String         @id @default(cuid())
+  familyId      String
+  productId     String
+  operatorId    String?
+  operatorName  String
+  action        StockLogAction
+  actionText    String
+  quantity      Decimal        @db.Decimal(12, 3)
+  unit          String
+  unitPrice     Decimal?       @db.Decimal(12, 2)
+  amount        Decimal?       @db.Decimal(14, 2)
+  notes         String?        @db.Text
+  operatedAt    DateTime       @default(now())
+
+  family   Family        @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  product  Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  operator FamilyMember? @relation(fields: [operatorId], references: [id], onDelete: SetNull)
+
+  @@index([familyId])
+  @@index([productId])
+  @@index([operatedAt])
+  @@map("stock_logs")
+}
+
+model Pet {
+  id               String   @id @default(cuid())
+  familyId         String
+  name             String
+  species          String
+  breed            String
+  ageText          String?
+  weightKg         Decimal  @default(0.0) @db.Decimal(5, 2)
+  avatar           String?
+  colorTone        String   @default("neutral")
+  tags             Json
+  dietStaple       String?
+  dietSnack        String?
+  estimateFoodDays Int      @default(0)
+  estimateLitterDays Int    @default(0)
+  weightTrend      Json
+  albumPhotos      Json
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@map("pets")
+}
+
+model Reminder {
+  id                  String           @id @default(cuid())
+  familyId            String
+  productId           String?
+  category            ReminderCategory
+  tone                ReminderTone     @default(INFO)
+  title               String
+  description         String           @db.Text
+  badgeText           String
+  timeText            String
+  primaryActionText   String
+  secondaryActionText String?
+  dismissed           Boolean          @default(false)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@index([category])
+  @@map("reminders")
+}
+
+model RestockItem {
+  id                       String   @id @default(cuid())
+  familyId                 String
+  groupId                  String
+  groupTitle               String
+  groupIcon                String?
+  productId                String?
+  name                     String
+  description              String
+  image                    String?
+  icon                     String?
+  category                 String?
+  unit                     String?
+  suggestedQuantity        Decimal? @db.Decimal(12, 3)
+  selected                 Boolean  @default(false)
+  completed                Boolean  @default(false)
+  sourceRecommendationId   String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@index([completed])
+  @@map("restock_items")
+}
+
+model NotificationSettings {
+  id                     String   @id @default(cuid())
+  familyId               String   @unique
+  stockWarningEnabled    Boolean  @default(true)
+  expiryReminderEnabled  Boolean  @default(true)
+  updatedAt              DateTime @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@map("notification_settings")
+}
+
+model UserProfile {
+  id              String   @id @default(cuid())
+  memberId        String?  @unique
+  name            String
+  familyName      String
+  avatar          String?
+  petCount        Int      @default(0)
+  bookkeepingDays Int      @default(0)
+  reminderCount   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("user_profiles")
+}

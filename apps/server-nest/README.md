@@ -13,29 +13,49 @@ reached the scaffold can be retired.
 
 ## Endpoints currently implemented
 
-| Method | Path                                | Notes                              |
-| ------ | ----------------------------------- | ---------------------------------- |
-| GET    | `/health`                           | Liveness                           |
-| GET    | `/api/family`                       | Family overview (members + addr)   |
-| GET    | `/api/products`                     | Filterable list                    |
-| POST   | `/api/products`                     | Create product + stock-in log      |
-| GET    | `/api/products/:id`                 | Detail                             |
-| POST   | `/api/products/:id/update`          | Update fields & quantity           |
-| POST   | `/api/products/:id/consume`         | Decrement stock + log              |
-| POST   | `/api/products/:id/archive`         | Soft delete + log                  |
-| GET    | `/api/pets`                         | List pets                          |
-| POST   | `/api/pets`                         | Create pet                         |
-| POST   | `/api/pets/:id/update`              | Update pet profile                 |
-| POST   | `/api/pets/:id/album`               | Append single album photo          |
-| POST   | `/api/pets/:id/album/batch`         | Append multiple album photos       |
-| POST   | `/api/pets/:id/album/remove`        | Remove an album photo              |
-| GET    | `/api/stock-logs`                   | List all stock logs                |
-| GET    | `/api/products/:id/logs`            | List logs for a product            |
+| Method | Path                                       | Notes                                          |
+| ------ | ------------------------------------------ | ---------------------------------------------- |
+| GET    | `/health`                                  | Liveness                                       |
+| GET    | `/api/dashboard`                           | Home greeting + alert counts + categories      |
+| GET    | `/api/family`                              | Family overview (members + address)            |
+| POST   | `/api/family/rename`                       | Rename family                                  |
+| POST   | `/api/family/address`                      | Upsert family address                          |
+| POST   | `/api/family/members/role`                 | Change member role (guards last admin)         |
+| POST   | `/api/family/members/remove`               | Remove member (guards last admin)              |
+| POST   | `/api/family/dissolve`                     | Remove non-owner members, promote owner        |
+| GET    | `/api/products`                            | Filterable list (q / category / status)        |
+| POST   | `/api/products`                            | Create product + stock-in log                  |
+| POST   | `/api/products/stock-in`                   | Upsert + append stock-in log                   |
+| GET    | `/api/products/:id`                        | Detail                                         |
+| POST   | `/api/products/:id/update`                 | Update fields & quantity                       |
+| POST   | `/api/products/:id/consume`                | Decrement stock + log                          |
+| POST   | `/api/products/:id/archive`                | Soft delete + log                              |
+| GET    | `/api/products/:id/logs`                   | Logs for a product                             |
+| GET    | `/api/pets`                                | List pets                                      |
+| POST   | `/api/pets`                                | Create pet                                     |
+| POST   | `/api/pets/:id/update`                     | Update pet profile                             |
+| POST   | `/api/pets/:id/album`                      | Append single album photo                      |
+| POST   | `/api/pets/:id/album/batch`                | Append multiple album photos (dedup)           |
+| POST   | `/api/pets/:id/album/remove`               | Remove an album photo                          |
+| GET    | `/api/stock-logs`                          | List all stock logs                            |
+| GET    | `/api/profile`                             | Current user profile + stats                   |
+| POST   | `/api/profile/update`                      | Update name / avatar                           |
+| GET    | `/api/notification-settings`               | Current toggles                                |
+| POST   | `/api/notification-settings`               | Update stock / expiry toggles                  |
+| GET    | `/api/reminders`                           | Active reminders + per-category summary        |
+| POST   | `/api/reminders/dismiss`                   | Dismiss one reminder                           |
+| POST   | `/api/reminders/read-all`                  | Dismiss all active reminders                   |
+| GET    | `/api/restock-plan`                        | Grouped restock plan + recommendations         |
+| POST   | `/api/restock-plan/complete`               | Mark items done + restock stock (+ log)        |
+| POST   | `/api/restock-plan/remove`                 | Remove restock entry                           |
+| POST   | `/api/restock-plan/recommendations/add`    | Add recommendation to plan                     |
+| POST   | `/api/restock-plan/products/add`           | Add existing product to plan                   |
+| GET    | `/api/statistics/summary?range=…`          | Spend stats (week / month / year)              |
 
-Endpoints exposed by the legacy scaffold that aren't yet ported:
-`dashboard`, `statistics`, `reminders`, `restock-plan`, `notification-settings`,
-`family/*` mutations, `profile/*`. They remain available via the existing
-scaffold (`pnpm dev:server`) while the Nest implementation grows.
+Surface parity with the legacy scaffold has been reached. The scaffold still
+ships in `apps/server/` for offline development without MySQL — switch the
+client between them with `VITE_API_BASE_URL` (default `http://localhost:4000`
+for the scaffold; set to `http://localhost:4001` for NestJS).
 
 ## Local setup
 

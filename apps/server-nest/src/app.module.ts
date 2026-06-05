@@ -7,6 +7,11 @@ import { FamilyModule } from "./family/family.module";
 import { ProductsModule } from "./products/products.module";
 import { PetsModule } from "./pets/pets.module";
 import { StockLogsModule } from "./stock-logs/stock-logs.module";
+import { ProfileModule } from "./profile/profile.module";
+import { DashboardModule } from "./dashboard/dashboard.module";
+import { RemindersModule } from "./reminders/reminders.module";
+import { RestockModule } from "./restock/restock.module";
+import { StatisticsModule } from "./statistics/statistics.module";
 
 @Module({
   imports: [
@@ -20,6 +25,11 @@ import { StockLogsModule } from "./stock-logs/stock-logs.module";
     ProductsModule,
     PetsModule,
     StockLogsModule,
+    ProfileModule,
+    DashboardModule,
+    RemindersModule,
+    RestockModule,
+    StatisticsModule,
   ],
   controllers: [HealthController],
 })

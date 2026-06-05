@@ -30,6 +30,12 @@ export class ProductsController {
     return this.productsService.create(payload);
   }
 
+  @Post("stock-in")
+  @HttpCode(200)
+  stockIn(@Body() payload: CreateProductDto) {
+    return this.productsService.stockIn(payload);
+  }
+
   @Get(":id")
   detail(@Param("id") id: string) {
     return this.productsService.detail(id);

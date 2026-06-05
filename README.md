@@ -76,7 +76,7 @@ pnpm dev:server-nest
 - [x] 后端 API scaffold（零依赖）
 - [x] 离线存储 adapter
 - [x] Pinia stores 接入离线持久化
-- [x] NestJS / Prisma schema + 核心模块（family / products / pets / stock-logs）
-- [ ] NestJS 实现完整端点对齐 scaffold（dashboard / statistics / reminders / restock / family mutations / profile）
+- [x] NestJS / Prisma schema + 全部域模块（family / products / pets / stock-logs / dashboard / reminders / restock / statistics / profile / notification-settings）
+- [x] NestJS 端点与 scaffold 对齐（共 30+ 路由，含 mutations / consume / stock-in / dismiss / read-all 等）
 - [ ] Redis 缓存 / 队列接入
 - [ ] 鉴权 & 多家庭隔离

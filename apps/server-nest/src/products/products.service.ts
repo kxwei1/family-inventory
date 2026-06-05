@@ -70,6 +70,56 @@ export class ProductsService {
     return this.toDetail(product);
   }
 
+  async stockIn(payload: CreateProductDto): Promise<CreateProductResponse> {
+    const familyId = await this.context.resolveFamilyId();
+    const existing = await this.prisma.product.findFirst({
+      where: {
+        familyId,
+        archived: false,
+        name: payload.name,
+        category: payload.category,
+        unit: payload.unit,
+        brand: payload.brand ?? "未填写品牌",
+        spec: payload.spec ?? "未填写规格",
+      },
+    });
+
+    if (existing) {
+      const nextQuantity = Number(existing.quantity) + payload.quantity;
+      const nextStatus = this.classify(nextQuantity);
+      const updated = await this.prisma.product.update({
+        where: { id: existing.id },
+        data: {
+          quantity: nextQuantity,
+          status: nextStatus,
+          statusText: STATUS_TEXT[nextStatus],
+          purchasePrice: payload.purchasePrice ?? existing.purchasePrice ?? undefined,
+          purchaseChannel: payload.purchaseChannel ?? existing.purchaseChannel ?? undefined,
+          location: payload.location ?? existing.location ?? undefined,
+          stockInDate: this.parseDate(payload.stockInDate) ?? existing.stockInDate,
+          isOpened: payload.isOpened ?? existing.isOpened,
+        },
+      });
+
+      await this.prisma.stockLog.create({
+        data: {
+          familyId,
+          productId: existing.id,
+          operatorName: "系统",
+          action: "STOCK_IN",
+          actionText: "扫码入库",
+          quantity: payload.quantity,
+          unit: payload.unit,
+          notes: payload.notes,
+        },
+      });
+
+      return { item: this.toSummary(updated) };
+    }
+
+    return this.create(payload);
+  }
+
   async create(payload: CreateProductDto): Promise<CreateProductResponse> {
     const familyId = await this.context.resolveFamilyId();
     const product = await this.prisma.product.create({

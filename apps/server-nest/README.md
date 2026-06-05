@@ -11,6 +11,18 @@ reached the scaffold can be retired.
 - Redis 7 (Docker only, not wired into code yet)
 - Shares the API contract via `@family-inventory/shared-types`
 
+## Production cross-cutting
+
+- **Global validation pipe** strips unknown fields and coerces query types
+  before they reach a controller.
+- **Global `HttpExceptionFilter`** turns every thrown error into
+  `{ error, statusCode, path, details? }` with a consistent shape; 5xx errors
+  log a stack trace via Nest `Logger`.
+- **Global `LoggingInterceptor`** logs `METHOD url -> status (xx.xms)` at
+  `log` / `warn` / `error` depending on the response.
+- **Swagger UI** mounted at `GET /api-docs` (disable with
+  `SWAGGER_ENABLED=false` in `.env.local`).
+
 ## Endpoints currently implemented
 
 | Method | Path                                       | Notes                                          |

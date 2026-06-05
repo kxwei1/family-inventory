@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useRemindersStore } from "@/stores";
 
 type TabKey = "home" | "inventory" | "add" | "statistics" | "reminders" | "profile";
 type TabItem = {
@@ -13,6 +15,11 @@ type TabItem = {
 const props = defineProps<{
   active: TabKey;
 }>();
+
+const remindersStore = useRemindersStore();
+const { summary } = storeToRefs(remindersStore);
+const reminderTotal = computed(() => summary.value.total);
+const homeBadgeCount = computed(() => reminderTotal.value);
 
 const baseTabs: TabItem[] = [
   { key: "home", label: "首页", icon: "home", url: "/pages/home/home" },
@@ -37,6 +44,17 @@ const tabs = computed(() =>
       )
     : baseTabs,
 );
+
+function badgeFor(tab: TabItem) {
+  if (tab.key === "home") return homeBadgeCount.value;
+  if (tab.key === "reminders") return reminderTotal.value;
+  return 0;
+}
+
+function badgeText(count: number) {
+  if (count <= 0) return "";
+  return count > 99 ? "99+" : String(count);
+}
 
 function isRaised(tab: TabItem) {
   return props.active === "home" && tab.key === "add";
@@ -65,6 +83,13 @@ function goTab(tab: TabItem) {
     >
       <view class="tabbar-icon-wrap">
         <wd-icon :name="tab.icon" :size="isRaised(tab) ? '44rpx' : '40rpx'" />
+        <text
+          v-if="badgeFor(tab) > 0 && !isRaised(tab)"
+          class="tabbar-badge"
+          :class="{ dot: badgeFor(tab) > 99 }"
+        >
+          {{ badgeText(badgeFor(tab)) }}
+        </text>
       </view>
       <text v-if="!isRaised(tab)" class="tabbar-label">{{ tab.label }}</text>
     </view>
@@ -106,10 +131,36 @@ function goTab(tab: TabItem) {
 }
 
 .tabbar-icon-wrap {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   color: inherit;
+}
+
+.tabbar-badge {
+  position: absolute;
+  top: -6rpx;
+  right: -16rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8rpx;
+  border-radius: $radius-full;
+  background: $color-danger;
+  color: $color-text-inverse;
+  font-size: 20rpx;
+  font-weight: $font-weight-bold;
+  line-height: 28rpx;
+}
+
+.tabbar-badge.dot {
+  min-width: 24rpx;
+  height: 24rpx;
+  padding: 0 6rpx;
+  font-size: 18rpx;
 }
 
 .tabbar-label {

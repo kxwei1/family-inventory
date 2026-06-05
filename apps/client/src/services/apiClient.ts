@@ -15,10 +15,17 @@ export class HttpStatusError extends Error {
   constructor(
     message: string,
     readonly statusCode: number,
+    readonly responseBody?: unknown,
   ) {
     super(message);
     this.name = "HttpStatusError";
   }
+}
+
+let globalErrorHandler: ((error: HttpStatusError) => void) | null = null;
+
+export function setGlobalApiErrorHandler(handler: (error: HttpStatusError) => void) {
+  globalErrorHandler = handler;
 }
 
 export async function getJsonWithFallback<T>(
@@ -29,8 +36,9 @@ export async function getJsonWithFallback<T>(
   try {
     return await requestJson<T>({ path, method: "GET" });
   } catch (error) {
-    if (error instanceof HttpStatusError && options.fallbackOnHttpError === false) {
-      throw error;
+    if (error instanceof HttpStatusError) {
+      if (options.fallbackOnHttpError === false) throw error;
+      reportHttpError(error);
     }
 
     console.warn(`[api] ${path} failed, using local fallback`, error);
@@ -47,12 +55,23 @@ export async function postJsonWithFallback<TResponse, TBody>(
   try {
     return await requestJson<TResponse>({ path, method: "POST", body });
   } catch (error) {
-    if (error instanceof HttpStatusError && options.fallbackOnHttpError === false) {
-      throw error;
+    if (error instanceof HttpStatusError) {
+      if (options.fallbackOnHttpError === false) throw error;
+      reportHttpError(error);
     }
 
     console.warn(`[api] ${path} failed, using local fallback`, error);
     return resolveFallback(fallback);
+  }
+}
+
+function reportHttpError(error: HttpStatusError) {
+  if (globalErrorHandler) {
+    try {
+      globalErrorHandler(error);
+    } catch {
+      // never let error handler break the callsite
+    }
   }
 }
 
@@ -79,7 +98,13 @@ function requestJson<T>({
           return;
         }
 
-        reject(new HttpStatusError(`${method} ${path} failed with ${statusCode}`, statusCode));
+        reject(
+          new HttpStatusError(
+            `${method} ${path} failed with ${statusCode}`,
+            statusCode,
+            response.data,
+          ),
+        );
       },
       fail(error) {
         reject(error);

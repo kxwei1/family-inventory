@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { onShow } from "@dcloudio/uni-app";
-import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import AppTabBar from "@/components/AppTabBar.vue";
 import PetPawMark from "@/components/PetPawMark.vue";
-import { fetchDashboard, fetchProducts } from "@/services/inventoryApi";
-import { fallbackDashboard } from "@/services/fallbackData";
+import { fetchProducts } from "@/services/inventoryApi";
+import { useDashboardStore } from "@/stores";
 
 const PENDING_INVENTORY_FILTER_KEY = "fi:inventory:pending_filter";
-const dashboard = ref(fallbackDashboard);
+const dashboardStore = useDashboardStore();
+const { dashboard } = storeToRefs(dashboardStore);
 
 const actions = [
   { id: "scan", label: "扫码入库", icon: "scan", tone: "mint" },
@@ -23,7 +24,7 @@ onShow(() => {
 
 async function loadDashboard() {
   try {
-    dashboard.value = await fetchDashboard();
+    await dashboardStore.refresh();
   } catch {
     uni.showToast({ title: "首页数据加载失败", icon: "none" });
   }

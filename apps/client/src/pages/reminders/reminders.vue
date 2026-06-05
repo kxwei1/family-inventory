@@ -1,28 +1,18 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
-import type { ReminderCategory, ReminderItem, ReminderListResponse } from "@family-inventory/shared-types";
+import { storeToRefs } from "pinia";
+import type { ReminderCategory, ReminderItem } from "@family-inventory/shared-types";
 import AppTabBar from "@/components/AppTabBar.vue";
-import {
-  addRestockProduct,
-  dismissReminder,
-  fetchReminders,
-  readAllReminders,
-} from "@/services/inventoryApi";
+import { useRemindersStore, useRestockStore } from "@/stores";
 
 const PENDING_RESTOCK_SELECTION_KEY = "fi:restock:pending_selection";
-const reminders = ref<ReminderListResponse>({
-  items: [],
-  summary: {
-    total: 0,
-    soon: 0,
-    expired: 0,
-    stock: 0,
-  },
-});
+const remindersStore = useRemindersStore();
+const restockStore = useRestockStore();
+const { items: reminderItems, summary: reminderSummary, isLoading } =
+  storeToRefs(remindersStore);
 const activeCategory = ref<ReminderCategory>("soon");
 const isCategoryFilterApplied = ref(false);
-const isLoading = ref(true);
 const isReadingAll = ref(false);
 const dismissingIds = ref(new Set<string>());
 
@@ -34,8 +24,8 @@ const tabs: Array<{ id: ReminderCategory; label: string }> = [
 
 const visibleItems = computed(() =>
   isCategoryFilterApplied.value
-    ? reminders.value.items.filter((item) => item.category === activeCategory.value)
-    : reminders.value.items,
+    ? reminderItems.value.filter((item) => item.category === activeCategory.value)
+    : reminderItems.value,
 );
 
 onShow(() => {
@@ -51,25 +41,20 @@ onLoad((query) => {
 });
 
 async function loadReminders() {
-  isLoading.value = true;
-
   try {
-    reminders.value = await fetchReminders();
+    await remindersStore.refresh();
   } catch {
     uni.showToast({ title: "提醒加载失败", icon: "none" });
-  } finally {
-    isLoading.value = false;
   }
 }
 
 async function markAllRead() {
-  if (isReadingAll.value || !reminders.value.items.length) return;
+  if (isReadingAll.value || !reminderItems.value.length) return;
 
   isReadingAll.value = true;
 
   try {
-    const response = await readAllReminders();
-    reminders.value = response.reminders;
+    await remindersStore.readAll();
     uni.showToast({ title: "已标记全部已读", icon: "success" });
   } catch {
     uni.showToast({ title: "一键处理失败", icon: "none" });
@@ -116,8 +101,8 @@ async function addStockReminderToRestock(item: ReminderItem) {
   dismissingIds.value = next;
 
   try {
-    const response = await addRestockProduct({ productId: item.productId });
-    uni.setStorageSync(PENDING_RESTOCK_SELECTION_KEY, { itemId: response.itemId });
+    const itemId = await restockStore.addProduct({ productId: item.productId });
+    uni.setStorageSync(PENDING_RESTOCK_SELECTION_KEY, { itemId });
     uni.showToast({ title: "已加入补货清单", icon: "success" });
     uni.navigateTo({ url: "/pages/restock/restock" });
   } catch {
@@ -137,8 +122,7 @@ async function dismissItem(item: ReminderItem, title = item.secondaryActionText 
   dismissingIds.value = next;
 
   try {
-    const response = await dismissReminder({ itemId: item.id });
-    reminders.value = response.reminders;
+    await remindersStore.dismiss({ itemId: item.id });
     uni.showToast({ title, icon: "success" });
   } catch {
     uni.showToast({ title: "处理提醒失败", icon: "none" });
@@ -176,10 +160,10 @@ function handleSecondary(item: ReminderItem) {
         </view>
         <view class="summary-row">
           <view class="summary-count-row">
-            <text class="summary-count">{{ reminders.summary.total }}</text>
+            <text class="summary-count">{{ reminderSummary.total }}</text>
             <text>项提醒需要关注</text>
           </view>
-          <button class="summary-action" :disabled="isReadingAll || !reminders.items.length" @click="markAllRead">
+          <button class="summary-action" :disabled="isReadingAll || !reminderItems.length" @click="markAllRead">
             一键处理
           </button>
         </view>

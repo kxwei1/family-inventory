@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
+import { storeToRefs } from "pinia";
 import type { CreatePetRequest, PetProfileSummary, UpdatePetRequest } from "@family-inventory/shared-types";
-import { addPetAlbumPhoto, createPet, fetchPets, updatePet } from "@/services/inventoryApi";
+import { usePetsStore } from "@/stores";
 
-const pets = ref<PetProfileSummary[]>([]);
-const selectedPetId = ref("");
+const petsStore = usePetsStore();
+const { pets, selectedPetId } = storeToRefs(petsStore);
 const isPetSheetVisible = ref(false);
 const isAlbumSheetVisible = ref(false);
 const isSavingPet = ref(false);
@@ -35,13 +36,7 @@ onShow(() => {
 
 async function loadPets() {
   try {
-    const response = await fetchPets();
-    const preservedPetId = response.items.some((pet) => pet.id === selectedPetId.value)
-      ? selectedPetId.value
-      : "";
-
-    pets.value = response.items;
-    selectedPetId.value = preservedPetId || response.selectedPetId || response.items[0]?.id || "";
+    await petsStore.refresh();
   } catch {
     uni.showToast({ title: "宠物档案加载失败", icon: "none" });
   }
@@ -54,7 +49,7 @@ function goBack() {
 }
 
 function selectPet(id: string) {
-  selectedPetId.value = id;
+  petsStore.selectPet(id);
 }
 
 function openCreateSheet() {
@@ -132,9 +127,7 @@ async function savePet() {
         tags,
         diet: buildDietPayload(),
       };
-      const response = await createPet(payload);
-      pets.value = response.pets.items;
-      selectedPetId.value = response.item.id;
+      await petsStore.create(payload);
     } else if (selectedPet.value) {
       const payload: UpdatePetRequest = {
         name,
@@ -145,9 +138,7 @@ async function savePet() {
         tags,
         diet: buildDietPayload(),
       };
-      const response = await updatePet(selectedPet.value.id, payload);
-      pets.value = response.pets.items;
-      selectedPetId.value = response.item.id;
+      await petsStore.update(selectedPet.value.id, payload);
     }
 
     isPetSheetVisible.value = false;
@@ -236,9 +227,7 @@ async function saveAlbumPhoto(image: string) {
   isSavingAlbum.value = true;
 
   try {
-    const response = await addPetAlbumPhoto(selectedPet.value.id, { image });
-    pets.value = response.pets.items;
-    selectedPetId.value = response.item.id;
+    await petsStore.addAlbumPhoto(selectedPet.value.id, { image });
     uni.showToast({ title: "照片已加入相册", icon: "success" });
   } catch {
     uni.showToast({ title: "照片添加失败", icon: "none" });

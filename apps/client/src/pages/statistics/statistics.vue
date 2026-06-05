@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { onShow } from "@dcloudio/uni-app";
+import { storeToRefs } from "pinia";
 import type { StatisticsRange, StatisticsSummary } from "@family-inventory/shared-types";
 import AppTabBar from "@/components/AppTabBar.vue";
-import { fetchStatistics } from "@/services/inventoryApi";
+import { useStatisticsStore } from "@/stores";
 import { fallbackStatistics } from "@/services/fallbackData";
 
-const activeRange = ref<StatisticsRange>("month");
-const statistics = ref(fallbackStatistics);
-const isLoading = ref(false);
+const statisticsStore = useStatisticsStore();
+const { activeRange, isLoading } = storeToRefs(statisticsStore);
+const statistics = computed(() => statisticsStore.current ?? fallbackStatistics);
 
 const ranges: Array<{ id: StatisticsRange; label: string }> = [
   { id: "week", label: "本周" },
@@ -125,23 +126,17 @@ function ratioLegendClass(index: number) {
 async function loadStatistics(range: StatisticsRange) {
   if (isLoading.value) return;
 
-  isLoading.value = true;
-
   try {
-    statistics.value = await fetchStatistics(range);
-    activeRange.value = statistics.value.range;
+    await statisticsStore.refresh(range);
   } catch {
-    activeRange.value = statistics.value.range;
     uni.showToast({ title: "统计数据加载失败", icon: "none" });
-  } finally {
-    isLoading.value = false;
   }
 }
 
 function selectRange(range: StatisticsRange) {
   if (activeRange.value === range && !isLoading.value) return;
 
-  activeRange.value = range;
+  statisticsStore.setRange(range);
   void loadStatistics(range);
 }
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
+import { storeToRefs } from "pinia";
 import type {
   InventoryProductSummary,
   InventoryStockStatus,
@@ -8,16 +9,13 @@ import type {
 } from "@family-inventory/shared-types";
 import AppTabBar from "@/components/AppTabBar.vue";
 import PetPawMark from "@/components/PetPawMark.vue";
-import { fetchProducts } from "@/services/inventoryApi";
-import { fallbackProducts } from "@/services/fallbackData";
+import { useInventoryStore } from "@/stores";
 
 const PENDING_INVENTORY_FILTER_KEY = "fi:inventory:pending_filter";
-const activeCategory = ref("all");
-const activeStatus = ref<InventoryStockStatus | "all">("all");
-const searchQuery = ref("");
-const products = ref<InventoryProductSummary[]>(fallbackProducts);
+const inventoryStore = useInventoryStore();
+const { products, isLoading, activeCategory, activeStatus, searchQuery } =
+  storeToRefs(inventoryStore);
 const isFilterSheetVisible = ref(false);
-const isLoading = ref(false);
 let searchTimer: ReturnType<typeof setTimeout> | undefined;
 
 const categories = [
@@ -41,9 +39,7 @@ const activeStatusLabel = computed(
   () => statusOptions.find((status) => status.id === activeStatus.value)?.label ?? "全部状态",
 );
 
-const hasActiveFilters = computed(
-  () => Boolean(searchQuery.value.trim()) || activeCategory.value !== "all" || activeStatus.value !== "all",
-);
+const hasActiveFilters = computed(() => inventoryStore.hasActiveFilters);
 
 const displayedProducts = computed(() => products.value);
 
@@ -69,7 +65,7 @@ onLoad((query) => {
 });
 
 function selectCategory(id: string) {
-  activeCategory.value = id;
+  inventoryStore.setCategory(id);
   void loadProducts();
 }
 
@@ -80,7 +76,7 @@ function applyCategoryFilter(value?: string) {
 
   if (!category) return false;
 
-  activeCategory.value = category.id;
+  inventoryStore.setCategory(category.id);
   return true;
 }
 
@@ -89,7 +85,7 @@ function applyStatusFilter(value?: string) {
 
   if (!status) return false;
 
-  activeStatus.value = status.id;
+  inventoryStore.setStatus(status.id);
   return true;
 }
 
@@ -109,7 +105,7 @@ function applyPendingInventoryFilter() {
   changed = applyStatusFilter(pending.status) || changed;
 
   if (typeof pending.query === "string") {
-    searchQuery.value = pending.query;
+    inventoryStore.setSearchQuery(pending.query);
     changed = true;
   }
 
@@ -117,14 +113,10 @@ function applyPendingInventoryFilter() {
 }
 
 async function loadProducts() {
-  isLoading.value = true;
-
   try {
-    products.value = (await fetchProducts(currentFilters())).items;
+    await inventoryStore.refresh(currentFilters());
   } catch {
     uni.showToast({ title: "库存加载失败", icon: "none" });
-  } finally {
-    isLoading.value = false;
   }
 }
 
@@ -157,7 +149,7 @@ function submitSearch() {
 }
 
 function clearSearch() {
-  searchQuery.value = "";
+  inventoryStore.setSearchQuery("");
   submitSearch();
 }
 
@@ -170,15 +162,13 @@ function closeFilterSheet() {
 }
 
 function selectStatus(status: InventoryStockStatus | "all") {
-  activeStatus.value = status;
+  inventoryStore.setStatus(status);
   isFilterSheetVisible.value = false;
   void loadProducts();
 }
 
 function resetFilters() {
-  activeCategory.value = "all";
-  activeStatus.value = "all";
-  searchQuery.value = "";
+  inventoryStore.resetFilters();
   isFilterSheetVisible.value = false;
   void loadProducts();
 }

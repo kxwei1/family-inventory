@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
+import { storeToRefs } from "pinia";
 import type { RestockItem, RestockPlan } from "@family-inventory/shared-types";
-import {
-  addRestockRecommendation,
-  completeRestock,
-  fetchRestockPlan,
-  removeRestockItem,
-} from "@/services/inventoryApi";
-import { fallbackRestockPlan } from "@/services/fallbackData";
+import { useRestockStore } from "@/stores";
 
 const PENDING_RESTOCK_SELECTION_KEY = "fi:restock:pending_selection";
-const plan = ref(fallbackRestockPlan);
+const restockStore = useRestockStore();
+const { plan } = storeToRefs(restockStore);
 const selectedIds = ref(new Set<string>());
 const isCompleting = ref(false);
 const removingIds = ref(new Set<string>());
@@ -31,7 +27,7 @@ onShow(() => {
 
 async function loadPlan() {
   try {
-    plan.value = await fetchRestockPlan();
+    await restockStore.refresh();
     applyPendingSelection();
   } catch {
     showToast("补货清单加载失败");
@@ -98,11 +94,10 @@ async function removeItem(item: RestockItem) {
   removingIds.value = pending;
 
   try {
-    const response = await removeRestockItem({ itemId: item.id });
+    await restockStore.remove({ itemId: item.id });
     const nextSelected = new Set(selectedIds.value);
     nextSelected.delete(item.id);
     selectedIds.value = nextSelected;
-    plan.value = response.restockPlan;
     uni.showToast({ title: "已移除补货项", icon: "success" });
   } catch {
     showToast("移除补货项失败");
@@ -121,9 +116,8 @@ async function addRecommendation(recommendation: RestockPlan["recommendations"][
   addingRecommendationIds.value = pending;
 
   try {
-    const response = await addRestockRecommendation({ recommendationId: recommendation.id });
-    plan.value = response.restockPlan;
-    selectedIds.value = new Set([...selectedIds.value, response.itemId]);
+    const itemId = await restockStore.addRecommendation({ recommendationId: recommendation.id });
+    selectedIds.value = new Set([...selectedIds.value, itemId]);
     uni.showToast({ title: "已加入清单", icon: "success" });
   } catch {
     showToast("加入清单失败");
@@ -143,12 +137,12 @@ async function markPurchased() {
   }
 
   isCompleting.value = true;
+  const completingIds = [...selectedIds.value];
 
   try {
-    const response = await completeRestock({ itemIds: [...selectedIds.value] });
-    plan.value = response.restockPlan;
+    await restockStore.complete({ itemIds: completingIds });
     selectedIds.value = new Set();
-    uni.showToast({ title: `已入库 ${response.completedItemIds.length} 项`, icon: "success" });
+    uni.showToast({ title: `已入库 ${completingIds.length} 项`, icon: "success" });
   } catch {
     showToast("补货入库失败");
   } finally {

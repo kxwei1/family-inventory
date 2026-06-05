@@ -8,16 +8,15 @@ import type {
   ProductStockLogSummary,
 } from "@family-inventory/shared-types";
 import {
-  addRestockProduct,
   archiveProduct,
-  consumeProduct,
-  fetchProductDetail,
   fetchProductLogs,
-  updateProduct,
 } from "@/services/inventoryApi";
+import { useProductDetailStore, useRestockStore } from "@/stores";
 
 const PENDING_RESTOCK_SELECTION_KEY = "fi:restock:pending_selection";
 const DEFAULT_PRODUCT_DETAIL_ID = "prod_royal_kitten_food";
+const productDetailStore = useProductDetailStore();
+const restockStore = useRestockStore();
 const detail = ref<ProductDetailResponse | null>(null);
 const isConsumeSheetVisible = ref(false);
 const isHistorySheetVisible = ref(false);
@@ -145,14 +144,17 @@ onLoad((query) => {
 async function loadDetail(id: string) {
   loadError.value = "";
 
-  try {
-    detail.value = await fetchProductDetail(id);
-  } catch {
+  const cached = productDetailStore.detailById(id);
+  if (cached) detail.value = cached;
+
+  const next = await productDetailStore.refresh(id);
+  if (next) {
+    detail.value = next;
+  } else {
     detail.value = null;
     loadError.value = "商品不存在或已归档";
-  } finally {
-    hasLoadedDetail = true;
   }
+  hasLoadedDetail = true;
 }
 
 function goBack() {
@@ -171,8 +173,8 @@ async function goRestock() {
   isAddingRestock.value = true;
 
   try {
-    const response = await addRestockProduct({ productId: detail.value.item.id });
-    uni.setStorageSync(PENDING_RESTOCK_SELECTION_KEY, { itemId: response.itemId });
+    const itemId = await restockStore.addProduct({ productId: detail.value.item.id });
+    uni.setStorageSync(PENDING_RESTOCK_SELECTION_KEY, { itemId });
     uni.showToast({ title: "已加入补货清单", icon: "success" });
     uni.navigateTo({ url: "/pages/restock/restock" });
   } catch {
@@ -265,7 +267,7 @@ async function confirmProductUpdate() {
   isUpdatingProduct.value = true;
 
   try {
-    const response = await updateProduct(detail.value.item.id, {
+    const next = await productDetailStore.update(detail.value.item.id, {
       name,
       brand: editBrand.value.trim() || "未填写品牌",
       category,
@@ -279,7 +281,7 @@ async function confirmProductUpdate() {
       isOpened: editIsOpened.value,
       notes: editNotes.value.trim() || undefined,
     });
-    detail.value = response.detail;
+    detail.value = next;
     isEditSheetVisible.value = false;
     uni.showToast({ title: "商品已更新", icon: "success" });
   } catch {
@@ -322,6 +324,7 @@ async function archiveCurrentProduct() {
 
   try {
     await archiveProduct(detail.value.item.id);
+    productDetailStore.drop(detail.value.item.id);
     uni.showToast({ title: "商品已归档", icon: "success" });
     uni.switchTab({ url: "/pages/inventory/inventory" });
   } catch {
@@ -388,12 +391,12 @@ async function confirmConsume() {
   isConsuming.value = true;
 
   try {
-    const response = await consumeProduct(detail.value.item.id, {
+    const next = await productDetailStore.consume(detail.value.item.id, {
       quantity: consumeQuantity.value,
       actionType: consumeActionType.value,
       notes: consumeNotes.value.trim() || undefined,
     });
-    detail.value = response.detail;
+    detail.value = next;
     isConsumeSheetVisible.value = false;
     uni.showToast({ title: "已记录出库", icon: "success" });
   } catch {

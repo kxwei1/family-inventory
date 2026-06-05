@@ -1,18 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { onShow } from "@dcloudio/uni-app";
+import { storeToRefs } from "pinia";
 import type { FamilyMemberSummary, FamilyOverview } from "@family-inventory/shared-types";
-import {
-  dissolveFamily,
-  fetchFamily,
-  removeFamilyMember,
-  renameFamily,
-  updateFamilyAddress,
-  updateFamilyMemberRole,
-} from "@/services/inventoryApi";
-import { fallbackFamily } from "@/services/fallbackData";
+import { useFamilyStore } from "@/stores";
 
-const family = ref(fallbackFamily);
+const familyStore = useFamilyStore();
+const { family } = storeToRefs(familyStore);
 const isInviteSheetVisible = ref(false);
 const isRenameSheetVisible = ref(false);
 const isAddressSheetVisible = ref(false);
@@ -62,11 +56,17 @@ onShow(() => {
 
 async function loadFamily() {
   try {
-    setFamily(await fetchFamily());
+    await familyStore.refresh();
   } catch {
     showToast("家庭信息加载失败");
   }
 }
+
+watch(
+  () => family.value,
+  (next) => syncSelectedMemberWith(next),
+  { deep: true },
+);
 
 function goBack() {
   uni.navigateBack({
@@ -78,9 +78,7 @@ function showToast(title: string) {
   uni.showToast({ title, icon: "none" });
 }
 
-function setFamily(nextFamily: FamilyOverview) {
-  family.value = nextFamily;
-
+function syncSelectedMemberWith(nextFamily: FamilyOverview) {
   if (!selectedMember.value) return;
 
   selectedMember.value =
@@ -120,8 +118,7 @@ async function saveFamilyName() {
   isSavingName.value = true;
 
   try {
-    const response = await renameFamily({ name });
-    setFamily(response.family);
+    await familyStore.rename({ name });
     isRenameSheetVisible.value = false;
     uni.showToast({ title: "已更新家庭名称", icon: "success" });
   } catch {
@@ -190,14 +187,13 @@ async function saveFamilyAddress() {
   isSavingAddress.value = true;
 
   try {
-    const response = await updateFamilyAddress({
+    await familyStore.updateAddress({
       contactName,
       phone,
       region,
       detail,
       notes: notes || undefined,
     });
-    setFamily(response.family);
     isAddressSheetVisible.value = false;
     uni.showToast({ title: "家庭地址已保存", icon: "success" });
   } catch {
@@ -247,11 +243,10 @@ async function changeMemberRole(role: FamilyMemberSummary["role"]) {
   isSavingMember.value = true;
 
   try {
-    const response = await updateFamilyMemberRole({
+    await familyStore.updateMemberRole({
       memberId: selectedMember.value.id,
       role,
     });
-    setFamily(response.family);
     uni.showToast({ title: "成员权限已更新", icon: "success" });
   } catch {
     showToast("成员权限更新失败");
@@ -285,8 +280,7 @@ async function removeSelectedMember() {
   isSavingMember.value = true;
 
   try {
-    const response = await removeFamilyMember({ memberId: selectedMember.value.id });
-    setFamily(response.family);
+    await familyStore.removeMember({ memberId: selectedMember.value.id });
     isMemberSheetVisible.value = false;
     selectedMember.value = null;
     uni.showToast({ title: "已移除成员", icon: "success" });
@@ -319,8 +313,7 @@ async function dissolveCurrentFamily() {
   isDissolving.value = true;
 
   try {
-    const response = await dissolveFamily();
-    setFamily(response.family);
+    await familyStore.dissolve();
     isPermissionsSheetVisible.value = false;
     isMemberSheetVisible.value = false;
     selectedMember.value = null;

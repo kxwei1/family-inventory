@@ -1,23 +1,19 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
+import { storeToRefs } from "pinia";
 import AppTabBar from "@/components/AppTabBar.vue";
-import {
-  fetchNotificationSettings,
-  fetchProfile,
-  updateNotificationSettings,
-  updateProfile,
-} from "@/services/inventoryApi";
-import { fallbackProfile } from "@/services/fallbackData";
+import { useProfileStore } from "@/stores";
 
 type MenuTone = "mint" | "blue" | "neutral";
 type ProfilePanelId = "settings" | "notifications" | "help" | "about";
 type ProfileMenuItemId = "inventory" | "history" | ProfilePanelId;
 
-const profile = ref(fallbackProfile);
+const profileStore = useProfileStore();
+const { profile, notificationSettings } = storeToRefs(profileStore);
+const notificationsEnabled = computed(() => notificationSettings.value.stockWarningEnabled);
+const expiryNotificationsEnabled = computed(() => notificationSettings.value.expiryReminderEnabled);
 const activePanel = ref<ProfilePanelId | null>(null);
-const notificationsEnabled = ref(true);
-const expiryNotificationsEnabled = ref(true);
 const isSavingNotifications = ref(false);
 const isProfileSheetVisible = ref(false);
 const isSavingProfile = ref(false);
@@ -73,14 +69,7 @@ onShow(() => {
 
 async function loadProfileData() {
   try {
-    const [profileResponse, notificationSettings] = await Promise.all([
-      fetchProfile(),
-      fetchNotificationSettings(),
-    ]);
-
-    profile.value = profileResponse;
-    notificationsEnabled.value = notificationSettings.stockWarningEnabled;
-    expiryNotificationsEnabled.value = notificationSettings.expiryReminderEnabled;
+    await profileStore.refresh();
   } catch {
     uni.showToast({ title: "个人信息加载失败", icon: "none" });
   }
@@ -164,11 +153,10 @@ async function saveProfile() {
   isSavingProfile.value = true;
 
   try {
-    const response = await updateProfile({
+    await profileStore.updateProfile({
       name,
       avatar: avatar || profile.value.avatar,
     });
-    profile.value = response.profile;
     isProfileSheetVisible.value = false;
     uni.showToast({ title: "资料已更新", icon: "success" });
   } catch {
@@ -201,9 +189,7 @@ async function saveNotificationSettings(payload: {
   isSavingNotifications.value = true;
 
   try {
-    const response = await updateNotificationSettings(payload);
-    notificationsEnabled.value = response.settings.stockWarningEnabled;
-    expiryNotificationsEnabled.value = response.settings.expiryReminderEnabled;
+    await profileStore.updateNotificationSettings(payload);
   } catch {
     uni.showToast({ title: "通知设置保存失败", icon: "none" });
   } finally {

@@ -1,0 +1,21 @@
+{
+  "name": "family-inventory",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A family pet inventory management mini-program (uni-app + NestJS)",
+  "scripts": {
+    "dev:h5": "pnpm --filter @family-inventory/client dev:h5",
+    "dev:mp-weixin": "pnpm --filter @family-inventory/client dev:mp-weixin",
+    "build:h5": "pnpm --filter @family-inventory/client build:h5",
+    "build:mp-weixin": "pnpm --filter @family-inventory/client build:mp-weixin",
+    "dev:server": "pnpm --filter @family-inventory/server start:dev",
+    "smoke:api": "pnpm --filter @family-inventory/server smoke:api",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.14.2"
+}

@@ -1,0 +1,128 @@
+{
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^wd-(.*)": "wot-design-uni/components/wd-$1/wd-$1.vue"
+    }
+  },
+  "pages": [
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationBarTitleText": "宠物管家",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/inventory/inventory",
+      "style": {
+        "navigationBarTitleText": "库存",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/add/add",
+      "style": {
+        "navigationBarTitleText": "添加商品",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/statistics/statistics",
+      "style": {
+        "navigationBarTitleText": "数据洞察",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/family/family",
+      "style": {
+        "navigationBarTitleText": "家庭管理",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/pets/pets",
+      "style": {
+        "navigationBarTitleText": "宠物档案",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/product-detail/product-detail",
+      "style": {
+        "navigationBarTitleText": "商品详情",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/restock/restock",
+      "style": {
+        "navigationBarTitleText": "该补货啦",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/stock-in/stock-in",
+      "style": {
+        "navigationBarTitleText": "扫码入库",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/records/records",
+      "style": {
+        "navigationBarTitleText": "使用记录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/reminders/reminders",
+      "style": {
+        "navigationBarTitleText": "智能提醒",
+        "navigationStyle": "custom"
+      }
+    }
+  ],
+  "tabBar": {
+    "color": "#6B7280",
+    "selectedColor": "#006C49",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/inventory/inventory",
+        "text": "库存"
+      },
+      {
+        "pagePath": "pages/add/add",
+        "text": "添加"
+      },
+      {
+        "pagePath": "pages/statistics/statistics",
+        "text": "统计"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "宠物管家",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F8FBFA"
+  }
+}

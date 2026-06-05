@@ -1,0 +1,56 @@
+// =========================================
+// Global styles
+// =========================================
+@use "./tokens.scss" as *;
+
+page {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  color: $color-text-primary;
+  background-color: $color-bg-page;
+  line-height: $line-height-base;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// reset some browser defaults (H5)
+view, text, image, button {
+  box-sizing: border-box;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  &::after {
+    border: none;
+  }
+}
+
+// utility classes
+.card {
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  padding: $space-4;
+}
+
+.text-primary { color: $color-text-primary; }
+.text-secondary { color: $color-text-secondary; }
+.text-tertiary { color: $color-text-tertiary; }
+.text-brand { color: $color-primary; }
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-1 { flex: 1; }
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

@@ -1,0 +1,106 @@
+// =========================================
+// Design Tokens - MintPet inventory app
+// 8pt grid system, mobile-first
+// =========================================
+
+// ---------- Colors ----------
+// Brand
+$color-primary: #006C49;
+$color-primary-light: #18B981;
+$color-primary-dark: #00422B;
+$color-primary-bg: #E8F8F2;
+
+// Accent
+$color-accent: #005CBA;
+$color-accent-bg: #EAF3FF;
+$color-accent-yellow: #FFE066;
+
+// Semantic
+$color-success: #16A34A;
+$color-success-bg: #E8F8F2;
+$color-warning: #D97706;
+$color-warning-bg: #FFF7E0;
+$color-danger: #DC2626;
+$color-danger-bg: #FFE9E6;
+$color-info: #005CBA;
+$color-info-bg: #EAF3FF;
+
+// Neutral
+$color-text-primary: #0A1F21;
+$color-text-secondary: #6B7280;
+$color-text-tertiary: #6C7A71;
+$color-text-disabled: #D1D5DB;
+$color-text-inverse: #FFFFFF;
+
+$color-bg-page: #F8FBFA;
+$color-bg-card: #FFFFFF;
+$color-bg-muted: #E9FDFF;
+$color-bg-mask: rgba(0, 0, 0, 0.5);
+
+$color-border: #E5E7EB;
+$color-border-light: #BBCABF;
+$color-divider: #E5E7EB;
+
+// ---------- Typography ----------
+$font-family-base: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+  Helvetica, "Microsoft YaHei", Arial, sans-serif;
+
+$font-size-xs: 20rpx;   // 10px
+$font-size-sm: 24rpx;   // 12px
+$font-size-base: 28rpx; // 14px
+$font-size-md: 30rpx;   // 15px
+$font-size-lg: 32rpx;   // 16px
+$font-size-xl: 36rpx;   // 18px
+$font-size-2xl: 40rpx;  // 20px
+$font-size-3xl: 44rpx;  // 22px
+$font-size-4xl: 56rpx;  // 28px
+$font-size-5xl: 72rpx;  // 36px
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$line-height-tight: 1.2;
+$line-height-base: 1.4;
+$line-height-relaxed: 1.6;
+
+// ---------- Spacing ----------
+$space-1: 8rpx;
+$space-2: 16rpx;
+$space-3: 24rpx;
+$space-4: 32rpx;
+$space-5: 40rpx;
+$space-6: 48rpx;
+$space-8: 64rpx;
+$space-10: 80rpx;
+$space-12: 96rpx;
+
+// ---------- Radius ----------
+$radius-xs: 8rpx;
+$radius-sm: 12rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+$radius-xl: 32rpx;
+$radius-2xl: 40rpx;
+$radius-full: 9999rpx;
+
+// ---------- Shadows ----------
+$shadow-sm: 0 4rpx 16rpx rgba(21, 61, 53, 0.04);
+$shadow-md: 0 8rpx 32rpx rgba(21, 61, 53, 0.06);
+$shadow-lg: 0 16rpx 48rpx rgba(21, 61, 53, 0.08);
+
+// ---------- Z-index ----------
+$z-base: 1;
+$z-dropdown: 100;
+$z-sticky: 200;
+$z-fixed: 300;
+$z-modal-mask: 400;
+$z-modal: 500;
+$z-popover: 600;
+$z-toast: 700;
+
+// ---------- Transitions ----------
+$transition-fast: 150ms ease-out;
+$transition-base: 250ms ease-out;
+$transition-slow: 400ms ease-out;

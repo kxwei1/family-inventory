@@ -1,0 +1,46 @@
+{
+    "name" : "家庭库存",
+    "appid" : "",
+    "description" : "家庭宠物用品库存管理",
+    "versionName" : "0.0.1",
+    "versionCode" : "1",
+    "transformPx" : false,
+    "h5" : {
+        "title" : "家庭库存",
+        "router" : {
+            "mode" : "hash",
+            "base" : "/"
+        },
+        "devServer" : {
+            "port" : 5173,
+            "https" : false
+        },
+        "async" : {
+            "loading" : "AsyncLoading",
+            "error" : "AsyncError",
+            "delay" : 200,
+            "timeout" : 60000
+        },
+        "optimization" : {
+            "treeShaking" : {
+                "enable" : true
+            }
+        }
+    },
+    "mp-weixin" : {
+        "appid" : "",
+        "setting" : {
+            "urlCheck" : false,
+            "es6" : true,
+            "postcss" : true,
+            "minified" : true
+        },
+        "usingComponents" : true,
+        "lazyCodeLoading" : "requiredComponents",
+        "permission" : {}
+    },
+    "uniStatistics": {
+        "enable": false
+    },
+    "vueVersion" : "3"
+}

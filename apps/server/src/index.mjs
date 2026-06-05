@@ -545,6 +545,49 @@ export function createApiServer(options = {}) {
         return;
       }
 
+      if (request.method === "POST" && url.pathname.startsWith("/api/pets/") && url.pathname.endsWith("/album/batch")) {
+        const id = decodeURIComponent(url.pathname.slice("/api/pets/".length, -"/album/batch".length));
+
+        try {
+          const payload = await readJsonBody(request);
+          const images = Array.isArray(payload?.images)
+            ? payload.images.filter((image) => typeof image === "string" && image.trim())
+            : [];
+
+          if (!images.length) {
+            throw new Error("At least one image is required");
+          }
+
+          const result = await store.update((data) => addPetAlbumPhotos(data, id, images));
+
+          sendJson(response, 200, result);
+        } catch (error) {
+          sendJson(response, error.statusCode ?? 400, {
+            error: error instanceof Error ? error.message : "Invalid request body",
+            id,
+          });
+        }
+        return;
+      }
+
+      if (request.method === "POST" && url.pathname.startsWith("/api/pets/") && url.pathname.endsWith("/album/remove")) {
+        const id = decodeURIComponent(url.pathname.slice("/api/pets/".length, -"/album/remove".length));
+
+        try {
+          const payload = await readJsonBody(request);
+          const image = readRequiredString(payload, "image");
+          const result = await store.update((data) => removePetAlbumPhoto(data, id, image));
+
+          sendJson(response, 200, result);
+        } catch (error) {
+          sendJson(response, error.statusCode ?? 400, {
+            error: error instanceof Error ? error.message : "Invalid request body",
+            id,
+          });
+        }
+        return;
+      }
+
       if (request.method === "POST" && url.pathname === "/api/products/stock-in") {
         try {
           const payload = await readJsonBody(request);
@@ -1478,14 +1521,7 @@ function withPetDietUpdates(currentDiet, payloadDiet) {
 }
 
 function addPetAlbumPhoto(data, petId, image) {
-  const petIndex = data.pets.findIndex((item) => item.id === petId);
-
-  if (petIndex === -1) {
-    const notFound = new Error("Pet Not Found");
-    notFound.statusCode = 404;
-    throw notFound;
-  }
-
+  const petIndex = locatePetIndex(data, petId);
   const pet = data.pets[petIndex];
   const albumPhotos = [
     image,
@@ -1502,6 +1538,63 @@ function addPetAlbumPhoto(data, petId, image) {
     item: data.pets[petIndex],
     pets: buildPetList(data, petId),
   };
+}
+
+function addPetAlbumPhotos(data, petId, images) {
+  const petIndex = locatePetIndex(data, petId);
+  const pet = data.pets[petIndex];
+  const existing = normalizePetAlbumPhotos(pet.albumPhotos);
+  const uniqueNew = [];
+  const seen = new Set(existing);
+
+  for (const image of images) {
+    if (typeof image !== "string" || !image.trim() || seen.has(image)) continue;
+    seen.add(image);
+    uniqueNew.push(image);
+  }
+
+  const albumPhotos = [...uniqueNew, ...existing].slice(0, 24);
+
+  data.pets[petIndex] = normalizePet({
+    ...pet,
+    albumPhotos,
+    albumCount: albumPhotos.length,
+  });
+
+  return {
+    item: data.pets[petIndex],
+    pets: buildPetList(data, petId),
+    addedImages: uniqueNew,
+  };
+}
+
+function removePetAlbumPhoto(data, petId, image) {
+  const petIndex = locatePetIndex(data, petId);
+  const pet = data.pets[petIndex];
+  const albumPhotos = normalizePetAlbumPhotos(pet.albumPhotos).filter((item) => item !== image);
+
+  data.pets[petIndex] = normalizePet({
+    ...pet,
+    albumPhotos,
+    albumCount: albumPhotos.length,
+  });
+
+  return {
+    item: data.pets[petIndex],
+    pets: buildPetList(data, petId),
+  };
+}
+
+function locatePetIndex(data, petId) {
+  const petIndex = data.pets.findIndex((item) => item.id === petId);
+
+  if (petIndex === -1) {
+    const notFound = new Error("Pet Not Found");
+    notFound.statusCode = 404;
+    throw notFound;
+  }
+
+  return petIndex;
 }
 
 function createProduct(payload) {

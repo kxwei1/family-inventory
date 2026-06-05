@@ -1,6 +1,10 @@
 import type {
   AddPetAlbumPhotoRequest,
   AddPetAlbumPhotoResponse,
+  AddPetAlbumPhotosRequest,
+  AddPetAlbumPhotosResponse,
+  RemovePetAlbumPhotoRequest,
+  RemovePetAlbumPhotoResponse,
   AddRestockProductRequest,
   AddRestockProductResponse,
   AddRestockRecommendationRequest,
@@ -56,6 +60,8 @@ import {
   addLocalRestockProduct,
   addLocalRestockRecommendation,
   addLocalPetAlbumPhoto,
+  addLocalPetAlbumPhotos,
+  removeLocalPetAlbumPhoto,
   archiveLocalProduct,
   completeLocalRestock,
   createLocalPet,
@@ -170,6 +176,24 @@ export function addPetAlbumPhoto(id: string, payload: AddPetAlbumPhotoRequest) {
     `/api/pets/${encodeURIComponent(id)}/album`,
     payload,
     () => addLocalPetAlbumPhoto(id, payload),
+    { fallbackOnHttpError: false },
+  );
+}
+
+export function addPetAlbumPhotos(id: string, payload: AddPetAlbumPhotosRequest) {
+  return postJsonWithFallback<AddPetAlbumPhotosResponse, AddPetAlbumPhotosRequest>(
+    `/api/pets/${encodeURIComponent(id)}/album/batch`,
+    payload,
+    () => addLocalPetAlbumPhotos(id, payload),
+    { fallbackOnHttpError: false },
+  );
+}
+
+export function removePetAlbumPhoto(id: string, payload: RemovePetAlbumPhotoRequest) {
+  return postJsonWithFallback<RemovePetAlbumPhotoResponse, RemovePetAlbumPhotoRequest>(
+    `/api/pets/${encodeURIComponent(id)}/album/remove`,
+    payload,
+    () => removeLocalPetAlbumPhoto(id, payload),
     { fallbackOnHttpError: false },
   );
 }

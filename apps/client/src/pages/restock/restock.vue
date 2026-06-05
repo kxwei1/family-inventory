@@ -13,6 +13,10 @@ const isCompleting = ref(false);
 const removingIds = ref(new Set<string>());
 const addingRecommendationIds = ref(new Set<string>());
 const allItems = computed(() => plan.value.groups.flatMap((group) => group.items));
+const isAllSelected = computed(
+  () => allItems.value.length > 0 && selectedIds.value.size === allItems.value.length,
+);
+const generateButtonLabel = computed(() => (isAllSelected.value ? "全部取消" : "生成清单"));
 const selectedCount = computed(() => selectedIds.value.size);
 const purchaseButtonLabel = computed(() => {
   if (isCompleting.value) return "入库中...";
@@ -79,6 +83,12 @@ function showToast(title: string) {
 function selectAllItems() {
   if (!allItems.value.length) {
     showToast("暂无可生成的清单");
+    return;
+  }
+
+  if (isAllSelected.value) {
+    selectedIds.value = new Set();
+    uni.showToast({ title: "已清空选择", icon: "none" });
     return;
   }
 
@@ -188,7 +198,7 @@ function sharePlan() {
         <wd-icon name="arrow-left" size="44rpx" />
       </button>
       <text class="topbar-title">该补货啦</text>
-      <button class="generate-button" @click="selectAllItems">生成清单</button>
+      <button class="generate-button" @click="selectAllItems">{{ generateButtonLabel }}</button>
     </view>
 
     <scroll-view class="content" scroll-y :show-scrollbar="false">

@@ -8,6 +8,7 @@ type RecordFilter = "all" | "stock_in" | "stock_out" | "adjust";
 
 const logs = ref<ProductStockLogSummary[]>([]);
 const activeFilter = ref<RecordFilter>("all");
+const activeOperator = ref<string>("all");
 const isLoading = ref(true);
 
 const filters: Array<{ id: RecordFilter; label: string }> = [
@@ -17,11 +18,39 @@ const filters: Array<{ id: RecordFilter; label: string }> = [
   { id: "adjust", label: "调整" },
 ];
 
+const operatorOptions = computed<Array<{ id: string; label: string }>>(() => {
+  const operators = Array.from(
+    new Set(logs.value.map((log) => log.operatorName).filter(Boolean)),
+  );
+
+  return [
+    { id: "all", label: "全部成员" },
+    ...operators.map((name) => ({ id: name, label: name })),
+  ];
+});
+
 const filteredLogs = computed(() => logs.value.filter(matchesFilter));
 const stockInCount = computed(() => logs.value.filter((log) => log.action === "stock_in").length);
 const stockOutCount = computed(() =>
   logs.value.filter((log) => ["stock_out", "expired", "gift"].includes(log.action)).length,
 );
+
+const groupedLogs = computed(() => {
+  const groups = new Map<string, ProductStockLogSummary[]>();
+
+  for (const log of filteredLogs.value) {
+    const key = formatDateKey(log.operatedAt);
+    const bucket = groups.get(key);
+
+    if (bucket) {
+      bucket.push(log);
+    } else {
+      groups.set(key, [log]);
+    }
+  }
+
+  return [...groups.entries()].map(([date, items]) => ({ date, items }));
+});
 
 onShow(() => {
   uni.hideTabBar({ animation: false });
@@ -41,9 +70,17 @@ async function loadLogs() {
 }
 
 function matchesFilter(log: ProductStockLogSummary) {
+  if (activeOperator.value !== "all" && log.operatorName !== activeOperator.value) {
+    return false;
+  }
+
   if (activeFilter.value === "all") return true;
   if (activeFilter.value === "stock_out") return ["stock_out", "expired", "gift"].includes(log.action);
   return log.action === activeFilter.value;
+}
+
+function selectOperator(id: string) {
+  activeOperator.value = id;
 }
 
 function goBack() {
@@ -77,12 +114,31 @@ function formatTime(value: string) {
     return value;
   }
 
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
   const hour = String(date.getHours()).padStart(2, "0");
   const minute = String(date.getMinutes()).padStart(2, "0");
 
-  return `${month}.${day} ${hour}:${minute}`;
+  return `${hour}:${minute}`;
+}
+
+function formatDateKey(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  const now = new Date();
+  const sameDay = now.toDateString() === date.toDateString();
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const isYesterday = yesterday.toDateString() === date.toDateString();
+
+  if (sameDay) return "今天";
+  if (isYesterday) return "昨天";
+
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}.${month}.${day}`;
 }
 </script>
 
@@ -126,6 +182,23 @@ function formatTime(value: string) {
         </button>
       </view>
 
+      <scroll-view
+        v-if="operatorOptions.length > 1"
+        class="operator-scroll"
+        scroll-x
+        :show-scrollbar="false"
+      >
+        <button
+          v-for="option in operatorOptions"
+          :key="option.id"
+          class="operator-chip"
+          :class="{ active: activeOperator === option.id }"
+          @click="selectOperator(option.id)"
+        >
+          {{ option.label }}
+        </button>
+      </scroll-view>
+
       <view v-if="isLoading" class="empty-state">加载中...</view>
       <view v-else-if="!filteredLogs.length" class="empty-state">
         <wd-icon name="check-circle" size="68rpx" />
@@ -133,31 +206,34 @@ function formatTime(value: string) {
       </view>
 
       <view v-else class="record-list">
-        <view
-          v-for="log in filteredLogs"
-          :key="log.id"
-          class="record-card"
-          @click="goProduct(log)"
-        >
-          <image
-            v-if="log.productImage"
-            class="record-image"
-            :src="log.productImage"
-            mode="aspectFit"
-          />
-          <view v-else class="record-image icon-only">
-            <wd-icon name="list" size="42rpx" />
-          </view>
+        <view v-for="group in groupedLogs" :key="group.date" class="record-group">
+          <view class="record-date">{{ group.date }}</view>
+          <view
+            v-for="log in group.items"
+            :key="log.id"
+            class="record-card"
+            @click="goProduct(log)"
+          >
+            <image
+              v-if="log.productImage"
+              class="record-image"
+              :src="log.productImage"
+              mode="aspectFit"
+            />
+            <view v-else class="record-image icon-only">
+              <wd-icon name="list" size="42rpx" />
+            </view>
 
-          <view class="record-main">
-            <view class="record-title">{{ log.productName || "库存商品" }}</view>
-            <view class="record-meta">{{ log.actionText }} · {{ formatTime(log.operatedAt) }}</view>
-            <view v-if="log.notes" class="record-notes">{{ log.notes }}</view>
-          </view>
+            <view class="record-main">
+              <view class="record-title">{{ log.productName || "库存商品" }}</view>
+              <view class="record-meta">{{ log.actionText }} · {{ formatTime(log.operatedAt) }}</view>
+              <view v-if="log.notes" class="record-notes">{{ log.notes }}</view>
+            </view>
 
-          <view class="record-side">
-            <text class="record-quantity" :class="log.action">{{ formatQuantity(log) }}</text>
-            <text class="record-operator">{{ log.operatorName }}</text>
+            <view class="record-side">
+              <text class="record-quantity" :class="log.action">{{ formatQuantity(log) }}</text>
+              <text class="record-operator">{{ log.operatorName }}</text>
+            </view>
           </view>
         </view>
       </view>
@@ -273,11 +349,52 @@ function formatTime(value: string) {
   color: #ffffff;
 }
 
+.operator-scroll {
+  margin: 24rpx -32rpx 0;
+  padding: 0 32rpx 8rpx;
+  white-space: nowrap;
+}
+
+.operator-chip {
+  min-width: 132rpx;
+  height: 60rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18rpx;
+  padding: 0 28rpx;
+  border: 2rpx solid $color-border;
+  border-radius: $radius-full;
+  background: #ffffff;
+  color: $color-text-secondary;
+  font-size: 26rpx;
+  font-weight: $font-weight-bold;
+}
+
+.operator-chip.active {
+  border-color: $color-primary;
+  background: $color-primary;
+  color: #ffffff;
+}
+
 .record-list {
   display: flex;
   flex-direction: column;
   gap: 22rpx;
   margin-top: 36rpx;
+}
+
+.record-group {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.record-date {
+  margin-top: 4rpx;
+  color: $color-text-secondary;
+  font-size: 24rpx;
+  font-weight: $font-weight-bold;
 }
 
 .record-card {

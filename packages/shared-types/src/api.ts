@@ -231,6 +231,25 @@ export interface AddPetAlbumPhotoResponse {
   pets: PetListResponse;
 }
 
+export interface AddPetAlbumPhotosRequest {
+  images: string[];
+}
+
+export interface AddPetAlbumPhotosResponse {
+  item: PetProfileSummary;
+  pets: PetListResponse;
+  addedImages: string[];
+}
+
+export interface RemovePetAlbumPhotoRequest {
+  image: string;
+}
+
+export interface RemovePetAlbumPhotoResponse {
+  item: PetProfileSummary;
+  pets: PetListResponse;
+}
+
 export type StatisticsRange = "week" | "month" | "year";
 
 export interface StatisticsSummary {

@@ -1,14 +1,18 @@
 import { defineStore } from "pinia";
 import type {
   AddPetAlbumPhotoRequest,
+  AddPetAlbumPhotosRequest,
   CreatePetRequest,
   PetProfileSummary,
+  RemovePetAlbumPhotoRequest,
   UpdatePetRequest,
 } from "@family-inventory/shared-types";
 import {
   addPetAlbumPhoto as addPetAlbumPhotoApi,
+  addPetAlbumPhotos as addPetAlbumPhotosApi,
   createPet as createPetApi,
   fetchPets,
+  removePetAlbumPhoto as removePetAlbumPhotoApi,
   updatePet as updatePetApi,
 } from "@/services/inventoryApi";
 import { fallbackPets } from "@/services/fallbackData";
@@ -80,6 +84,30 @@ export const usePetsStore = defineStore("pets", {
 
     async addAlbumPhoto(id: string, payload: AddPetAlbumPhotoRequest): Promise<PetProfileSummary> {
       const response = await addPetAlbumPhotoApi(id, payload);
+      this.pets = response.pets.items;
+      if (response.pets.selectedPetId) {
+        this.selectedPetId = response.pets.selectedPetId;
+      }
+      return response.item;
+    },
+
+    async addAlbumPhotos(
+      id: string,
+      payload: AddPetAlbumPhotosRequest,
+    ): Promise<{ pet: PetProfileSummary; addedImages: string[] }> {
+      const response = await addPetAlbumPhotosApi(id, payload);
+      this.pets = response.pets.items;
+      if (response.pets.selectedPetId) {
+        this.selectedPetId = response.pets.selectedPetId;
+      }
+      return { pet: response.item, addedImages: response.addedImages };
+    },
+
+    async removeAlbumPhoto(
+      id: string,
+      payload: RemovePetAlbumPhotoRequest,
+    ): Promise<PetProfileSummary> {
+      const response = await removePetAlbumPhotoApi(id, payload);
       this.pets = response.pets.items;
       if (response.pets.selectedPetId) {
         this.selectedPetId = response.pets.selectedPetId;

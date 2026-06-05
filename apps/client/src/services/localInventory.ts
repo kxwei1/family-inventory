@@ -1,6 +1,10 @@
 import type {
   AddPetAlbumPhotoRequest,
   AddPetAlbumPhotoResponse,
+  AddPetAlbumPhotosRequest,
+  AddPetAlbumPhotosResponse,
+  RemovePetAlbumPhotoRequest,
+  RemovePetAlbumPhotoResponse,
   AddRestockProductRequest,
   AddRestockProductResponse,
   AddRestockRecommendationRequest,
@@ -155,7 +159,55 @@ export async function addLocalPetAlbumPhoto(
   payload: AddPetAlbumPhotoRequest,
 ): Promise<AddPetAlbumPhotoResponse> {
   const image = readRequiredString(payload.image, "image");
+  const { pet, list } = await applyLocalPetAlbumUpdate(id, (existing) =>
+    [image, ...existing.filter((item) => item !== image)].slice(0, 24),
+  );
 
+  return { item: pet, pets: list };
+}
+
+export async function addLocalPetAlbumPhotos(
+  id: string,
+  payload: AddPetAlbumPhotosRequest,
+): Promise<AddPetAlbumPhotosResponse> {
+  if (!Array.isArray(payload.images) || !payload.images.length) {
+    throw new Error("At least one image is required");
+  }
+
+  const addedImages: string[] = [];
+  const { pet, list } = await applyLocalPetAlbumUpdate(id, (existing) => {
+    const seen = new Set(existing);
+    const uniqueNew: string[] = [];
+
+    for (const image of payload.images) {
+      if (typeof image !== "string" || !image.trim() || seen.has(image)) continue;
+      seen.add(image);
+      uniqueNew.push(image);
+      addedImages.push(image);
+    }
+
+    return [...uniqueNew, ...existing].slice(0, 24);
+  });
+
+  return { item: pet, pets: list, addedImages };
+}
+
+export async function removeLocalPetAlbumPhoto(
+  id: string,
+  payload: RemovePetAlbumPhotoRequest,
+): Promise<RemovePetAlbumPhotoResponse> {
+  const image = readRequiredString(payload.image, "image");
+  const { pet, list } = await applyLocalPetAlbumUpdate(id, (existing) =>
+    existing.filter((item) => item !== image),
+  );
+
+  return { item: pet, pets: list };
+}
+
+async function applyLocalPetAlbumUpdate(
+  id: string,
+  transform: (existing: string[]) => string[],
+): Promise<{ pet: PetProfileSummary; list: PetListResponse }> {
   const localPets = await listLocalPets();
   const sourcePet =
     localPets.find((pet) => pet.id === id) ??
@@ -165,10 +217,7 @@ export async function addLocalPetAlbumPhoto(
     throw new Error("Pet not found");
   }
 
-  const albumPhotos = [
-    image,
-    ...(sourcePet.albumPhotos ?? []).filter((item) => item !== image),
-  ].slice(0, 24);
+  const albumPhotos = transform(sourcePet.albumPhotos ?? []);
   const nextPet = {
     ...sourcePet,
     albumPhotos,
@@ -179,8 +228,8 @@ export async function addLocalPetAlbumPhoto(
   await storage.set(LOCAL_PETS_KEY, nextLocalPets);
 
   return {
-    item: nextPet,
-    pets: await getPetsFallback(id),
+    pet: nextPet,
+    list: await getPetsFallback(id),
   };
 }
 

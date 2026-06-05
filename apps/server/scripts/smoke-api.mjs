@@ -124,6 +124,38 @@ async function main() {
     });
     assert.equal(album.item.albumPhotos[0], "/static/products/orijen.png", "pet album adds image first");
 
+    const batchAlbum = await api(`/api/pets/${encodeURIComponent(createdPet.item.id)}/album/batch`, {
+      method: "POST",
+      body: {
+        images: [
+          "/static/products/ziwi.png",
+          "/static/products/litter.png",
+          "/static/products/orijen.png",
+        ],
+      },
+    });
+    assert.deepEqual(
+      batchAlbum.addedImages,
+      ["/static/products/ziwi.png", "/static/products/litter.png"],
+      "batch album dedupes against existing images",
+    );
+    assert.equal(
+      batchAlbum.item.albumPhotos[0],
+      "/static/products/ziwi.png",
+      "batch album prepends new images preserving input order",
+    );
+
+    const removeAlbum = await api(`/api/pets/${encodeURIComponent(createdPet.item.id)}/album/remove`, {
+      method: "POST",
+      body: {
+        image: "/static/products/litter.png",
+      },
+    });
+    assert.ok(
+      !removeAlbum.item.albumPhotos.includes("/static/products/litter.png"),
+      "removed album photo no longer appears in list",
+    );
+
     const updatedNotificationSettings = await api("/api/notification-settings", {
       method: "POST",
       body: {

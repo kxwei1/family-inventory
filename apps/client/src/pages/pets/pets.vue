@@ -206,13 +206,19 @@ function chooseAlbumPhoto() {
   }
 
   uni.chooseImage({
-    count: 1,
+    count: 9,
     sourceType: ["album", "camera"],
     success: (result) => {
-      const image = Array.isArray(result.tempFilePaths) ? result.tempFilePaths[0] : "";
+      const paths = Array.isArray(result.tempFilePaths) ? result.tempFilePaths : [];
+      const images = paths.filter((path): path is string => typeof path === "string" && Boolean(path));
 
-      if (image) {
-        void saveAlbumPhoto(image);
+      if (images.length === 1) {
+        void saveAlbumPhoto(images[0]);
+        return;
+      }
+
+      if (images.length > 1) {
+        void saveAlbumPhotos(images);
       }
     },
     fail: () => {
@@ -231,6 +237,57 @@ async function saveAlbumPhoto(image: string) {
     uni.showToast({ title: "照片已加入相册", icon: "success" });
   } catch {
     uni.showToast({ title: "照片添加失败", icon: "none" });
+  } finally {
+    isSavingAlbum.value = false;
+  }
+}
+
+async function saveAlbumPhotos(images: string[]) {
+  if (!selectedPet.value || isSavingAlbum.value) return;
+
+  isSavingAlbum.value = true;
+
+  try {
+    const { addedImages } = await petsStore.addAlbumPhotos(selectedPet.value.id, { images });
+    if (addedImages.length === 0) {
+      uni.showToast({ title: "照片已存在，已自动去重", icon: "none" });
+      return;
+    }
+    uni.showToast({ title: `已加入 ${addedImages.length} 张`, icon: "success" });
+  } catch {
+    uni.showToast({ title: "照片批量添加失败", icon: "none" });
+  } finally {
+    isSavingAlbum.value = false;
+  }
+}
+
+function confirmRemoveAlbumPhoto(image: string) {
+  if (!selectedPet.value || isSavingAlbum.value) return;
+
+  const petId = selectedPet.value.id;
+  uni.showModal({
+    title: "删除照片",
+    content: "确认从相册移除这张照片？",
+    confirmText: "删除",
+    confirmColor: "#dc2626",
+    success: (result) => {
+      if (result.confirm) {
+        void removeAlbumPhoto(petId, image);
+      }
+    },
+  });
+}
+
+async function removeAlbumPhoto(petId: string, image: string) {
+  if (isSavingAlbum.value) return;
+
+  isSavingAlbum.value = true;
+
+  try {
+    await petsStore.removeAlbumPhoto(petId, { image });
+    uni.showToast({ title: "照片已移除", icon: "success" });
+  } catch {
+    uni.showToast({ title: "照片移除失败", icon: "none" });
   } finally {
     isSavingAlbum.value = false;
   }
@@ -493,18 +550,30 @@ async function saveAlbumPhoto(image: string) {
         </view>
 
         <view class="album-sheet-grid">
-          <image
+          <view
             v-for="photo in selectedPet.albumPhotos"
             :key="photo"
-            class="album-sheet-photo"
-            :src="photo"
-            mode="aspectFill"
-          />
+            class="album-sheet-photo-wrap"
+          >
+            <image
+              class="album-sheet-photo"
+              :src="photo"
+              mode="aspectFill"
+            />
+            <button
+              class="album-sheet-remove"
+              :disabled="isSavingAlbum"
+              @click.stop="confirmRemoveAlbumPhoto(photo)"
+            >
+              <wd-icon name="close" size="24rpx" />
+            </button>
+          </view>
           <button class="album-sheet-add" :disabled="isSavingAlbum" @click="chooseAlbumPhoto">
             <wd-icon name="add" size="44rpx" />
             <text>{{ isSavingAlbum ? "添加中" : "添加照片" }}</text>
           </button>
         </view>
+        <text class="album-sheet-hint">长按可单张管理 · 一次最多添加 9 张</text>
       </view>
     </view>
   </view>
@@ -1026,6 +1095,45 @@ async function saveAlbumPhoto(image: string) {
 
 .album-sheet-add[disabled] {
   opacity: 0.56;
+}
+
+.album-sheet-photo-wrap {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: $color-bg-page;
+}
+
+.album-sheet-photo-wrap .album-sheet-photo {
+  width: 100%;
+  height: 100%;
+}
+
+.album-sheet-remove {
+  position: absolute;
+  top: 6rpx;
+  right: 6rpx;
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-full;
+  background: rgba(10, 31, 33, 0.68);
+  color: #ffffff;
+}
+
+.album-sheet-remove[disabled] {
+  opacity: 0.56;
+}
+
+.album-sheet-hint {
+  display: block;
+  margin-top: 18rpx;
+  text-align: center;
+  color: $color-text-secondary;
+  font-size: 22rpx;
 }
 
 .empty-state {

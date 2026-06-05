@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>数据洞察</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#d6ecef",
+                        "bg-lake": "#EAF3FF",
+                        "on-secondary-container": "#002959",
+                        "primary": "#006c49",
+                        "background": "#e9fdff",
+                        "primary-fixed-dim": "#51dea3",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#ff7c5e",
+                        "surface-white": "#FFFFFF",
+                        "on-primary-container": "#00422b",
+                        "on-secondary-fixed-variant": "#00458e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#0a1f21",
+                        "surface-container": "#dcf2f4",
+                        "surface-dim": "#c8dee0",
+                        "inverse-surface": "#203436",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#8c1900",
+                        "status-warning": "#D97706",
+                        "inverse-on-surface": "#dff5f7",
+                        "secondary-fixed-dim": "#abc7ff",
+                        "on-tertiary-container": "#731300",
+                        "surface-container-low": "#e1f8fa",
+                        "error-container": "#ffdad6",
+                        "bg-cloud": "#F8FBFA",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d0e7e9",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-fixed": "#001b3f",
+                        "on-primary-fixed-variant": "#005236",
+                        "bg-mint": "#E8F8F2",
+                        "border-light": "#E5E7EB",
+                        "secondary-fixed": "#d7e3ff",
+                        "inverse-primary": "#51dea3",
+                        "accent-yellow": "#FFE066",
+                        "tertiary-fixed": "#ffdad2",
+                        "surface-tint": "#006c49",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#e9fdff",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#0a1f21",
+                        "status-success": "#16A34A",
+                        "secondary": "#005cba",
+                        "primary-fixed": "#71fbbd",
+                        "on-tertiary-fixed": "#3d0600",
+                        "surface-variant": "#d0e7e9",
+                        "outline": "#6c7a71",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "outline-variant": "#bbcabf",
+                        "secondary-container": "#448ffd",
+                        "on-surface-variant": "#3c4a42",
+                        "surface": "#e9fdff",
+                        "text-secondary": "#6B7280",
+                        "status-error": "#DC2626",
+                        "tertiary": "#ae3115",
+                        "primary-container": "#18b981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "20px",
+                        "button-height": "48px",
+                        "item-gap": "12px",
+                        "list-item-min-height": "56px",
+                        "card-padding": "16px",
+                        "edge-margin": "16px"
+                    },
+                    "fontFamily": {
+                        "body-main": ["beVietnamPro"],
+                        "section-title": ["beVietnamPro"],
+                        "page-title": ["beVietnamPro"],
+                        "body-sm": ["beVietnamPro"],
+                        "label-bold": ["beVietnamPro"],
+                        "numeric-display": ["beVietnamPro"]
+                    },
+                    "fontSize": {
+                        "body-main": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "section-title": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "page-title": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "numeric-display": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Chart Animations */
+        @keyframes fillRing { from { stroke-dasharray: 0 100; } to { stroke-dasharray: var(--percent) 100; } }
+        .chart-ring { animation: fillRing 1.2s ease-out forwards; }
+        
+        @keyframes growBar { from { height: 0; } to { height: var(--height); } }
+        .bar-grow { animation: growBar 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; transform-origin: bottom; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-bg-cloud min-h-screen pb-[90px]">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-bg-cloud dark:bg-inverse-surface z-50">
+<div class="flex items-center justify-between px-edge-margin h-button-height w-full">
+<button aria-label="Go back" class="w-10 h-10 flex items-center justify-start text-on-surface-variant dark:text-outline-variant hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-page-title text-page-title text-primary dark:text-primary-fixed-dim">数据洞察</h1>
+<button aria-label="Export" class="w-10 h-10 flex items-center justify-end text-primary dark:text-primary-fixed-dim hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+</div>
+</header>
+<main class="px-edge-margin pt-2 pb-8 flex flex-col gap-stack-gap">
+<!-- Time Dimension Tabs -->
+<div class="flex bg-surface-container-low rounded-lg p-1 w-full mt-2">
+<button class="flex-1 py-1.5 text-center rounded text-on-surface-variant font-body-sm text-body-sm">本周</button>
+<button class="flex-1 py-1.5 text-center rounded bg-surface-white shadow-[0_1px_3px_rgba(21,61,53,0.08)] text-primary font-body-sm text-body-sm font-semibold">本月</button>
+<button class="flex-1 py-1.5 text-center rounded text-on-surface-variant font-body-sm text-body-sm">本年</button>
+</div>
+<!-- Core Expenditure Card -->
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] relative overflow-hidden flex flex-col gap-3">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-text-secondary">本月总支出 (¥)</span>
+<span class="font-numeric-display text-numeric-display text-on-surface mt-1">4,285.50</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px] text-status-success" data-icon="trending_down">trending_down</span>
+<span class="font-label-bold text-label-bold text-status-success">-12.4%</span>
+</div>
+</div>
+<div class="w-full h-px bg-border-light my-1"></div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-bg-mint flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="receipt_long">receipt_long</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-bold text-label-bold text-text-secondary">记账笔数</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">32 笔</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-bg-lake flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-label-bold text-label-bold text-text-secondary">日均支出</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">¥ 142.85</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Smart Insight Hint -->
+<div class="bg-bg-mint rounded-xl p-4 flex gap-3 items-start border border-primary-container/20">
+<span class="material-symbols-outlined text-primary mt-0.5" data-icon="lightbulb" data-weight="fill">lightbulb</span>
+<div class="flex flex-col gap-1">
+<h3 class="font-label-bold text-label-bold text-on-primary-container">智能洞察</h3>
+<p class="font-body-sm text-body-sm text-on-primary-container/80 leading-relaxed">
+                    本月「主粮」支出较上月增加，建议关注余粮情况；「零食」支出明显下降，控糖计划执行良好。
+                </p>
+</div>
+</div>
+<!-- Bento Grid: Charts -->
+<div class="grid grid-cols-2 gap-3 w-full">
+<!-- Donut Chart Card (Categories) -->
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] col-span-1 flex flex-col gap-4">
+<h3 class="font-section-title text-[15px] font-semibold text-on-surface">分类占比</h3>
+<div class="relative w-full aspect-square flex items-center justify-center">
+<svg class="w-[85%] h-[85%] transform -rotate-90" viewbox="0 0 36 36">
+<!-- Background Ring -->
+<path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
+<!-- Segments -->
+<path class="text-primary chart-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="45 100" stroke-width="4" style="--percent: 45;"></path>
+<path class="text-accent-yellow chart-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="25 100" stroke-dashoffset="-45" stroke-width="4" style="--percent: 25;"></path>
+<path class="text-secondary chart-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="20 100" stroke-dashoffset="-70" stroke-width="4" style="--percent: 20;"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-label-bold text-[10px] text-text-secondary">最大头</span>
+<span class="font-body-main text-body-main font-semibold text-primary">主粮</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5 mt-auto">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-body-sm text-[11px] text-text-secondary flex-1">主粮</span>
+<span class="font-body-sm text-[11px] text-on-surface font-semibold">45%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-accent-yellow"></div>
+<span class="font-body-sm text-[11px] text-text-secondary flex-1">医疗</span>
+<span class="font-body-sm text-[11px] text-on-surface font-semibold">25%</span>
+</div>
+</div>
+</div>
+<!-- Bar Chart Card (Trend) -->
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] col-span-1 flex flex-col gap-4">
+<h3 class="font-section-title text-[15px] font-semibold text-on-surface">支出趋势</h3>
+<div class="w-full h-full min-h-[100px] flex items-end justify-between gap-1 pb-1 pt-2">
+<!-- Bars -->
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-full bg-bg-mint rounded-t-sm bar-grow" style="--height: 40%;"></div>
+<span class="font-label-bold text-[9px] text-text-secondary">一</span>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-full bg-bg-mint rounded-t-sm bar-grow" style="--height: 60%;"></div>
+<span class="font-label-bold text-[9px] text-text-secondary">二</span>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-full bg-bg-mint rounded-t-sm bar-grow" style="--height: 30%;"></div>
+<span class="font-label-bold text-[9px] text-text-secondary">三</span>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-full bg-primary rounded-t-sm bar-grow" style="--height: 90%;"></div>
+<span class="font-label-bold text-[9px] text-primary font-bold">四</span>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-full bg-bg-mint rounded-t-sm bar-grow" style="--height: 50%;"></div>
+<span class="font-label-bold text-[9px] text-text-secondary">五</span>
+</div>
+<div class="flex flex-col items-center gap-1 w-full h-full justify-end">
+<div class="w-full bg-bg-mint rounded-t-sm bar-grow" style="--height: 70%;"></div>
+<span class="font-label-bold text-[9px] text-text-secondary">六</span>
+</div>
+</div>
+<div class="mt-auto pt-2 border-t border-border-light">
+<span class="font-label-bold text-[10px] text-text-secondary">周四出现消费峰值</span>
+</div>
+</div>
+</div>
+<!-- Top 5 List -->
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] flex flex-col">
+<div class="flex justify-between items-center mb-4">
+<h2 class="font-section-title text-section-title text-on-surface">单笔支出 Top 5</h2>
+<button class="text-primary font-body-sm text-body-sm flex items-center">
+                    查看全部 <span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Item 1 -->
+<div class="flex items-center gap-3 pb-3 border-b border-border-light/50 last:border-0 last:pb-0">
+<div class="w-6 h-6 rounded-md bg-status-warning/10 text-status-warning flex items-center justify-center font-bold text-[12px]">1</div>
+<img alt="Pet food bag" class="w-10 h-10 rounded-lg object-cover" data-alt="A small square close-up photo of a premium dog food bag on a bright clean background. Light tech style, well lit, high quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB53Da7pJDwOgHHsFtP7nTaEs5Kg_PdhKPFb_aR9KdCRwLbwp5IBL5mP8dbVNS9bz9h5BahY4dTZ8pDdyIilKN-0EEUhr9IvWbYIjJq3A6kAV9oDUeLduU2j8_WQXqb1oXsvHve8MpGP4nTzh-5-KMX3r15ZaNW5YvWUlY5saVAkO_nPtW6mFvDewNQqM-x1WYMJMZJT_IugWDPt7za7NXGmcO2yFWniuJkjF-DE2MKYUdnPEncILjFt3HC55MwNaiipG91UqI"/>
+<div class="flex flex-col flex-1">
+<span class="font-body-main text-body-main text-on-surface font-medium truncate">皇家小型犬成犬粮 8kg</span>
+<span class="font-body-sm text-[11px] text-text-secondary">主粮 · 10月12日</span>
+</div>
+<span class="font-numeric-display text-[16px] text-on-surface font-semibold">¥ 389.00</span>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-3 pb-3 border-b border-border-light/50 last:border-0 last:pb-0">
+<div class="w-6 h-6 rounded-md bg-surface-container-highest text-text-secondary flex items-center justify-center font-bold text-[12px]">2</div>
+<div class="w-10 h-10 rounded-lg bg-bg-lake flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="vaccines">vaccines</span>
+</div>
+<div class="flex flex-col flex-1">
+<span class="font-body-main text-body-main text-on-surface font-medium truncate">年度体检套餐</span>
+<span class="font-body-sm text-[11px] text-text-secondary">医疗 · 10月05日</span>
+</div>
+<span class="font-numeric-display text-[16px] text-on-surface font-semibold">¥ 299.00</span>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center gap-3 pb-3 border-b border-border-light/50 last:border-0 last:pb-0">
+<div class="w-6 h-6 rounded-md bg-surface-container-highest text-text-secondary flex items-center justify-center font-bold text-[12px]">3</div>
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="cut">cut</span>
+</div>
+<div class="flex flex-col flex-1">
+<span class="font-body-main text-body-main text-on-surface font-medium truncate">洗护美容服务</span>
+<span class="font-body-sm text-[11px] text-text-secondary">服务 · 10月20日</span>
+</div>
+<span class="font-numeric-display text-[16px] text-on-surface font-semibold">¥ 158.00</span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-white dark:bg-inverse-surface border-t border-border-light dark:border-outline shadow-[0_-4px_16px_rgba(21,61,53,0.06)]">
+<div class="flex justify-around items-center h-[64px] px-2 pb-safe w-full">
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 w-16 h-full Active: scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[24px] mb-1" data-icon="home">home</span>
+<span class="font-label-bold text-[10px]">首页</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 w-16 h-full Active: scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[24px] mb-1" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-bold text-[10px]">库存</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 w-16 h-full Active: scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[24px] mb-1" data-icon="add_circle">add_circle</span>
+<span class="font-label-bold text-[10px]">添加</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-bg-mint dark:hover:bg-on-primary-container/10 w-16 h-full Active: scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[24px] mb-1" data-icon="leaderboard" data-weight="fill">leaderboard</span>
+<span class="font-label-bold text-[10px]">统计</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 w-16 h-full Active: scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[24px] mb-1" data-icon="person">person</span>
+<span class="font-label-bold text-[10px]">我的</span>
+</button>
+</div>
+</nav>
+</body></html>

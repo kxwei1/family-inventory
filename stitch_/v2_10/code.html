@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>扫码入库 - 宠物管家</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#d6ecef",
+                        "bg-lake": "#EAF3FF",
+                        "on-secondary-container": "#002959",
+                        "primary": "#006c49",
+                        "background": "#e9fdff",
+                        "primary-fixed-dim": "#51dea3",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#ff7c5e",
+                        "surface-white": "#FFFFFF",
+                        "on-primary-container": "#00422b",
+                        "on-secondary-fixed-variant": "#00458e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#0a1f21",
+                        "surface-container": "#dcf2f4",
+                        "surface-dim": "#c8dee0",
+                        "inverse-surface": "#203436",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#8c1900",
+                        "status-warning": "#D97706",
+                        "inverse-on-surface": "#dff5f7",
+                        "secondary-fixed-dim": "#abc7ff",
+                        "on-tertiary-container": "#731300",
+                        "surface-container-low": "#e1f8fa",
+                        "error-container": "#ffdad6",
+                        "bg-cloud": "#F8FBFA",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d0e7e9",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-fixed": "#001b3f",
+                        "on-primary-fixed-variant": "#005236",
+                        "bg-mint": "#E8F8F2",
+                        "border-light": "#E5E7EB",
+                        "secondary-fixed": "#d7e3ff",
+                        "inverse-primary": "#51dea3",
+                        "accent-yellow": "#FFE066",
+                        "tertiary-fixed": "#ffdad2",
+                        "surface-tint": "#006c49",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#e9fdff",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#0a1f21",
+                        "status-success": "#16A34A",
+                        "secondary": "#005cba",
+                        "primary-fixed": "#71fbbd",
+                        "on-tertiary-fixed": "#3d0600",
+                        "surface-variant": "#d0e7e9",
+                        "outline": "#6c7a71",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "outline-variant": "#bbcabf",
+                        "secondary-container": "#448ffd",
+                        "on-surface-variant": "#3c4a42",
+                        "surface": "#e9fdff",
+                        "text-secondary": "#6B7280",
+                        "status-error": "#DC2626",
+                        "tertiary": "#ae3115",
+                        "primary-container": "#18b981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "20px",
+                        "button-height": "48px",
+                        "item-gap": "12px",
+                        "list-item-min-height": "56px",
+                        "card-padding": "16px",
+                        "edge-margin": "16px"
+                    },
+                    "fontFamily": {
+                        "body-main": ["beVietnamPro"],
+                        "section-title": ["beVietnamPro"],
+                        "page-title": ["beVietnamPro"],
+                        "body-sm": ["beVietnamPro"],
+                        "label-bold": ["beVietnamPro"],
+                        "numeric-display": ["beVietnamPro"]
+                    },
+                    "fontSize": {
+                        "body-main": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "section-title": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "page-title": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "numeric-display": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .scan-line {
+            background: linear-gradient(to bottom, rgba(234, 243, 255, 0), rgba(234, 243, 255, 1) 50%, rgba(234, 243, 255, 0));
+            animation: scan 2s infinite linear;
+        }
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .bg-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-black text-surface-white font-body-main antialiased h-screen w-screen overflow-hidden flex flex-col relative">
+<!-- Simulated Camera Background -->
+<div class="absolute inset-0 z-0">
+<img alt="Dog food bag being scanned" class="w-full h-full object-cover opacity-60" data-alt="A close-up view of a premium dog food bag positioned in a bright, modern living room. The lighting is soft and natural, creating a clean, inviting atmosphere consistent with a light-mode UI aesthetic. The overall color palette leans towards whites, light greens, and soft wood tones. The focus is sharp on the product barcode, with the background slightly blurred to simulate a camera viewfinder's depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxPTIueQ4afDIprIG_9Hkm0z5Yxn74hZRATrwU2w8ETog9xFsz2i4Zw7CxrtJjrc1MBPw9Yc6xNgiy8-uKVg-LealpBNsGlLhLH4whtL8YxZLV58Jd-Pd41kPl_rFk6Tzu1pQCbSqrb8OCyVeAeKOZyk29S8kd2wB1zNmzWWmP4do3If_mPIUcgk2biWeBTPH946cBG364rIjy7TNBfYwpYuqUvwqFfpDHWEAcFPqrSd0nFQlSiZwWh-r1RsYjnimER3cpKe4"/>
+<!-- 70% Black Overlay with cutout -->
+<div class="absolute inset-0 bg-black/70 pointer-events-none" style="mask-image: radial-gradient(circle at center, transparent 35%, black 45%); -webkit-mask-image: -webkit-radial-gradient(center, circle, transparent 130px, black 131px);"></div>
+</div>
+<!-- Top Bar -->
+<div class="relative z-10 flex items-center justify-between px-edge-margin pt-12 pb-4 w-full">
+<button class="w-10 h-10 rounded-full bg-white/20 bg-blur flex items-center justify-center hover:bg-white/30 transition-colors">
+<span class="material-symbols-outlined text-surface-white" data-icon="close">close</span>
+</button>
+<div class="flex bg-white/20 bg-blur rounded-full p-1">
+<button class="px-4 py-1.5 rounded-full bg-surface-white text-on-surface font-label-bold text-label-bold transition-all shadow-sm">扫条码</button>
+<button class="px-4 py-1.5 rounded-full text-surface-white font-label-bold text-label-bold transition-all hover:bg-white/10">扫包装</button>
+</div>
+<div class="w-10 h-10"></div> <!-- Spacer for centering -->
+</div>
+<!-- Scanner Area -->
+<div class="relative z-10 flex-1 flex flex-col items-center justify-center">
+<div class="relative w-[260px] h-[260px]">
+<!-- Corner Markers -->
+<div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary-container rounded-tl-lg"></div>
+<div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary-container rounded-tr-lg"></div>
+<div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary-container rounded-bl-lg"></div>
+<div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary-container rounded-br-lg"></div>
+<!-- Scan Line -->
+<div class="absolute left-0 right-0 h-1 scan-line bg-bg-lake shadow-[0_0_8px_#EAF3FF]"></div>
+</div>
+<p class="mt-8 font-body-sm text-body-sm text-surface-white/80 tracking-wide text-center">将条形码放入框内，即可自动扫描</p>
+</div>
+<!-- Actions -->
+<div class="relative z-10 flex justify-center gap-12 pb-stack-gap">
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-white/10 bg-blur flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition-all">
+<span class="material-symbols-outlined text-surface-white text-[28px]" data-icon="photo_library">photo_library</span>
+</div>
+<span class="font-label-bold text-label-bold text-surface-white/90">相册</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-white/10 bg-blur flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition-all">
+<span class="material-symbols-outlined text-surface-white text-[28px]" data-icon="flashlight_on">flashlight_on</span>
+</div>
+<span class="font-label-bold text-label-bold text-surface-white/90">手电筒</span>
+</button>
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-14 h-14 rounded-full bg-white/10 bg-blur flex items-center justify-center border border-white/20 group-hover:bg-white/20 transition-all">
+<span class="material-symbols-outlined text-surface-white text-[28px]" data-icon="edit_square">edit_square</span>
+</div>
+<span class="font-label-bold text-label-bold text-surface-white/90">手动输入</span>
+</button>
+</div>
+<!-- Recent Additions Card -->
+<div class="relative z-10 px-edge-margin pb-safe mb-6">
+<div class="bg-white/15 bg-blur rounded-xl p-card-padding border border-white/20 shadow-lg">
+<div class="flex items-center justify-between mb-3">
+<h3 class="font-section-title text-section-title text-surface-white">最近添加</h3>
+<span class="font-body-sm text-body-sm text-surface-white/70">查看全部 &gt;</span>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-2 snap-x hide-scrollbar">
+<!-- Item 1 -->
+<div class="snap-start flex-shrink-0 w-16 flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-lg bg-surface-white/20 flex items-center justify-center overflow-hidden border border-white/10">
+<span class="material-symbols-outlined text-surface-white text-3xl opacity-50" data-icon="pets">pets</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="snap-start flex-shrink-0 w-16 flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-lg bg-surface-white/20 flex items-center justify-center overflow-hidden border border-white/10">
+<span class="material-symbols-outlined text-surface-white text-3xl opacity-50" data-icon="medication">medication</span>
+</div>
+</div>
+<!-- Empty Slot -->
+<div class="snap-start flex-shrink-0 w-16 flex flex-col items-center gap-2">
+<div class="w-16 h-16 rounded-lg bg-surface-white/5 border border-dashed border-white/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-surface-white/40" data-icon="add">add</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>

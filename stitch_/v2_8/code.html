@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>智能提醒中心</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#d6ecef",
+                    "bg-lake": "#EAF3FF",
+                    "on-secondary-container": "#002959",
+                    "primary": "#006c49",
+                    "background": "#e9fdff",
+                    "primary-fixed-dim": "#51dea3",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#ff7c5e",
+                    "surface-white": "#FFFFFF",
+                    "on-primary-container": "#00422b",
+                    "on-secondary-fixed-variant": "#00458e",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-surface": "#0a1f21",
+                    "surface-container": "#dcf2f4",
+                    "surface-dim": "#c8dee0",
+                    "inverse-surface": "#203436",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#8c1900",
+                    "status-warning": "#D97706",
+                    "inverse-on-surface": "#dff5f7",
+                    "secondary-fixed-dim": "#abc7ff",
+                    "on-tertiary-container": "#731300",
+                    "surface-container-low": "#e1f8fa",
+                    "error-container": "#ffdad6",
+                    "bg-cloud": "#F8FBFA",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#d0e7e9",
+                    "on-primary-fixed": "#002113",
+                    "on-secondary-fixed": "#001b3f",
+                    "on-primary-fixed-variant": "#005236",
+                    "bg-mint": "#E8F8F2",
+                    "border-light": "#E5E7EB",
+                    "secondary-fixed": "#d7e3ff",
+                    "inverse-primary": "#51dea3",
+                    "accent-yellow": "#FFE066",
+                    "tertiary-fixed": "#ffdad2",
+                    "surface-tint": "#006c49",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#e9fdff",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#0a1f21",
+                    "status-success": "#16A34A",
+                    "secondary": "#005cba",
+                    "primary-fixed": "#71fbbd",
+                    "on-tertiary-fixed": "#3d0600",
+                    "surface-variant": "#d0e7e9",
+                    "outline": "#6c7a71",
+                    "tertiary-fixed-dim": "#ffb4a3",
+                    "outline-variant": "#bbcabf",
+                    "secondary-container": "#448ffd",
+                    "on-surface-variant": "#3c4a42",
+                    "surface": "#e9fdff",
+                    "text-secondary": "#6B7280",
+                    "status-error": "#DC2626",
+                    "tertiary": "#ae3115",
+                    "primary-container": "#18b981"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-gap": "20px",
+                    "button-height": "48px",
+                    "item-gap": "12px",
+                    "list-item-min-height": "56px",
+                    "card-padding": "16px",
+                    "edge-margin": "16px"
+            },
+            "fontFamily": {
+                    "body-main": ["Be Vietnam Pro"],
+                    "section-title": ["Be Vietnam Pro"],
+                    "page-title": ["Be Vietnam Pro"],
+                    "body-sm": ["Be Vietnam Pro"],
+                    "label-bold": ["Be Vietnam Pro"],
+                    "numeric-display": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "body-main": ["15px", {"lineHeight": "22px", "fontWeight": "400"}],
+                    "section-title": ["18px", {"lineHeight": "26px", "fontWeight": "600"}],
+                    "page-title": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "label-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "numeric-display": ["28px", {"lineHeight": "36px", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .tab-indicator { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-bg-cloud min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-50 bg-bg-cloud dark:bg-inverse-surface flat no shadows">
+<div class="flex items-center justify-between px-edge-margin h-button-height w-full">
+<button class="text-primary dark:text-primary-fixed-dim hover:opacity-80 transition-opacity active:scale-95 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h1 class="font-page-title text-page-title text-primary dark:text-primary-fixed-dim">智能提醒</h1>
+<button class="text-primary dark:text-primary-fixed-dim hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="font-body-sm text-body-sm">全部已读</span>
+</button>
+</div>
+</header>
+<main class="px-edge-margin pt-4 flex flex-col gap-stack-gap">
+<!-- Summary Card -->
+<section class="rounded-xl overflow-hidden shadow-[0_4px_16px_rgba(21,61,53,0.06)] relative bg-gradient-to-br from-primary-container to-primary text-surface-white p-card-padding">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-surface-white/10 rounded-full blur-2xl"></div>
+<div class="absolute -left-10 -bottom-10 w-32 h-32 bg-accent-yellow/20 rounded-full blur-xl"></div>
+<div class="relative z-10 flex flex-col gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">error</span>
+<h2 class="font-section-title text-section-title">待处理事项</h2>
+</div>
+<div class="flex justify-between items-end">
+<div>
+<span class="font-numeric-display text-numeric-display">12</span>
+<span class="font-body-sm text-body-sm opacity-90 ml-1">项提醒需要关注</span>
+</div>
+<button class="bg-surface-white/20 hover:bg-surface-white/30 px-4 py-2 rounded-lg font-label-bold text-label-bold transition-colors">
+                        一键处理
+                    </button>
+</div>
+</div>
+</section>
+<!-- Segmented Tabs -->
+<section class="relative">
+<div class="flex overflow-x-auto hide-scrollbar gap-2 bg-surface-white p-1 rounded-lg border border-border-light relative z-10" id="tabContainer">
+<button class="flex-1 py-2 px-4 rounded font-label-bold text-label-bold text-surface-white bg-primary transition-colors text-center whitespace-nowrap active-tab" data-target="soon">
+                    即将过期
+                </button>
+<button class="flex-1 py-2 px-4 rounded font-label-bold text-label-bold text-text-secondary hover:bg-bg-cloud transition-colors text-center whitespace-nowrap" data-target="expired">
+                    已过期
+                </button>
+<button class="flex-1 py-2 px-4 rounded font-label-bold text-label-bold text-text-secondary hover:bg-bg-cloud transition-colors text-center whitespace-nowrap" data-target="stock">
+                    库存不足
+                </button>
+</div>
+</section>
+<!-- List Content -->
+<section class="flex flex-col gap-item-gap" id="listContainer">
+<!-- Item 1: Soon -->
+<div class="bg-surface-white rounded-lg flex items-stretch shadow-[0_2px_8px_rgba(21,61,53,0.04)] overflow-hidden list-item" data-category="soon">
+<div class="w-1.5 bg-status-warning shrink-0"></div>
+<div class="p-card-padding flex-1 flex flex-col justify-center">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-2 items-center">
+<span class="bg-status-warning/10 text-status-warning px-2 py-0.5 rounded font-label-bold text-label-bold">3天后过期</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-secondary">今天 09:00</span>
+</div>
+<h3 class="font-section-title text-section-title text-on-surface mb-1">渴望无谷鸡肉猫粮 5.4kg</h3>
+<p class="font-body-sm text-body-sm text-text-secondary mb-3">批次：L20230501 • 剩余 2 袋</p>
+<div class="flex justify-end mt-auto">
+<button class="bg-primary hover:bg-primary-fixed-dim text-surface-white px-4 py-2 rounded-lg font-label-bold text-label-bold transition-colors active:scale-95">
+                            立即处理
+                        </button>
+</div>
+</div>
+</div>
+<!-- Item 2: Expired -->
+<div class="bg-surface-white rounded-lg flex items-stretch shadow-[0_2px_8px_rgba(21,61,53,0.04)] overflow-hidden list-item" data-category="expired">
+<div class="w-1.5 bg-status-error shrink-0"></div>
+<div class="p-card-padding flex-1 flex flex-col justify-center">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-2 items-center">
+<span class="bg-status-error/10 text-status-error px-2 py-0.5 rounded font-label-bold text-label-bold">已过期</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-secondary">昨天 14:30</span>
+</div>
+<h3 class="font-section-title text-section-title text-on-surface mb-1">拜宠清 驱虫药</h3>
+<p class="font-body-sm text-body-sm text-text-secondary mb-3">批次：B220911 • 剩余 1 盒</p>
+<div class="flex justify-end mt-auto">
+<button class="bg-primary hover:bg-primary-fixed-dim text-surface-white px-4 py-2 rounded-lg font-label-bold text-label-bold transition-colors active:scale-95">
+                            报废处理
+                        </button>
+</div>
+</div>
+</div>
+<!-- Item 3: Stock -->
+<div class="bg-surface-white rounded-lg flex items-stretch shadow-[0_2px_8px_rgba(21,61,53,0.04)] overflow-hidden list-item" data-category="stock">
+<div class="w-1.5 bg-secondary shrink-0"></div>
+<div class="p-card-padding flex-1 flex flex-col justify-center">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-2 items-center">
+<span class="bg-secondary/10 text-secondary px-2 py-0.5 rounded font-label-bold text-label-bold">库存预警</span>
+</div>
+<span class="font-body-sm text-body-sm text-text-secondary">08-12 10:00</span>
+</div>
+<h3 class="font-section-title text-section-title text-on-surface mb-1">大宠爱 驱虫滴剂</h3>
+<p class="font-body-sm text-body-sm text-text-secondary mb-3">当前库存：1盒 • 安全库存：5盒</p>
+<div class="flex justify-end mt-auto gap-2">
+<button class="bg-bg-mint text-on-surface hover:bg-surface-variant px-4 py-2 rounded-lg font-label-bold text-label-bold transition-colors active:scale-95">
+                            忽略
+                        </button>
+<button class="bg-primary hover:bg-primary-fixed-dim text-surface-white px-4 py-2 rounded-lg font-label-bold text-label-bold transition-colors active:scale-95">
+                            补货申请
+                        </button>
+</div>
+</div>
+</div>
+<!-- Empty State (Hidden by default) -->
+<div class="hidden flex-col items-center justify-center py-12 px-4 text-center" id="emptyState">
+<div class="w-24 h-24 bg-surface-container-high rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-4xl text-outline-variant">check_circle</span>
+</div>
+<h3 class="font-section-title text-section-title text-on-surface mb-2">暂无待办事项</h3>
+<p class="font-body-main text-body-main text-text-secondary">当前分类下没有需要处理的提醒。</p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-white dark:bg-inverse-surface border-t border-border-light dark:border-outline shadow-[0_-4px_16px_rgba(21,61,53,0.06)] md:hidden">
+<div class="flex justify-around items-center h-[64px] px-2 pb-safe w-full">
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 active:scale-90 transition-all duration-200 w-full h-full rounded-lg">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-bold text-label-bold mt-1">首页</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 active:scale-90 transition-all duration-200 w-full h-full rounded-lg">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-bold text-label-bold mt-1">库存</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 active:scale-90 transition-all duration-200 w-full h-full rounded-lg">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-label-bold text-label-bold mt-1">添加</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-bg-mint dark:hover:bg-on-primary-container/10 active:scale-90 transition-all duration-200 w-full h-full rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="font-label-bold text-label-bold mt-1">提醒</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 active:scale-90 transition-all duration-200 w-full h-full rounded-lg">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-bold text-label-bold mt-1">我的</span>
+</button>
+</div>
+</nav>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('#tabContainer button');
+            const items = document.querySelectorAll('.list-item');
+            const emptyState = document.getElementById('emptyState');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Reset tabs
+                    tabs.forEach(t => {
+                        t.classList.remove('bg-primary', 'text-surface-white', 'active-tab');
+                        t.classList.add('text-text-secondary');
+                    });
+                    
+                    // Set active tab
+                    tab.classList.remove('text-text-secondary');
+                    tab.classList.add('bg-primary', 'text-surface-white', 'active-tab');
+
+                    const target = tab.getAttribute('data-target');
+                    let visibleCount = 0;
+
+                    items.forEach(item => {
+                        if (item.getAttribute('data-category') === target || target === 'all') { // Added generic 'all' logic if needed later
+                            item.style.display = 'flex';
+                            visibleCount++;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    if (visibleCount === 0) {
+                        emptyState.classList.remove('hidden');
+                        emptyState.classList.add('flex');
+                    } else {
+                        emptyState.classList.add('hidden');
+                        emptyState.classList.remove('flex');
+                    }
+                });
+            });
+            
+            // Trigger initially to show mixed content for demo, or uncomment to filter initially
+            // document.querySelector('[data-target="soon"]').click();
+        });
+    </script>
+</body></html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>家庭管理</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#d6ecef",
+                        "bg-lake": "#EAF3FF",
+                        "on-secondary-container": "#002959",
+                        "primary": "#006c49",
+                        "background": "#e9fdff",
+                        "primary-fixed-dim": "#51dea3",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#ff7c5e",
+                        "surface-white": "#FFFFFF",
+                        "on-primary-container": "#00422b",
+                        "on-secondary-fixed-variant": "#00458e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#0a1f21",
+                        "surface-container": "#dcf2f4",
+                        "surface-dim": "#c8dee0",
+                        "inverse-surface": "#203436",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#8c1900",
+                        "status-warning": "#D97706",
+                        "inverse-on-surface": "#dff5f7",
+                        "secondary-fixed-dim": "#abc7ff",
+                        "on-tertiary-container": "#731300",
+                        "surface-container-low": "#e1f8fa",
+                        "error-container": "#ffdad6",
+                        "bg-cloud": "#F8FBFA",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d0e7e9",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-fixed": "#001b3f",
+                        "on-primary-fixed-variant": "#005236",
+                        "bg-mint": "#E8F8F2",
+                        "border-light": "#E5E7EB",
+                        "secondary-fixed": "#d7e3ff",
+                        "inverse-primary": "#51dea3",
+                        "accent-yellow": "#FFE066",
+                        "tertiary-fixed": "#ffdad2",
+                        "surface-tint": "#006c49",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#e9fdff",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#0a1f21",
+                        "status-success": "#16A34A",
+                        "secondary": "#005cba",
+                        "primary-fixed": "#71fbbd",
+                        "on-tertiary-fixed": "#3d0600",
+                        "surface-variant": "#d0e7e9",
+                        "outline": "#6c7a71",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "outline-variant": "#bbcabf",
+                        "secondary-container": "#448ffd",
+                        "on-surface-variant": "#3c4a42",
+                        "surface": "#e9fdff",
+                        "text-secondary": "#6B7280",
+                        "status-error": "#DC2626",
+                        "tertiary": "#ae3115",
+                        "primary-container": "#18b981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "20px",
+                        "button-height": "48px",
+                        "item-gap": "12px",
+                        "list-item-min-height": "56px",
+                        "card-padding": "16px",
+                        "edge-margin": "16px"
+                    },
+                    "fontFamily": {
+                        "body-main": ["beVietnamPro"],
+                        "section-title": ["beVietnamPro"],
+                        "page-title": ["beVietnamPro"],
+                        "body-sm": ["beVietnamPro"],
+                        "label-bold": ["beVietnamPro"],
+                        "numeric-display": ["beVietnamPro"]
+                    },
+                    "fontSize": {
+                        "body-main": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "section-title": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "page-title": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "numeric-display": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-bg-cloud text-on-surface min-h-screen flex flex-col pb-safe">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-50 bg-bg-cloud dark:bg-inverse-surface flex items-center justify-between px-edge-margin h-button-height flat no shadows">
+<button aria-label="返回" class="flex items-center justify-center w-10 h-10 -ml-2 text-primary dark:text-primary-fixed-dim hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="arrow_back" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-page-title text-page-title text-primary dark:text-primary-fixed-dim truncate flex-1 text-center font-extrabold tracking-tight">
+            家庭管理
+        </h1>
+<button aria-label="设置" class="flex items-center justify-center w-10 h-10 -mr-2 text-primary dark:text-primary-fixed-dim hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 0;">settings</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-edge-margin pt-stack-gap pb-stack-gap flex flex-col gap-stack-gap">
+<!-- Family Info Bento Card -->
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] flex flex-col gap-item-gap relative overflow-hidden">
+<!-- Decorative gradient -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary-fixed-dim opacity-20 rounded-full blur-2xl"></div>
+<div class="flex items-start justify-between relative z-10">
+<div>
+<h2 class="font-section-title text-section-title text-on-surface">幸福的小窝</h2>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1">创建于 2023-05-12</p>
+</div>
+<div class="bg-bg-mint text-primary-container px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-bold text-label-bold">4 成员</span>
+</div>
+</div>
+</div>
+<!-- Invite Member Card -->
+<button class="w-full bg-surface-white border-2 border-dashed border-border-light rounded-xl p-card-padding flex flex-col items-center justify-center gap-2 hover:bg-bg-mint transition-colors active:scale-95 shadow-[0_4px_16px_rgba(21,61,53,0.06)] h-[100px]">
+<span class="material-symbols-outlined text-primary-container text-[32px]" data-icon="person_add" style="font-variation-settings: 'FILL' 0;">person_add</span>
+<span class="font-body-main text-body-main text-primary-container font-semibold">邀请新成员</span>
+</button>
+<!-- Members List -->
+<section class="flex flex-col gap-item-gap">
+<h3 class="font-label-bold text-label-bold text-text-secondary uppercase tracking-wider pl-1">家庭成员</h3>
+<div class="bg-surface-white rounded-xl shadow-[0_4px_16px_rgba(21,61,53,0.06)] overflow-hidden flex flex-col">
+<!-- Member Item (Admin) -->
+<div class="flex items-center justify-between p-card-padding min-h-list-item-min-height border-b border-border-light last:border-b-0 bg-white">
+<div class="flex items-center gap-3">
+<img alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-border-light" data-alt="A close-up portrait of a cheerful person used as a profile picture, well-lit in a bright modern environment. The styling is clean and minimal, consistent with a youthful Light Tech aesthetic, featuring soft ambient lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1cdsgkor9DIlswi6k3Lh8IYWM0QrIHy4JX5419Zfcg5tNTKlQj1qYiE16H0UdYfjdfDJXi7SvHbtok6Kqm6vwrWuv5migqOJJJqjHp_ifUnfPsXyC8eoaqekJ9XSbXWF8wZqFYC261YK9fIGJWzrYC_FklcOC7EHFsdjuiBB4BKUWyYC8ESKaENvZVUGkl1UHVnKOLoZYq6tISDqWSfKpe9aeI-l1GxTQXfiqFGtpXWfrxhBYj9AYvy3Iv_uiZ2GnyULrTU4"/>
+<div class="flex flex-col">
+<span class="font-body-main text-body-main text-on-surface font-semibold">张三 (我)</span>
+<span class="font-body-sm text-body-sm text-text-secondary">zhangsan@example.com</span>
+</div>
+</div>
+<div class="bg-primary-container/10 text-primary-container px-2 py-0.5 rounded-md font-label-bold text-label-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+                        管理员
+                    </div>
+</div>
+<!-- Member Item (Member) -->
+<div class="flex items-center justify-between p-card-padding min-h-list-item-min-height border-b border-border-light last:border-b-0 bg-white">
+<div class="flex items-center gap-3">
+<img alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-border-light" data-alt="A portrait of a smiling woman used as an avatar, bathed in natural light against a soft, blurred background. The image feels approachable, professional, and aligns with a high-quality, modern corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIb-xR3dG33fW1J-AN14X0niFmBxIsJK1CRm6mACrui6-vyaqxC5ur9ihxbeuJ6jXl82sSbCYdNnlc4Z0aO5CnfcpkbDMxISgfxaZS58RMvaq0rdPJwb9yMrHv_Lr2IHb0oP5IChJrWlmdqf0DkPZV894_jMh6EmHWcUfBj-dXIO5YvtLGolgJnymkm3diFtEv946LvNumb3HkZ-2ZjQTrXoMdLXuNjnufkBIu_ra9nUwE6l4b4RrpS0qng8M-SFsrh8aPJSo"/>
+<div class="flex flex-col">
+<span class="font-body-main text-body-main text-on-surface font-semibold">李四</span>
+<span class="font-body-sm text-body-sm text-text-secondary">lisi@example.com</span>
+</div>
+</div>
+<div class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-md font-label-bold text-label-bold">
+                        成员
+                    </div>
+</div>
+<!-- Member Item (Guest) -->
+<div class="flex items-center justify-between p-card-padding min-h-list-item-min-height bg-white">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center border border-border-light text-text-secondary">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 0;">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-main text-body-main text-on-surface font-semibold">王五</span>
+<span class="font-body-sm text-body-sm text-text-secondary">临时访客</span>
+</div>
+</div>
+<div class="bg-bg-lake text-secondary px-2 py-0.5 rounded-md font-label-bold text-label-bold">
+                        访客
+                    </div>
+</div>
+</div>
+</section>
+<!-- Settings List -->
+<section class="flex flex-col gap-item-gap mt-2">
+<h3 class="font-label-bold text-label-bold text-text-secondary uppercase tracking-wider pl-1">家庭设置</h3>
+<div class="bg-surface-white rounded-xl shadow-[0_4px_16px_rgba(21,61,53,0.06)] overflow-hidden">
+<button class="w-full flex items-center justify-between p-card-padding min-h-list-item-min-height border-b border-border-light active:bg-bg-cloud transition-colors text-left">
+<span class="font-body-main text-body-main text-on-surface">修改家庭名称</span>
+<span class="material-symbols-outlined text-text-secondary" data-icon="chevron_right" style="font-variation-settings: 'FILL' 0;">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-card-padding min-h-list-item-min-height border-b border-border-light active:bg-bg-cloud transition-colors text-left">
+<span class="font-body-main text-body-main text-on-surface">家庭地址管理</span>
+<span class="material-symbols-outlined text-text-secondary" data-icon="chevron_right" style="font-variation-settings: 'FILL' 0;">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-card-padding min-h-list-item-min-height active:bg-bg-cloud transition-colors text-left">
+<span class="font-body-main text-body-main text-on-surface">权限与分享设置</span>
+<span class="material-symbols-outlined text-text-secondary" data-icon="chevron_right" style="font-variation-settings: 'FILL' 0;">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Danger Zone Action -->
+<div class="mt-8 mb-4 text-center">
+<button class="font-body-main text-body-main text-status-error font-semibold py-2 px-4 rounded-lg hover:bg-error-container/20 active:scale-95 transition-all bg-transparent">
+                解散当前家庭
+            </button>
+</div>
+</main>
+<!-- BottomNavBar Suppressed: This is a focused management/settings page with a back button implied, not a top-level destination. -->
+</body></html>

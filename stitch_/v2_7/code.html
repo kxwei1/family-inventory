@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>宠物管家 - 消耗记录</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#d6ecef",
+                        "bg-lake": "#EAF3FF",
+                        "on-secondary-container": "#002959",
+                        "primary": "#006c49",
+                        "background": "#e9fdff",
+                        "primary-fixed-dim": "#51dea3",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#ff7c5e",
+                        "surface-white": "#FFFFFF",
+                        "on-primary-container": "#00422b",
+                        "on-secondary-fixed-variant": "#00458e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#0a1f21",
+                        "surface-container": "#dcf2f4",
+                        "surface-dim": "#c8dee0",
+                        "inverse-surface": "#203436",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#8c1900",
+                        "status-warning": "#D97706",
+                        "inverse-on-surface": "#dff5f7",
+                        "secondary-fixed-dim": "#abc7ff",
+                        "on-tertiary-container": "#731300",
+                        "surface-container-low": "#e1f8fa",
+                        "error-container": "#ffdad6",
+                        "bg-cloud": "#F8FBFA",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d0e7e9",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-fixed": "#001b3f",
+                        "on-primary-fixed-variant": "#005236",
+                        "bg-mint": "#E8F8F2",
+                        "border-light": "#E5E7EB",
+                        "secondary-fixed": "#d7e3ff",
+                        "inverse-primary": "#51dea3",
+                        "accent-yellow": "#FFE066",
+                        "tertiary-fixed": "#ffdad2",
+                        "surface-tint": "#006c49",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#e9fdff",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#0a1f21",
+                        "status-success": "#16A34A",
+                        "secondary": "#005cba",
+                        "primary-fixed": "#71fbbd",
+                        "on-tertiary-fixed": "#3d0600",
+                        "surface-variant": "#d0e7e9",
+                        "outline": "#6c7a71",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "outline-variant": "#bbcabf",
+                        "secondary-container": "#448ffd",
+                        "on-surface-variant": "#3c4a42",
+                        "surface": "#e9fdff",
+                        "text-secondary": "#6B7280",
+                        "status-error": "#DC2626",
+                        "tertiary": "#ae3115",
+                        "primary-container": "#18b981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "20px",
+                        "button-height": "48px",
+                        "item-gap": "12px",
+                        "list-item-min-height": "56px",
+                        "card-padding": "16px",
+                        "edge-margin": "16px"
+                    },
+                    "fontFamily": {
+                        "body-main": ["beVietnamPro", "sans-serif"],
+                        "section-title": ["beVietnamPro", "sans-serif"],
+                        "page-title": ["beVietnamPro", "sans-serif"],
+                        "body-sm": ["beVietnamPro", "sans-serif"],
+                        "label-bold": ["beVietnamPro", "sans-serif"],
+                        "numeric-display": ["beVietnamPro", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-main": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "section-title": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "page-title": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "numeric-display": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .bottom-sheet-transition {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .overlay-transition {
+            transition: opacity 0.3s ease-in-out;
+        }
+        /* Custom Stepper Input hide arrows */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-bg-cloud font-body-main text-body-main text-on-surface antialiased h-screen w-screen overflow-hidden flex flex-col items-center justify-end">
+<!-- Mock Background App Content to show opacity overlay -->
+<div class="absolute inset-0 z-0 flex flex-col p-edge-margin space-y-stack-gap">
+<header class="w-full top-0 sticky bg-bg-cloud flex items-center justify-between px-edge-margin h-button-height w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">pets</span>
+<h1 class="font-page-title text-page-title text-primary">宠物管家</h1>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</header>
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] h-48 w-full border border-border-light"></div>
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] h-32 w-full border border-border-light"></div>
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] h-64 w-full border border-border-light"></div>
+</div>
+<!-- Backdrop Overlay -->
+<div class="absolute inset-0 bg-on-surface/50 z-40 overlay-transition backdrop-blur-sm" id="backdrop"></div>
+<!-- Bottom Sheet -->
+<div class="relative z-50 w-full max-w-md bg-surface-white rounded-t-2xl shadow-[0_-4px_24px_rgba(21,61,53,0.12)] h-[618px] flex flex-col bottom-sheet-transition translate-y-0 pb-safe" id="bottomSheet">
+<!-- Drag Handle & Header -->
+<div class="flex flex-col items-center pt-3 pb-4 px-edge-margin border-b border-border-light shrink-0">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mb-4"></div>
+<div class="w-full flex items-center justify-between">
+<h2 class="font-section-title text-section-title text-on-surface">记录消耗</h2>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-high text-on-surface hover:bg-surface-dim transition-colors" id="closeBtn">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+<!-- Scrollable Content Area -->
+<div class="flex-1 overflow-y-auto p-edge-margin space-y-stack-gap">
+<!-- Selected Product Card -->
+<div class="bg-bg-cloud rounded-xl p-3 flex gap-4 border border-border-light items-center">
+<div class="w-16 h-16 rounded-lg bg-surface-white border border-border-light flex-shrink-0 overflow-hidden shadow-sm">
+<img alt="Premium dog food bag standing upright against a clean white background in bright studio lighting." class="w-full h-full object-cover" data-alt="A premium bag of dry dog food standing upright against a pristine white studio background. The lighting is high-key and bright, highlighting the crisp, modern packaging design. The color palette features a clean white base with vibrant, fresh mint green and deep forest green accents. The overall mood is healthy, vibrant, and professional, aligning perfectly with a modern pet care aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfI-6naRc6O7A0RsDBPvzktnJUGHYE6SP7j0HOa168qJhkqPi5CYQCbPAw619lZ-tC5uTvpFCjIP1OX00MajqqR_OwlBnh-uUhIZGCQpWb9JteqrYNKH0xEudMfvgIF1Gqm8Xqpeas3Hak37fJbGW7zjrdZZHznAT60gVe6x-kGrFJ_ZU6N94LCp5UaYvhH-shlZgQu1k984SZQc67awe22SagQFk8SedSrAMm5EKXudwhjGR6e1fb-B1ZKEjk8qlVk62yWhg"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-section-title text-body-main font-semibold text-on-surface truncate">皇家渴望 幼犬粮</h3>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1">规格: 1.5kg / 袋</p>
+<div class="mt-2 flex items-center gap-2">
+<span class="font-label-bold text-label-bold px-2 py-0.5 rounded bg-surface-container-high text-on-secondary-container">当前库存: 4</span>
+</div>
+</div>
+</div>
+<!-- Quantity Stepper -->
+<div class="flex flex-col items-center py-6 bg-surface-white rounded-xl border border-border-light">
+<p class="font-body-sm text-body-sm text-text-secondary mb-4">消耗数量</p>
+<div class="flex items-center gap-6">
+<button class="w-12 h-12 rounded-full border border-border-light flex items-center justify-center text-text-secondary hover:bg-surface-container-low hover:text-primary hover:border-primary transition-colors active:scale-95" id="btnMinus">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="w-24 text-center">
+<input class="w-full text-center font-numeric-display text-numeric-display text-primary bg-transparent border-none p-0 focus:ring-0 focus:outline-none" id="qtyInput" max="99" min="1" type="number" value="1"/>
+</div>
+<button class="w-12 h-12 rounded-full border border-border-light flex items-center justify-center text-text-secondary hover:bg-surface-container-low hover:text-primary hover:border-primary transition-colors active:scale-95" id="btnPlus">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Action Types -->
+<div class="space-y-3">
+<p class="font-section-title text-body-main font-semibold text-on-surface">操作类型</p>
+<div class="flex flex-wrap gap-3">
+<button class="type-chip px-5 py-2.5 rounded-full border border-primary bg-bg-mint text-primary font-body-sm text-body-sm font-medium transition-colors">
+                        日常消耗
+                    </button>
+<button class="type-chip px-5 py-2.5 rounded-full border border-border-light bg-surface-white text-text-secondary font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">
+                        库存调整
+                    </button>
+<button class="type-chip px-5 py-2.5 rounded-full border border-border-light bg-surface-white text-text-secondary font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">
+                        过期损耗
+                    </button>
+<button class="type-chip px-5 py-2.5 rounded-full border border-border-light bg-surface-white text-text-secondary font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">
+                        客户赠送
+                    </button>
+</div>
+</div>
+<!-- Optional Note -->
+<div class="space-y-3 pb-4">
+<p class="font-section-title text-body-main font-semibold text-on-surface">备注说明</p>
+<textarea class="w-full bg-bg-cloud border border-border-light rounded-lg p-3 font-body-main text-body-main text-on-surface placeholder:text-text-secondary focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none h-20" placeholder="选填，记录特殊情况..."></textarea>
+</div>
+</div>
+<!-- Sticky Bottom Action -->
+<div class="px-edge-margin py-4 border-t border-border-light bg-surface-white shrink-0 mt-auto pb-8 md:pb-4">
+<button class="w-full h-button-height rounded-lg bg-[#18B981] text-surface-white font-section-title text-section-title flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all shadow-[0_4px_16px_rgba(21,61,53,0.06)]">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+                确认出库
+            </button>
+</div>
+</div>
+<script>
+        // Simple Interaction Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnMinus = document.getElementById('btnMinus');
+            const btnPlus = document.getElementById('btnPlus');
+            const qtyInput = document.getElementById('qtyInput');
+            const typeChips = document.querySelectorAll('.type-chip');
+            const bottomSheet = document.getElementById('bottomSheet');
+            const backdrop = document.getElementById('backdrop');
+            const closeBtn = document.getElementById('closeBtn');
+
+            // Stepper Logic
+            btnMinus.addEventListener('click', () => {
+                let val = parseInt(qtyInput.value) || 1;
+                if (val > 1) qtyInput.value = val - 1;
+            });
+
+            btnPlus.addEventListener('click', () => {
+                let val = parseInt(qtyInput.value) || 0;
+                if (val < 99) qtyInput.value = val + 1;
+            });
+
+            // Input validation
+            qtyInput.addEventListener('change', (e) => {
+                let val = parseInt(e.target.value);
+                if (isNaN(val) || val < 1) e.target.value = 1;
+                if (val > 99) e.target.value = 99;
+            });
+
+            // Chips Selection Logic
+            typeChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    // Reset all chips
+                    typeChips.forEach(c => {
+                        c.className = 'type-chip px-5 py-2.5 rounded-full border border-border-light bg-surface-white text-text-secondary font-body-sm text-body-sm hover:bg-surface-container-low transition-colors';
+                    });
+                    // Set active chip
+                    chip.className = 'type-chip px-5 py-2.5 rounded-full border border-primary bg-bg-mint text-primary font-body-sm text-body-sm font-medium transition-colors';
+                });
+            });
+
+            // Close Animation Demo (For visual testing)
+            closeBtn.addEventListener('click', () => {
+                bottomSheet.style.transform = 'translateY(100%)';
+                backdrop.style.opacity = '0';
+                setTimeout(() => {
+                    // Reset for demo purposes
+                    bottomSheet.style.transform = 'translateY(0)';
+                    backdrop.style.opacity = '1';
+                }, 1000);
+            });
+        });
+    </script>
+</body></html>

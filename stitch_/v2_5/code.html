@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>宠物管家 - 购物清单</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#d6ecef",
+                        "bg-lake": "#EAF3FF",
+                        "on-secondary-container": "#002959",
+                        "primary": "#006c49",
+                        "background": "#e9fdff",
+                        "primary-fixed-dim": "#51dea3",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#ff7c5e",
+                        "surface-white": "#FFFFFF",
+                        "on-primary-container": "#00422b",
+                        "on-secondary-fixed-variant": "#00458e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#0a1f21",
+                        "surface-container": "#dcf2f4",
+                        "surface-dim": "#c8dee0",
+                        "inverse-surface": "#203436",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#8c1900",
+                        "status-warning": "#D97706",
+                        "inverse-on-surface": "#dff5f7",
+                        "secondary-fixed-dim": "#abc7ff",
+                        "on-tertiary-container": "#731300",
+                        "surface-container-low": "#e1f8fa",
+                        "error-container": "#ffdad6",
+                        "bg-cloud": "#F8FBFA",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d0e7e9",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-fixed": "#001b3f",
+                        "on-primary-fixed-variant": "#005236",
+                        "bg-mint": "#E8F8F2",
+                        "border-light": "#E5E7EB",
+                        "secondary-fixed": "#d7e3ff",
+                        "inverse-primary": "#51dea3",
+                        "accent-yellow": "#FFE066",
+                        "tertiary-fixed": "#ffdad2",
+                        "surface-tint": "#006c49",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#e9fdff",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#0a1f21",
+                        "status-success": "#16A34A",
+                        "secondary": "#005cba",
+                        "primary-fixed": "#71fbbd",
+                        "on-tertiary-fixed": "#3d0600",
+                        "surface-variant": "#d0e7e9",
+                        "outline": "#6c7a71",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "outline-variant": "#bbcabf",
+                        "secondary-container": "#448ffd",
+                        "on-surface-variant": "#3c4a42",
+                        "surface": "#e9fdff",
+                        "text-secondary": "#6B7280",
+                        "status-error": "#DC2626",
+                        "tertiary": "#ae3115",
+                        "primary-container": "#18b981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "20px",
+                        "button-height": "48px",
+                        "item-gap": "12px",
+                        "list-item-min-height": "56px",
+                        "card-padding": "16px",
+                        "edge-margin": "16px",
+                        "safe-bottom": "env(safe-area-inset-bottom, 34px)"
+                    },
+                    "fontFamily": {
+                        "body-main": ["beVietnamPro", "sans-serif"],
+                        "section-title": ["beVietnamPro", "sans-serif"],
+                        "page-title": ["beVietnamPro", "sans-serif"],
+                        "body-sm": ["beVietnamPro", "sans-serif"],
+                        "label-bold": ["beVietnamPro", "sans-serif"],
+                        "numeric-display": ["beVietnamPro", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-main": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "section-title": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "page-title": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "numeric-display": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* Hide scrollbar for horizontal scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-checkbox:checked + div {
+            background-color: theme('colors.primary');
+            border-color: theme('colors.primary');
+        }
+        .custom-checkbox:checked + div svg {
+            display: block;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-bg-cloud text-on-surface min-h-screen pb-[120px]">
+<!-- TopAppBar -->
+<header class="bg-bg-cloud w-full top-0 sticky z-40 flat no shadows flex items-center justify-between px-edge-margin h-button-height w-full">
+<button aria-label="Back" class="text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform flex items-center justify-center p-2 -ml-2">
+<span class="material-symbols-outlined" data-icon="arrow_back" data-weight="regular">arrow_back</span>
+</button>
+<h1 class="font-page-title text-page-title text-primary absolute left-1/2 -translate-x-1/2">该补货啦</h1>
+<button class="font-label-bold text-label-bold text-primary bg-bg-mint px-3 py-1.5 rounded-full hover:opacity-80 transition-opacity active:scale-95 transition-transform">
+            生成清单
+        </button>
+</header>
+<main class="px-edge-margin mt-2 flex flex-col gap-stack-gap">
+<!-- Summary Card -->
+<section class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-bg-lake rounded-bl-full opacity-50 -z-0 -mt-8 -mr-8"></div>
+<div class="relative z-10 flex justify-between items-end">
+<div>
+<p class="font-body-sm text-body-sm text-text-secondary mb-1">预计支出 (元)</p>
+<p class="font-numeric-display text-numeric-display text-on-surface">¥ 342.50</p>
+</div>
+<div class="text-right">
+<p class="font-body-sm text-body-sm text-text-secondary mb-1">上次补货</p>
+<p class="font-body-main text-body-main text-on-surface font-medium">12天前 (10月12日)</p>
+</div>
+</div>
+</section>
+<!-- Shopping List Group: Food -->
+<section>
+<div class="flex items-center gap-2 mb-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]" data-icon="restaurant" data-weight="regular">restaurant</span>
+</div>
+<h2 class="font-section-title text-section-title text-on-surface">主粮与零食</h2>
+</div>
+<div class="bg-surface-white rounded-xl overflow-hidden shadow-[0_4px_16px_rgba(21,61,53,0.06)]">
+<!-- Item 1 -->
+<div class="flex items-center p-3 border-b border-border-light min-h-[56px] gap-3">
+<label class="flex items-center cursor-pointer relative">
+<input checked="" class="custom-checkbox opacity-0 absolute h-0 w-0" type="checkbox"/>
+<div class="w-6 h-6 rounded border border-outline flex items-center justify-center transition-colors">
+<svg class="w-4 h-4 text-white hidden pointer-events-none" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path>
+</svg>
+</div>
+</label>
+<img alt="Dog Food" class="w-12 h-12 rounded-lg object-cover bg-surface-container-low" data-alt="A brightly lit, modern product shot of a premium bag of dry dog food sitting on a clean, minimal white surface. The packaging is sleek and features minimalist typography and a soft color palette. The lighting is soft and diffused, creating a fresh, trustworthy 'Light Tech' corporate aesthetic. Gentle shadows anchor the product without overwhelming the clean composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-3HXBRW5nuHNOZPjWIP_rFUrzZDKRkc0CgbQHjw8QXh1m1qbB1-m_qgXmXMY3GUnpXGq3g3pgEiNMUW0yyo4BfCNHR8ftzXJrs2eSZvHIOU6p35vIYf2bGvbfH7DmhBzn9r_uynaIbORMQ3yqT7lx70DSgLWxvSIKfxmxflZ_R8NgnJ814bhduCs48y_2yUdPV3Qf_6K4GnF18WzrbRaXhkPn2EUNzZ-hTHmfMK_-BICuGqDB9U3Ypo4G9M9cQML0tHYNobM"/>
+<div class="flex-1">
+<p class="font-body-main text-body-main font-medium line-through text-text-secondary">皇家成犬粮 2kg</p>
+<p class="font-body-sm text-body-sm text-text-secondary">需补: 1袋 · 约 ¥128</p>
+</div>
+<button class="p-2 text-text-secondary hover:text-status-error transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete" data-weight="regular">delete</span>
+</button>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center p-3 min-h-[56px] gap-3">
+<label class="flex items-center cursor-pointer relative">
+<input class="custom-checkbox opacity-0 absolute h-0 w-0" type="checkbox"/>
+<div class="w-6 h-6 rounded border border-outline flex items-center justify-center transition-colors">
+<svg class="w-4 h-4 text-white hidden pointer-events-none" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path>
+</svg>
+</div>
+</label>
+<img alt="Cat Treats" class="w-12 h-12 rounded-lg object-cover bg-surface-container-low" data-alt="A macro shot of healthy, organic pet treats arranged neatly on a smooth, light mint-colored surface. The lighting is crisp and even, highlighting the texture of the treats against the minimalist background. The overall mood is vibrant, clean, and professional, perfectly aligning with a modern, high-quality pet care service identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZ2Hgk4paQJXbAdx2Vg1qMxCT-GonB0TUYW0D8QpAXV6ZGXOW8IcAk-NLRkzQYpw5SFy-aBy_20A6HPvDRcw6d0rQwy5LpoO8ccYS7T0FtyoQAuqtGNQr8oeqB4FXd8pQErQ58fT2dhK9Oo3Vj7LQA4caJQqJ04Aa0sh7I6LY2XlJ_g5R9OIRU7GpnvVjj_483vFwpSNBSSxxsVaVhVixQVpMic5HUfyNQzuY8vbwnTW4EjpM2RKlGoWD2HQuVCpBcqtGPjlg"/>
+<div class="flex-1">
+<p class="font-body-main text-body-main font-medium text-on-surface">冻干鸡肉粒</p>
+<p class="font-body-sm text-body-sm text-text-secondary">需补: 2罐 · 约 ¥79</p>
+</div>
+<button class="p-2 text-text-secondary hover:text-status-error transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete" data-weight="regular">delete</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Shopping List Group: Supplies -->
+<section>
+<div class="flex items-center gap-2 mb-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]" data-icon="cleaning_services" data-weight="regular">cleaning_services</span>
+</div>
+<h2 class="font-section-title text-section-title text-on-surface">日用清洁</h2>
+</div>
+<div class="bg-surface-white rounded-xl overflow-hidden shadow-[0_4px_16px_rgba(21,61,53,0.06)]">
+<!-- Item 3 -->
+<div class="flex items-center p-3 min-h-[56px] gap-3">
+<label class="flex items-center cursor-pointer relative">
+<input class="custom-checkbox opacity-0 absolute h-0 w-0" type="checkbox"/>
+<div class="w-6 h-6 rounded border border-outline flex items-center justify-center transition-colors">
+<svg class="w-4 h-4 text-white hidden pointer-events-none" fill="currentColor" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path>
+</svg>
+</div>
+</label>
+<div class="w-12 h-12 rounded-lg bg-bg-mint flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="layers" data-weight="regular">layers</span>
+</div>
+<div class="flex-1">
+<p class="font-body-main text-body-main font-medium text-on-surface">除臭尿垫 M码</p>
+<p class="font-body-sm text-body-sm text-text-secondary">需补: 1包 · 约 ¥45</p>
+</div>
+<button class="p-2 text-text-secondary hover:text-status-error transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete" data-weight="regular">delete</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Smart Recommendations -->
+<section class="mt-4 mb-8">
+<div class="flex items-center justify-between mb-3">
+<h2 class="font-section-title text-section-title text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-accent-yellow text-[20px]" data-icon="lightbulb" data-weight="fill">lightbulb</span>
+                    智能推荐
+                </h2>
+</div>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-edge-margin px-edge-margin">
+<!-- Rec Card 1 -->
+<div class="min-w-[140px] bg-surface-white rounded-xl p-3 shadow-[0_4px_16px_rgba(21,61,53,0.06)] flex flex-col">
+<img alt="Shampoo" class="w-full h-24 object-cover rounded-lg mb-2" data-alt="A sleek, minimalist bottle of pet shampoo positioned against a pristine white background with a subtle, airy shadow. The lighting is studio-quality, emphasizing the clean lines and modern branding of the product. The scene embodies a 'Light Tech' corporate aesthetic, suggesting cleanliness, care, and professional quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbFZeMLzwjDVIs-PUyplfVhou7E1LnQS_LnH2YxGEP-LMtmFaCr8xmdCnNe-w5EKKcQIqbn1vWmr-M_DdwsFEVm3FCq4d73Z-OFqgLw0spFbg44m7DBJOZfx8wQq0AG-XNU8IIQVcBJwmYjN3lUx-9c55_2MZPWni7CsSXGLLce8UXQEUkf7kWWSCwj6Hr7dB3bHfHHxNaNji8_KEpaai4UIHynA2gNVo4eRDrdUtI4BKH4Aj5kEkQ1i3yt92uP2hkry-f7cM"/>
+<p class="font-body-sm text-body-sm font-medium text-on-surface line-clamp-1">温和沐浴露</p>
+<p class="text-[11px] text-text-secondary mb-2 mt-0.5">上次购买3个月前</p>
+<button class="mt-auto w-full py-1.5 bg-bg-mint text-primary font-label-bold text-label-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+                        + 加入清单
+                    </button>
+</div>
+<!-- Rec Card 2 -->
+<div class="min-w-[140px] bg-surface-white rounded-xl p-3 shadow-[0_4px_16px_rgba(21,61,53,0.06)] flex flex-col">
+<div class="w-full h-24 bg-bg-lake rounded-lg mb-2 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[32px]" data-icon="pest_control" data-weight="regular">pest_control</span>
+</div>
+<p class="font-body-sm text-body-sm font-medium text-on-surface line-clamp-1">内外驱虫滴剂</p>
+<p class="text-[11px] text-text-secondary mb-2 mt-0.5">即将到期</p>
+<button class="mt-auto w-full py-1.5 bg-bg-mint text-primary font-label-bold text-label-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+                        + 加入清单
+                    </button>
+</div>
+<!-- Spacer for scroll -->
+<div class="min-w-[1px]"></div>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Actions -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-white border-t border-border-light px-edge-margin py-3 pb-[calc(12px+env(safe-area-inset-bottom,34px))] z-50 flex items-center gap-3 shadow-[0_-4px_16px_rgba(21,61,53,0.06)]">
+<button aria-label="Copy" class="w-12 h-button-height rounded-lg border border-border-light flex items-center justify-center text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy" data-weight="regular">content_copy</span>
+</button>
+<button aria-label="Share" class="w-12 h-button-height rounded-lg border border-border-light flex items-center justify-center text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="share" data-weight="regular">share</span>
+</button>
+<button class="flex-1 h-button-height bg-[#18B981] text-white rounded-lg font-section-title text-section-title flex items-center justify-center shadow-sm hover:opacity-90 active:scale-95 transition-all">
+            标记已购并入库
+        </button>
+</div>
+</body></html>

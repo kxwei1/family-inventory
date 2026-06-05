@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>宠物档案</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#d6ecef",
+                        "bg-lake": "#EAF3FF",
+                        "on-secondary-container": "#002959",
+                        "primary": "#006c49",
+                        "background": "#e9fdff",
+                        "primary-fixed-dim": "#51dea3",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#ff7c5e",
+                        "surface-white": "#FFFFFF",
+                        "on-primary-container": "#00422b",
+                        "on-secondary-fixed-variant": "#00458e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#0a1f21",
+                        "surface-container": "#dcf2f4",
+                        "surface-dim": "#c8dee0",
+                        "inverse-surface": "#203436",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#8c1900",
+                        "status-warning": "#D97706",
+                        "inverse-on-surface": "#dff5f7",
+                        "secondary-fixed-dim": "#abc7ff",
+                        "on-tertiary-container": "#731300",
+                        "surface-container-low": "#e1f8fa",
+                        "error-container": "#ffdad6",
+                        "bg-cloud": "#F8FBFA",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d0e7e9",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-fixed": "#001b3f",
+                        "on-primary-fixed-variant": "#005236",
+                        "bg-mint": "#E8F8F2",
+                        "border-light": "#E5E7EB",
+                        "secondary-fixed": "#d7e3ff",
+                        "inverse-primary": "#51dea3",
+                        "accent-yellow": "#FFE066",
+                        "tertiary-fixed": "#ffdad2",
+                        "surface-tint": "#006c49",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#e9fdff",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#0a1f21",
+                        "status-success": "#16A34A",
+                        "secondary": "#005cba",
+                        "primary-fixed": "#71fbbd",
+                        "on-tertiary-fixed": "#3d0600",
+                        "surface-variant": "#d0e7e9",
+                        "outline": "#6c7a71",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "outline-variant": "#bbcabf",
+                        "secondary-container": "#448ffd",
+                        "on-surface-variant": "#3c4a42",
+                        "surface": "#e9fdff",
+                        "text-secondary": "#6B7280",
+                        "status-error": "#DC2626",
+                        "tertiary": "#ae3115",
+                        "primary-container": "#18b981"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-gap": "20px",
+                        "button-height": "48px",
+                        "item-gap": "12px",
+                        "list-item-min-height": "56px",
+                        "card-padding": "16px",
+                        "edge-margin": "16px",
+                        "safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "body-main": ["beVietnamPro"],
+                        "section-title": ["beVietnamPro"],
+                        "page-title": ["beVietnamPro"],
+                        "body-sm": ["beVietnamPro"],
+                        "label-bold": ["beVietnamPro"],
+                        "numeric-display": ["beVietnamPro"]
+                    },
+                    "fontSize": {
+                        "body-main": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "section-title": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                        "page-title": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "numeric-display": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .hide-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .hide-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-bg-cloud dark:bg-on-surface font-body-main text-on-surface pb-[calc(80px+env(safe-area-inset-bottom))]">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-bg-cloud dark:bg-inverse-surface z-40 flat no shadows flex items-center justify-between px-edge-margin h-button-height">
+<button class="w-10 h-10 flex items-center justify-start text-primary dark:text-primary-fixed-dim active:scale-95 transition-transform hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-page-title text-page-title text-primary dark:text-primary-fixed-dim">宠物档案</h1>
+<button class="w-10 h-10 flex items-center justify-end text-primary dark:text-primary-fixed-dim active:scale-95 transition-transform hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</header>
+<main class="px-edge-margin flex flex-col gap-stack-gap mt-4">
+<!-- Pet Avatar Switcher -->
+<section class="w-full flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+<div class="flex flex-col items-center gap-2 min-w-[72px] shrink-0">
+<div class="w-16 h-16 rounded-full border-2 border-primary p-[2px]">
+<img alt="橘座" class="w-full h-full object-cover rounded-full" data-alt="A close-up portrait of a cute orange tabby cat looking directly at the camera. The lighting is soft and bright, emphasizing the modern and clean aesthetic. The cat's fur details are sharp, creating a high-quality professional pet portrait suitable for a modern app interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV-iJBbbGRafKIaOKYCPs1tCsVDy-KUWNaX9F70VAaIXO20CBh8noVIvJqszJD1loFOjxzSC_46a4Zxq1KW0wDw3kmoXNgT-Vv91qhSZE6d00M4pQ2IkVHn123wMD7x8xPlF9wo8xYvfRDdyQHZi8xMzuNbk64BPE7mGPPpo1zPLWJSVL3KPgYnfYvD2AWY7kN1br8wPquokdt7Motc87Hoe2QBplyh3w45U8UfhDz1_gF_BKrGtFDi62lBjq6Cld18fcqOGk"/>
+</div>
+<span class="font-label-bold text-label-bold text-primary">橘座</span>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[72px] shrink-0 opacity-60">
+<div class="w-16 h-16 rounded-full border-2 border-transparent p-[2px]">
+<img alt="小白" class="w-full h-full object-cover rounded-full" data-alt="A portrait of a small white dog with fluffy fur, sitting outdoors in natural daylight. The image has a clean, refreshing vibe with a shallow depth of field, blurring the background slightly. It fits perfectly within a youthful and minimalist digital interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8gFUcN8gp3zipAMfA4ASZ-PJ3DrY16Nx8shLzoNxew6-Yr-NGuC1hcTJXJaTLlm0dF7SMIJhugKbmN9MaG6I3Hv2FwYc0e7CMoG--4YiNkRgclA2I5hG_I1Mg_LwtZwUo-c6OB9nnUTzHjuH7nCzTWp3bDrX66kVMkWZh_oYRR1FDsuxfUIMyClZUk0lXvwmvO7AGSQ0Jg6OZyCNfDObj7mhLpj83YjvQavFdDDhrRggMu4M4ZnM1AR4T1UsarfTvfwFFMXg"/>
+</div>
+<span class="font-label-bold text-label-bold text-text-secondary">小白</span>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[72px] shrink-0">
+<button class="w-16 h-16 rounded-full border-2 border-dashed border-border-light flex items-center justify-center bg-surface-white text-text-secondary hover:bg-bg-mint transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+<span class="font-label-bold text-label-bold text-text-secondary">添加</span>
+</div>
+</section>
+<!-- Main Pet Card (Bento Style) -->
+<section class="grid grid-cols-2 gap-3">
+<!-- Hero Photo -->
+<div class="col-span-2 sm:col-span-1 rounded-xl overflow-hidden h-48 relative shadow-[0_4px_16px_rgba(21,61,53,0.06)]">
+<img alt="橘座主图" class="w-full h-full object-cover" data-alt="A professional full-body shot of a majestic orange tabby cat sitting confidently in a brightly lit, minimalist white room. The sunlight casts soft shadows, enhancing the clean and modern feel. The cat looks healthy and vibrant, matching a high-end pet care service theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvG-v5e397Yzt20w6pHRkh6ZU1FzLqomBS_TUcncZmZ3lwEugLPVSBpRryvQ9hUSHud1RmXvGMePhvGWrmttdL5s21xQkZWnfJ-XZ-0gnCzb7jJCdejeLFx-XYQ9OQhApvJPy7jbcVq8qwBnkF94_Pc3n6d7IaipfgBryFwVXVhbD9l4rN2Qivs5F1qruVyZakJ1Rli5vr6KBG1bvMtATqkACE6t3plZuMlLJbSw82TkMzM_RcHCpDE6Qz4n_z4PjYXwKxh1w"/>
+<div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent flex justify-between items-end">
+<h2 class="font-page-title text-page-title text-surface-white">橘座</h2>
+<span class="bg-surface-white/20 backdrop-blur-sm text-surface-white font-label-bold text-label-bold px-2 py-1 rounded-full">中华田园猫</span>
+</div>
+</div>
+<!-- Stats Mini Cards -->
+<div class="col-span-2 sm:col-span-1 grid grid-cols-2 gap-3">
+<div class="bg-surface-white rounded-xl p-card-padding flex flex-col justify-center items-center shadow-[0_4px_16px_rgba(21,61,53,0.06)]">
+<span class="text-text-secondary font-body-sm text-body-sm mb-1">年龄</span>
+<span class="font-numeric-display text-numeric-display text-primary">3<span class="font-section-title text-section-title ml-1">岁</span></span>
+</div>
+<div class="bg-surface-white rounded-xl p-card-padding flex flex-col justify-center items-center shadow-[0_4px_16px_rgba(21,61,53,0.06)]">
+<span class="text-text-secondary font-body-sm text-body-sm mb-1">体重</span>
+<span class="font-numeric-display text-numeric-display text-primary">5.2<span class="font-section-title text-section-title ml-1">kg</span></span>
+</div>
+<div class="col-span-2 bg-bg-mint rounded-xl p-card-padding flex flex-wrap gap-2 items-center">
+<span class="text-text-secondary font-body-sm text-body-sm w-full mb-1">性格标签</span>
+<span class="bg-surface-white text-on-surface px-3 py-1 rounded-full font-label-bold text-label-bold">贪吃</span>
+<span class="bg-surface-white text-on-surface px-3 py-1 rounded-full font-label-bold text-label-bold">亲人</span>
+<span class="bg-surface-white text-on-surface px-3 py-1 rounded-full font-label-bold text-label-bold">爱睡觉</span>
+</div>
+</div>
+</section>
+<!-- Modules Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 gap-stack-gap">
+<!-- Weight Trend -->
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)]">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-section-title text-section-title flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="monitor_weight">monitor_weight</span> 体重曲线
+                    </h3>
+<button class="text-text-secondary hover:text-primary"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+<!-- Mock Chart Area -->
+<div class="h-24 w-full bg-surface-container-low rounded-lg relative overflow-hidden flex items-end px-2 pb-2">
+<!-- Simplistic pure CSS bar chart representation -->
+<div class="w-full flex justify-between items-end h-full gap-2 mt-4">
+<div class="w-1/5 bg-primary-fixed-dim rounded-t-sm h-[60%] opacity-50"></div>
+<div class="w-1/5 bg-primary-fixed-dim rounded-t-sm h-[65%] opacity-60"></div>
+<div class="w-1/5 bg-primary-fixed-dim rounded-t-sm h-[62%] opacity-70"></div>
+<div class="w-1/5 bg-primary-fixed-dim rounded-t-sm h-[70%] opacity-80"></div>
+<div class="w-1/5 bg-primary rounded-t-sm h-[80%] relative">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface-white text-primary font-label-bold text-label-bold px-1 rounded shadow-sm text-[10px]">5.2</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Diet Preferences -->
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)]">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-section-title text-section-title flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="restaurant">restaurant</span> 饮食偏好
+                    </h3>
+<button class="text-text-secondary hover:text-primary"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+<div class="flex flex-col gap-item-gap">
+<div class="flex justify-between items-center">
+<span class="font-body-main text-body-main">主粮</span>
+<span class="font-body-main text-body-main text-text-secondary">皇家室内成猫粮</span>
+</div>
+<div class="h-[1px] w-full bg-border-light"></div>
+<div class="flex justify-between items-center">
+<span class="font-body-main text-body-main">最爱零食</span>
+<span class="font-body-main text-body-main text-text-secondary">冻干鹌鹑</span>
+</div>
+</div>
+</div>
+<!-- Consumption Data Card (Glassmorphism inspired) -->
+<div class="bg-gradient-to-br from-bg-lake to-surface-white rounded-xl p-card-padding border border-surface-container-high shadow-[0_4px_16px_rgba(21,61,53,0.06)] sm:col-span-2">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-section-title text-section-title flex items-center gap-2 text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span> 消耗数据预估
+                    </h3>
+</div>
+<div class="flex justify-around items-center">
+<div class="text-center">
+<span class="block font-numeric-display text-numeric-display text-primary">12<span class="text-body-sm font-body-sm ml-1">天</span></span>
+<span class="text-text-secondary font-body-sm text-body-sm">猫粮可用</span>
+</div>
+<div class="w-[1px] h-10 bg-border-light"></div>
+<div class="text-center">
+<span class="block font-numeric-display text-numeric-display text-status-warning">5<span class="text-body-sm font-body-sm ml-1">天</span></span>
+<span class="text-text-secondary font-body-sm text-body-sm">猫砂可用</span>
+</div>
+</div>
+</div>
+<!-- Photo Album Grid -->
+<div class="bg-surface-white rounded-xl p-card-padding shadow-[0_4px_16px_rgba(21,61,53,0.06)] sm:col-span-2">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-section-title text-section-title flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="photo_library">photo_library</span> 成长相册
+                    </h3>
+<button class="text-text-secondary font-body-sm text-body-sm hover:text-primary">查看全部</button>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low">
+<img alt="相册图片1" class="w-full h-full object-cover" data-alt="A playful orange kitten batting at a feather toy in a bright, modern living room setting. The photo captures dynamic movement while maintaining a clean, high-key lighting aesthetic suitable for a professional pet app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4BHbL9YbQ4AbnBDAhXHrEjHF42-xsLz9nv20GQeXtpnfVNSOlIFCWvn_OORbM3J_T6EAS2gk-DKmaTUqpEBrwEgAd9JzNU_G8XVo7wFqfRLIr2E-kmXSH7MsPKGEf60LkVPD2CeiWhx5X0_3PFEI32QTmhkITCXtpjDdfzYdQpTc8Z_wk0Yn4RPRLnLHt59YYQfzX3VAFg5SZNXwjUgCTXYB1-TvYR0h68yvdPzpteR7I9u32PIurORtAd3lDYN7OigoeGt0"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low">
+<img alt="相册图片2" class="w-full h-full object-cover" data-alt="A close-up shot of a sleeping orange cat curled up on a crisp white blanket. The image evokes a sense of peace and comfort, utilizing soft natural light and a minimalist composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOVF4a9X7qFYeDoHvFEIwMNX0mxzlDd8oVS9NO9Qe4X8-PksPMf2qVn8AiVVU9tSu6Lo7rhl3_Mds_cZ-B12hRl8QKDivmf1cnzqInLQu4HEHHH04zBF563K4-uyezpBt_tnMA6br-MAlQFgbMJYwAzM9JGRzFHG0rk_DMxZU4YX8a2iClt8BrDgeafpupSIbW2U5LqBwSnciOkBTD5JzSnHCqFlzPeAkw3paz1ZGM5dcrz27ZVBptYb7BsJgOu17vJAFKWaM"/>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden bg-surface-container-low flex items-center justify-center relative cursor-pointer hover:opacity-80 transition-opacity">
+<img alt="相册图片3" class="w-full h-full object-cover" data-alt="An orange cat looking out of a clean modern window, backlit by soft daylight. The scene is calm and minimalist, focusing on the silhouette and texture of the cat's fur." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFkTtRSW7JbJmQj2eV89PZQnYoBd4vHridMH6FsWzmW-riKRKHn5m6hqnQUPPHSWapui-hZ4I7vPYLs7DsCiem9M2hEKqr7DxQlxXmCmJR6-UexDzyxLbTQWhB2p_JaRvAVG_S8Jptlsb4kaz1HDDRYNN83ipeZyvtPQQdyX1tb1dsX7TKFglqK19Y6wRLdAbJfiT6B5bHC0VuQPz1byNnRgVtAB0WTO9wApxVzBOhNJsfH25duSiUn3r-24BzWD7eBrgQmzM"/>
+<div class="absolute inset-0 bg-on-surface/40 flex items-center justify-center">
+<span class="text-surface-white font-label-bold text-label-bold">+12</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-white/90 backdrop-blur-md border-t border-border-light px-edge-margin py-3 pb-safe z-50 shadow-[0_-4px_16px_rgba(21,61,53,0.06)] flex gap-4">
+<button class="flex-1 bg-bg-mint text-on-primary-container h-button-height rounded-lg font-section-title text-section-title flex items-center justify-center transition-opacity hover:opacity-80 active:scale-95">
+            添加新宠物
+        </button>
+<button class="flex-1 bg-primary text-surface-white h-button-height rounded-lg font-section-title text-section-title flex items-center justify-center transition-opacity hover:opacity-80 active:scale-95">
+            编辑档案
+        </button>
+</div>
+</body></html>

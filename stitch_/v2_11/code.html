@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>宠物管家 - 库存列表</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#d6ecef",
+                    "bg-lake": "#EAF3FF",
+                    "on-secondary-container": "#002959",
+                    "primary": "#006c49",
+                    "background": "#e9fdff",
+                    "primary-fixed-dim": "#51dea3",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#ff7c5e",
+                    "surface-white": "#FFFFFF",
+                    "on-primary-container": "#00422b",
+                    "on-secondary-fixed-variant": "#00458e",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-surface": "#0a1f21",
+                    "surface-container": "#dcf2f4",
+                    "surface-dim": "#c8dee0",
+                    "inverse-surface": "#203436",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#8c1900",
+                    "status-warning": "#D97706",
+                    "inverse-on-surface": "#dff5f7",
+                    "secondary-fixed-dim": "#abc7ff",
+                    "on-tertiary-container": "#731300",
+                    "surface-container-low": "#e1f8fa",
+                    "error-container": "#ffdad6",
+                    "bg-cloud": "#F8FBFA",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#d0e7e9",
+                    "on-primary-fixed": "#002113",
+                    "on-secondary-fixed": "#001b3f",
+                    "on-primary-fixed-variant": "#005236",
+                    "bg-mint": "#E8F8F2",
+                    "border-light": "#E5E7EB",
+                    "secondary-fixed": "#d7e3ff",
+                    "inverse-primary": "#51dea3",
+                    "accent-yellow": "#FFE066",
+                    "tertiary-fixed": "#ffdad2",
+                    "surface-tint": "#006c49",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#e9fdff",
+                    "on-tertiary": "#ffffff",
+                    "on-background": "#0a1f21",
+                    "status-success": "#16A34A",
+                    "secondary": "#005cba",
+                    "primary-fixed": "#71fbbd",
+                    "on-tertiary-fixed": "#3d0600",
+                    "surface-variant": "#d0e7e9",
+                    "outline": "#6c7a71",
+                    "tertiary-fixed-dim": "#ffb4a3",
+                    "outline-variant": "#bbcabf",
+                    "secondary-container": "#448ffd",
+                    "on-surface-variant": "#3c4a42",
+                    "surface": "#e9fdff",
+                    "text-secondary": "#6B7280",
+                    "status-error": "#DC2626",
+                    "tertiary": "#ae3115",
+                    "primary-container": "#18b981"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-gap": "20px",
+                    "button-height": "48px",
+                    "item-gap": "12px",
+                    "list-item-min-height": "56px",
+                    "card-padding": "16px",
+                    "edge-margin": "16px"
+            },
+            "fontFamily": {
+                    "body-main": ["Be Vietnam Pro", "sans-serif"],
+                    "section-title": ["Be Vietnam Pro", "sans-serif"],
+                    "page-title": ["Be Vietnam Pro", "sans-serif"],
+                    "body-sm": ["Be Vietnam Pro", "sans-serif"],
+                    "label-bold": ["Be Vietnam Pro", "sans-serif"],
+                    "numeric-display": ["Be Vietnam Pro", "sans-serif"]
+            },
+            "fontSize": {
+                    "body-main": ["15px", { "lineHeight": "22px", "fontWeight": "400" }],
+                    "section-title": ["18px", { "lineHeight": "26px", "fontWeight": "600" }],
+                    "page-title": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                    "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                    "label-bold": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                    "numeric-display": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #F8FBFA; /* bg-cloud */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-bg-cloud min-h-screen relative text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-bg-cloud dark:bg-inverse-surface w-full top-0 sticky z-40 bg-bg-cloud dark:bg-inverse-surface flex items-center justify-between px-edge-margin h-button-height w-full">
+<button class="text-primary dark:text-primary-fixed-dim hover:opacity-80 transition-opacity active:scale-95 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="pets">pets</span>
+</button>
+<h1 class="font-page-title text-page-title text-primary dark:text-primary-fixed-dim font-bold tracking-tight">宠物管家</h1>
+<button class="text-primary dark:text-primary-fixed-dim hover:opacity-80 transition-opacity active:scale-95 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="pb-[100px] pt-4">
+<div class="px-edge-margin flex flex-col gap-stack-gap">
+<!-- Search Bar -->
+<div class="w-full h-button-height bg-surface-white rounded-lg border border-border-light flex items-center px-4 shadow-[0_4px_16px_rgba(21,61,53,0.02)]">
+<span class="material-symbols-outlined text-text-secondary mr-2 text-[20px]">search</span>
+<input class="flex-1 bg-transparent border-none outline-none font-body-main text-body-main text-on-surface placeholder:text-text-secondary w-full p-0 focus:ring-0" placeholder="搜索商品名 / 品牌" type="text"/>
+<div class="w-[1px] h-[20px] bg-border-light mx-3"></div>
+<button class="text-text-secondary hover:text-primary transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+</div>
+<!-- Category Chips -->
+<div class="flex overflow-x-auto hide-scrollbar gap-item-gap -mx-edge-margin px-edge-margin py-1">
+<button class="bg-primary text-on-primary rounded-full px-5 py-2 font-label-bold text-label-bold whitespace-nowrap shadow-sm">全部</button>
+<button class="bg-surface-white border border-border-light text-text-secondary rounded-full px-5 py-2 font-label-bold text-label-bold whitespace-nowrap hover:bg-bg-mint hover:text-primary hover:border-primary/30 transition-colors">猫粮</button>
+<button class="bg-surface-white border border-border-light text-text-secondary rounded-full px-5 py-2 font-label-bold text-label-bold whitespace-nowrap hover:bg-bg-mint hover:text-primary hover:border-primary/30 transition-colors">罐头</button>
+<button class="bg-surface-white border border-border-light text-text-secondary rounded-full px-5 py-2 font-label-bold text-label-bold whitespace-nowrap hover:bg-bg-mint hover:text-primary hover:border-primary/30 transition-colors">猫砂</button>
+<button class="bg-surface-white border border-border-light text-text-secondary rounded-full px-5 py-2 font-label-bold text-label-bold whitespace-nowrap hover:bg-bg-mint hover:text-primary hover:border-primary/30 transition-colors">零食</button>
+</div>
+<!-- Inventory List -->
+<div class="flex flex-col gap-item-gap">
+<!-- Card 1 -->
+<div class="bg-surface-white rounded-lg p-card-padding flex gap-4 items-center shadow-[0_4px_16px_rgba(21,61,53,0.04)]">
+<div class="w-[80px] h-[80px] rounded-lg bg-surface-container-low overflow-hidden shrink-0">
+<img alt="Cat Food Dry" class="w-full h-full object-cover" data-alt="A high-quality studio shot of premium dry cat food kibbles piled next to a clean, modern branded pet food bag. Bright, clean lighting, light-mode aesthetic, corporate minimalist style with soft shadows on a cloud-white surface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJhirUNjEsdQbEbJXkzyw591SS6b7P-OghJULs4KdowikGqRq-PBMMdbKo0CMDc3LdwDmv1BJnZxPDKPWQZ28xwykNbNV9roEjqfALoMPcae0ShDkbK7sy_NUPOOpbHJA0KRCUAHJRjoXRscLt36V8Iq5TV1Zk300G7DSqIt54XDWtlkhmzC4luPvE1TY6rrZK2ue7iIpKElk1Ej8O6uIt5SytwSgIKWTaJ1RmvYGepZ5avzFfhdcNQf-A1wTgAif6nDs84fg"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-section-title text-section-title text-on-surface truncate mb-1">渴望六种鱼猫粮</h3>
+<p class="font-body-sm text-body-sm text-text-secondary truncate mb-2">Orijen · 5.4kg/袋</p>
+<div class="inline-flex items-center px-2 py-1 rounded bg-bg-mint text-primary-container font-label-bold text-label-bold">
+                            充足
+                        </div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<div class="flex items-baseline gap-1">
+<span class="font-numeric-display text-numeric-display text-primary">2</span>
+<span class="font-body-sm text-body-sm text-text-secondary">袋</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-white rounded-lg p-card-padding flex gap-4 items-center shadow-[0_4px_16px_rgba(21,61,53,0.04)] border border-transparent">
+<div class="w-[80px] h-[80px] rounded-lg bg-surface-container-low overflow-hidden shrink-0">
+<img alt="Cat Food Canned" class="w-full h-full object-cover" data-alt="A close-up of a premium wet cat food can with elegant minimalist typography, sitting on a pristine white surface. Soft natural lighting highlights the metallic rim, creating a fresh, reliable, and modern Light Tech aesthetic with a shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBL-nLiPpJUjYV1hKMCcxydg7C0ys-BmyJNuHy9jrOaVfK6O6bXb5_Ch_3ph0jdmbJ3U-Uklvf00BQKkuQp42xzOQCLUyjQKcZpPTitJWXKk0Q46Q80RQYhuuHF1iYavzTUOF-JvCqE_VA3cogVrpGMPK0aA6DA4FiFFhK0sgiXQfsduoi69-aBs1ZR-Ubkx83kZVOM6IZwLUM21lkIZfmHScrwukfglThYb84k7P6QwGDPDzAk2J7udrhi-8Bili417ILgISI"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-section-title text-section-title text-on-surface truncate mb-1">巅峰牛肉主食罐</h3>
+<p class="font-body-sm text-body-sm text-text-secondary truncate mb-2">Ziwi Peak · 170g/罐</p>
+<div class="inline-flex items-center px-2 py-1 rounded bg-[#FFFBEB] text-status-warning font-label-bold text-label-bold">
+                            即将耗尽
+                        </div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<div class="flex items-baseline gap-1">
+<span class="font-numeric-display text-numeric-display text-status-warning">3</span>
+<span class="font-body-sm text-body-sm text-text-secondary">罐</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-white rounded-lg p-card-padding flex gap-4 items-center shadow-[0_4px_16px_rgba(21,61,53,0.04)] opacity-70">
+<div class="w-[80px] h-[80px] rounded-lg bg-surface-container-low overflow-hidden shrink-0 grayscale-[50%]">
+<img alt="Cat Litter" class="w-full h-full object-cover" data-alt="A minimalist composition featuring a sleek, eco-friendly bag of tofu cat litter isolated against a soft, bright background. The design emphasizes cleanliness and modern pet care utility. Soft, diffused lighting enhances the youthful, refreshing brand persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvwQW5O62P40-BNW0C0nWiY3J2CXHqyV4MIqF-CDBsrDWE0w_JdsuQixC_tQvR-WZv3f9HU2X4rpmucofeE4tO22RjlxaDsA6nCpiNML8clhVRkZl6hx78X4AqWGV5qBrteflHM3TFdLMigIgUd_2AxR_Za-oSjrUaLqfJog05h9neXvkfJDb9U-3yVBaqnuS9A7612naPD1sIW0DrT3rXecIagHN-m6wNaTffUtS2ecc7LSkkzB-JXjB7aqktm9eKfLF2WR4"/>
+</div>
+<div class="flex-1 min-w-0">
+<h3 class="font-section-title text-section-title text-on-surface truncate mb-1 text-text-secondary">N1豆腐猫砂 原味</h3>
+<p class="font-body-sm text-body-sm text-text-secondary truncate mb-2">N1 · 17.5L/包</p>
+<div class="inline-flex items-center px-2 py-1 rounded bg-error-container/30 text-status-error font-label-bold text-label-bold">
+                            已耗尽
+                        </div>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<div class="flex items-baseline gap-1">
+<span class="font-numeric-display text-numeric-display text-status-error">0</span>
+<span class="font-body-sm text-body-sm text-text-secondary">包</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-[88px] right-edge-margin w-[56px] h-[56px] bg-primary-container hover:bg-primary transition-colors text-surface-white rounded-full shadow-[0_8px_24px_rgba(24,185,129,0.3)] flex items-center justify-center z-50 active:scale-90">
+<span class="material-symbols-outlined text-[28px]" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="bg-surface-white dark:bg-inverse-surface fixed bottom-0 w-full z-50 rounded-t-xl border-t border-border-light dark:border-outline shadow-[0_-4px_16px_rgba(21,61,53,0.06)] flex justify-around items-center h-[64px] px-2 pb-safe w-full md:hidden">
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 Active: scale-90 transition-all duration-200 w-16 h-full rounded-lg">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="home">home</span>
+<span class="font-label-bold text-label-bold">首页</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-bg-mint dark:hover:bg-on-primary-container/10 Active: scale-90 transition-all duration-200 w-16 h-full rounded-lg">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-bold text-label-bold">库存</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 Active: scale-90 transition-all duration-200 w-16 h-full rounded-lg">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="add_circle">add_circle</span>
+<span class="font-label-bold text-label-bold">添加</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 Active: scale-90 transition-all duration-200 w-16 h-full rounded-lg">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="leaderboard">leaderboard</span>
+<span class="font-label-bold text-label-bold">统计</span>
+</button>
+<button class="flex flex-col items-center justify-center text-text-secondary dark:text-outline-variant hover:bg-bg-mint dark:hover:bg-on-primary-container/10 Active: scale-90 transition-all duration-200 w-16 h-full rounded-lg">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="person">person</span>
+<span class="font-label-bold text-label-bold">我的</span>
+</button>
+</nav>
+</body></html>

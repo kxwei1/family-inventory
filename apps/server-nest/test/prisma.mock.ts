@@ -31,6 +31,7 @@ function matches(row: AnyRow, where: Where | undefined): boolean {
         gte?: number | Date;
         lt?: number | Date;
         contains?: string;
+        not?: unknown;
       };
       if (filter.in) return filter.in.includes(rowValue as unknown);
       if (filter.gte !== undefined && rowValue !== undefined) {
@@ -41,6 +42,14 @@ function matches(row: AnyRow, where: Where | undefined): boolean {
       }
       if (filter.contains !== undefined && typeof rowValue === "string") {
         return rowValue.includes(filter.contains);
+      }
+      if ("not" in filter) {
+        if (filter.not === null) return rowValue !== null && rowValue !== undefined;
+        return rowValue !== filter.not;
+      }
+      // Nested relation match (e.g. where.product.familyId)
+      if (rowValue && typeof rowValue === "object") {
+        return matches(rowValue as AnyRow, filter as Where);
       }
       return false;
     }
@@ -60,20 +69,44 @@ function createTable<T extends AnyRow>(seed: T[] = [], options: TableOptions = {
   const rows: T[] = [...seed];
   let counter = rows.length;
 
-  const findMany = jest.fn(async (args?: { where?: Where; orderBy?: Record<string, "asc" | "desc"> }) => {
-    let result = rows.filter((row) => matches(row, args?.where));
-    if (args?.orderBy) {
-      const [[key, direction]] = Object.entries(args.orderBy);
-      result = [...result].sort((a, b) => {
-        const av = (a[key] as number | string | Date | undefined) ?? "";
-        const bv = (b[key] as number | string | Date | undefined) ?? "";
-        if (av < bv) return direction === "asc" ? -1 : 1;
-        if (av > bv) return direction === "asc" ? 1 : -1;
-        return 0;
-      });
-    }
-    return result;
-  });
+  const findMany = jest.fn(
+    async (args?: {
+      where?: Where;
+      orderBy?: Record<string, "asc" | "desc">;
+      take?: number;
+      skip?: number;
+      cursor?: { id?: string };
+    }) => {
+      let result = rows.filter((row) => matches(row, args?.where));
+      if (args?.orderBy) {
+        const [[key, direction]] = Object.entries(args.orderBy);
+        result = [...result].sort((a, b) => {
+          const av = (a[key] as number | string | Date | undefined) ?? "";
+          const bv = (b[key] as number | string | Date | undefined) ?? "";
+          if (av < bv) return direction === "asc" ? -1 : 1;
+          if (av > bv) return direction === "asc" ? 1 : -1;
+          return 0;
+        });
+      }
+
+      if (args?.cursor?.id) {
+        const cursorIdx = result.findIndex((row) => row.id === args.cursor!.id);
+        if (cursorIdx === -1) {
+          result = [];
+        } else {
+          result = result.slice(cursorIdx + (args.skip ?? 0));
+        }
+      } else if (args?.skip) {
+        result = result.slice(args.skip);
+      }
+
+      if (typeof args?.take === "number") {
+        result = result.slice(0, args.take);
+      }
+
+      return result;
+    },
+  );
 
   const findFirst = jest.fn(async (args?: { where?: Where }) => {
     return rows.find((row) => matches(row, args?.where)) ?? null;
@@ -179,6 +212,7 @@ export interface PrismaMock {
   familyMember: ReturnType<typeof createTable>;
   familyAddress: ReturnType<typeof createTable>;
   product: ReturnType<typeof createTable>;
+  productBatch: ReturnType<typeof createTable>;
   pet: ReturnType<typeof createTable>;
   stockLog: ReturnType<typeof createTable>;
   reminder: ReturnType<typeof createTable>;
@@ -193,6 +227,7 @@ export function createPrismaMock(initial: {
   familyMember?: AnyRow[];
   familyAddress?: AnyRow[];
   product?: AnyRow[];
+  productBatch?: AnyRow[];
   pet?: AnyRow[];
   stockLog?: AnyRow[];
   reminder?: AnyRow[];
@@ -205,6 +240,7 @@ export function createPrismaMock(initial: {
     familyMember: createTable(initial.familyMember ?? []),
     familyAddress: createTable(initial.familyAddress ?? [], { generateId: false }),
     product: createTable(initial.product ?? []),
+    productBatch: createTable(initial.productBatch ?? []),
     pet: createTable(initial.pet ?? []),
     stockLog: createTable(initial.stockLog ?? []),
     reminder: createTable(initial.reminder ?? []),

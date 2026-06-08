@@ -221,12 +221,14 @@ model Reminder {
   timeText            String
   primaryActionText   String
   secondaryActionText String?
+  externalKey         String?
   dismissed           Boolean          @default(false)
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
 
   family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
 
+  @@unique([familyId, externalKey])
   @@index([familyId])
   @@index([category])
   @@map("reminders")

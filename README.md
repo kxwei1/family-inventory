@@ -60,6 +60,9 @@ pnpm dev:server
 # 运行后端 API 冒烟测试
 pnpm smoke:api
 
+# 运行 NestJS 单元测试
+pnpm test
+
 # NestJS 正式后端（需先准备 MySQL + Redis）
 docker compose -f apps/server-nest/docker-compose.yml up -d
 pnpm prisma:generate
@@ -78,5 +81,8 @@ pnpm dev:server-nest
 - [x] Pinia stores 接入离线持久化
 - [x] NestJS / Prisma schema + 全部域模块（family / products / pets / stock-logs / dashboard / reminders / restock / statistics / profile / notification-settings）
 - [x] NestJS 端点与 scaffold 对齐（共 30+ 路由，含 mutations / consume / stock-in / dismiss / read-all 等）
+- [x] NestJS 生产化（全局 ExceptionFilter + 请求日志 + Swagger /api-docs）
+- [x] NestJS Jest 单测（products / pets / family，15/15 绿）
+- [x] 客户端 TabBar 实时提醒红点 + 全局 API 错误处理
 - [ ] Redis 缓存 / 队列接入
 - [ ] 鉴权 & 多家庭隔离

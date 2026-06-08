@@ -82,7 +82,7 @@ pnpm dev:server-nest
 - [x] NestJS / Prisma schema + 全部域模块（family / products / pets / stock-logs / dashboard / reminders / restock / statistics / profile / notification-settings）
 - [x] NestJS 端点与 scaffold 对齐（共 30+ 路由，含 mutations / consume / stock-in / dismiss / read-all 等）
 - [x] NestJS 生产化（全局 ExceptionFilter + 请求日志 + Swagger /api-docs）
-- [x] NestJS Jest 单测（products / pets / family，15/15 绿）
+- [x] NestJS Jest 单测（products / pets / family / auth / guard，27/27 绿）
 - [x] 客户端 TabBar 实时提醒红点 + 全局 API 错误处理
+- [x] NestJS JWT 鉴权 + 多家庭隔离（`POST /api/auth/login` + `JwtAuthGuard` 全局守卫 + 请求级 `FamilyContextService`，`AUTH_REQUIRED` 开关控制是否强制）
 - [ ] Redis 缓存 / 队列接入
-- [ ] 鉴权 & 多家庭隔离

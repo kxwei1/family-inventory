@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { PrismaModule } from "./prisma/prisma.module";
 import { CommonModule } from "./common/common.module";
+import { AuthModule } from "./auth/auth.module";
 import { HealthController } from "./health/health.controller";
 import { FamilyModule } from "./family/family.module";
 import { ProductsModule } from "./products/products.module";
@@ -21,6 +22,7 @@ import { StatisticsModule } from "./statistics/statistics.module";
     }),
     PrismaModule,
     CommonModule,
+    AuthModule,
     FamilyModule,
     ProductsModule,
     PetsModule,

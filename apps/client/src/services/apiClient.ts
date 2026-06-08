@@ -3,6 +3,7 @@ const env = import.meta.env as ImportMetaEnv & {
 };
 
 const apiBaseUrl = (env.VITE_API_BASE_URL || "http://localhost:4000").replace(/\/$/, "");
+const AUTH_TOKEN_KEY = "fi:auth_token";
 
 type Fallback<T> = T | (() => T | Promise<T>);
 type RequestMethod = "GET" | "POST";
@@ -23,9 +24,40 @@ export class HttpStatusError extends Error {
 }
 
 let globalErrorHandler: ((error: HttpStatusError) => void) | null = null;
+let authToken: string | null = readTokenFromStorage();
 
 export function setGlobalApiErrorHandler(handler: (error: HttpStatusError) => void) {
   globalErrorHandler = handler;
+}
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+  if (token) {
+    try {
+      uni.setStorageSync(AUTH_TOKEN_KEY, token);
+    } catch {
+      /* storage unavailable */
+    }
+  } else {
+    try {
+      uni.removeStorageSync(AUTH_TOKEN_KEY);
+    } catch {
+      /* storage unavailable */
+    }
+  }
+}
+
+export function getAuthToken(): string | null {
+  return authToken;
+}
+
+function readTokenFromStorage(): string | null {
+  try {
+    const value = uni.getStorageSync(AUTH_TOKEN_KEY);
+    return typeof value === "string" && value.length > 0 ? value : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function getJsonWithFallback<T>(
@@ -85,10 +117,14 @@ function requestJson<T>({
   body?: unknown;
 }): Promise<T> {
   return new Promise((resolve, reject) => {
+    const header: Record<string, string> = {};
+    if (authToken) header.Authorization = `Bearer ${authToken}`;
+
     uni.request({
       url: `${apiBaseUrl}${path}`,
       method,
       data: body as RequestBody,
+      header,
       timeout: 2500,
       success(response) {
         const statusCode = response.statusCode ?? 0;

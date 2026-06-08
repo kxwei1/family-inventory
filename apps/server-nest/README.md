@@ -20,14 +20,39 @@ reached the scaffold can be retired.
   log a stack trace via Nest `Logger`.
 - **Global `LoggingInterceptor`** logs `METHOD url -> status (xx.xms)` at
   `log` / `warn` / `error` depending on the response.
+- **Global `JwtAuthGuard`** verifies `Authorization: Bearer <token>` on every
+  request and attaches the user (`memberId / familyId / role / name`) to
+  `req.user`. `FamilyContextService` then scopes every subsequent DB query
+  to `req.user.familyId`. Opt out with `@Public()` (see `AuthController.login`
+  and `HealthController`).
+  - `AUTH_REQUIRED=false` (default) keeps the dev shortcut: requests without a
+    token go through and the context falls back to the first family — so the
+    client and smoke scripts keep working without logging in.
+  - `AUTH_REQUIRED=true` enforces 401 on any unauthenticated request.
 - **Swagger UI** mounted at `GET /api-docs` (disable with
   `SWAGGER_ENABLED=false` in `.env.local`).
+
+## Auth flow
+
+```
+POST /api/auth/login { memberId, familyId? }
+  -> { token, expiresIn, user: { memberId, familyId, role, name } }
+
+GET  /api/auth/me        (requires Bearer token)
+  -> { user }
+```
+
+Send the token on every subsequent call as `Authorization: Bearer <token>`.
+On the client, call `setAuthToken(token)` after login — the apiClient picks
+it up automatically and clears it on 401/403.
 
 ## Endpoints currently implemented
 
 | Method | Path                                       | Notes                                          |
 | ------ | ------------------------------------------ | ---------------------------------------------- |
-| GET    | `/health`                                  | Liveness                                       |
+| GET    | `/health`                                  | Liveness (`@Public()`)                         |
+| POST   | `/api/auth/login`                          | Issue JWT for a member (`@Public()`)           |
+| GET    | `/api/auth/me`                             | Return the user attached to the request        |
 | GET    | `/api/dashboard`                           | Home greeting + alert counts + categories      |
 | GET    | `/api/family`                              | Family overview (members + address)            |
 | POST   | `/api/family/rename`                       | Rename family                                  |

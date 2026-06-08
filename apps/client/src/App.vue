@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
 import { useRemindersStore } from "@/stores";
-import { setGlobalApiErrorHandler, HttpStatusError } from "@/services/apiClient";
+import { setGlobalApiErrorHandler, setAuthToken, HttpStatusError } from "@/services/apiClient";
 
 setGlobalApiErrorHandler((error: HttpStatusError) => {
   if (error.statusCode === 401 || error.statusCode === 403) {
+    setAuthToken(null);
     uni.showToast({ title: "登录已过期，请重新登录", icon: "none" });
     return;
   }

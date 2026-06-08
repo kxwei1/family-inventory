@@ -29,6 +29,12 @@ reached the scaffold can be retired.
     token go through and the context falls back to the first family — so the
     client and smoke scripts keep working without logging in.
   - `AUTH_REQUIRED=true` enforces 401 on any unauthenticated request.
+- **Redis cache** for aggregation endpoints. `CacheService` wraps
+  `GET /api/dashboard` (TTL 30s) and `GET /api/statistics/summary` (TTL 60s)
+  per family. Mutations on products / restock / reminders call
+  `cache.invalidateFamilyAggregates(familyId)` so the next read recomputes.
+  When `REDIS_URL` is unset, the cache falls back to an in-memory backend so
+  dev still works without docker.
 - **Swagger UI** mounted at `GET /api-docs` (disable with
   `SWAGGER_ENABLED=false` in `.env.local`).
 

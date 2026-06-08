@@ -8,6 +8,7 @@ import type {
 } from "@family-inventory/shared-types";
 import { PrismaService } from "../prisma/prisma.service";
 import { FamilyContextService } from "../common/family-context.service";
+import { CacheService } from "../common/cache.service";
 
 const TONE_MAP: Record<ReminderTone, ReminderItem["tone"]> = {
   WARNING: "warning",
@@ -26,6 +27,7 @@ export class RemindersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly context: FamilyContextService,
+    private readonly cache: CacheService,
   ) {}
 
   async list(): Promise<ReminderListResponse> {
@@ -62,6 +64,7 @@ export class RemindersService {
       data: { dismissed: true },
     });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return {
       dismissedItemIds: [itemId],
       reminders: await this.list(),
@@ -80,6 +83,7 @@ export class RemindersService {
       data: { dismissed: true },
     });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return {
       dismissedItemIds: active.map((reminder) => reminder.id),
       reminders: await this.list(),

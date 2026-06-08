@@ -15,6 +15,7 @@ import type {
 } from "@family-inventory/shared-types";
 import { PrismaService } from "../prisma/prisma.service";
 import { FamilyContextService } from "../common/family-context.service";
+import { CacheService } from "../common/cache.service";
 import {
   ConsumeProductDto,
   CreateProductDto,
@@ -33,6 +34,7 @@ export class ProductsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly context: FamilyContextService,
+    private readonly cache: CacheService,
   ) {}
 
   async list(query: ProductListQueryDto): Promise<ProductListResponse> {
@@ -114,6 +116,7 @@ export class ProductsService {
         },
       });
 
+      await this.cache.invalidateFamilyAggregates(familyId);
       return { item: this.toSummary(updated) };
     }
 
@@ -156,6 +159,7 @@ export class ProductsService {
       },
     });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return { item: this.toSummary(product) };
   }
 
@@ -205,6 +209,7 @@ export class ProductsService {
       });
     }
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return { detail: this.toDetail(updated) };
   }
 
@@ -241,6 +246,7 @@ export class ProductsService {
       },
     });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return { detail: this.toDetail(updated) };
   }
 
@@ -270,6 +276,7 @@ export class ProductsService {
       orderBy: { createdAt: "desc" },
     });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return {
       archivedProductId: id,
       items: remaining.map((item) => this.toSummary(item)),

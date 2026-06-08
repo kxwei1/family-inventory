@@ -2,6 +2,7 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { createPrismaMock, PrismaMock } from "../../test/prisma.mock";
 import { FamilyContextService } from "../common/family-context.service";
+import { CacheService } from "../common/cache.service";
 
 const FAMILY_ID = "fam_demo";
 
@@ -9,6 +10,14 @@ function buildContext(): FamilyContextService {
   return {
     resolveFamilyId: jest.fn().mockResolvedValue(FAMILY_ID),
   } as unknown as FamilyContextService;
+}
+
+function buildCache(): CacheService {
+  return {
+    wrap: jest.fn((_key: string, _ttl: number, factory: () => Promise<unknown>) => factory()),
+    invalidate: jest.fn().mockResolvedValue(undefined),
+    invalidateFamilyAggregates: jest.fn().mockResolvedValue(undefined),
+  } as unknown as CacheService;
 }
 
 function seedProduct(prisma: PrismaMock, overrides: Record<string, unknown> = {}) {
@@ -44,6 +53,7 @@ describe("ProductsService", () => {
     service = new ProductsService(
       prisma as unknown as ConstructorParameters<typeof ProductsService>[0],
       buildContext(),
+      buildCache(),
     );
   });
 

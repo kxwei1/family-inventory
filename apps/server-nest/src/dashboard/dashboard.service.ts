@@ -2,16 +2,26 @@ import { Injectable } from "@nestjs/common";
 import type { DashboardSummary } from "@family-inventory/shared-types";
 import { PrismaService } from "../prisma/prisma.service";
 import { FamilyContextService } from "../common/family-context.service";
+import { CacheService } from "../common/cache.service";
+
+const DASHBOARD_TTL_SECONDS = 30;
 
 @Injectable()
 export class DashboardService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly context: FamilyContextService,
+    private readonly cache: CacheService,
   ) {}
 
   async getSummary(): Promise<DashboardSummary> {
     const familyId = await this.context.resolveFamilyId();
+    return this.cache.wrap(`dashboard:${familyId}`, DASHBOARD_TTL_SECONDS, () =>
+      this.buildSummary(familyId),
+    );
+  }
+
+  private async buildSummary(familyId: string): Promise<DashboardSummary> {
     const [family, profile, products, reminders, restockCount] = await Promise.all([
       this.prisma.family.findUnique({ where: { id: familyId }, select: { name: true } }),
       this.prisma.userProfile.findFirst(),

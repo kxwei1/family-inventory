@@ -11,6 +11,7 @@ import type {
 } from "@family-inventory/shared-types";
 import { PrismaService } from "../prisma/prisma.service";
 import { FamilyContextService } from "../common/family-context.service";
+import { CacheService } from "../common/cache.service";
 
 const STATIC_RECOMMENDATIONS: RestockPlan["recommendations"] = [
   {
@@ -32,6 +33,7 @@ export class RestockService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly context: FamilyContextService,
+    private readonly cache: CacheService,
   ) {}
 
   async getPlan(): Promise<RestockPlan> {
@@ -112,6 +114,7 @@ export class RestockService {
       }
     });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return {
       completedItemIds: items.map((item) => item.id),
       items: await this.productSummaries(familyId),
@@ -126,6 +129,7 @@ export class RestockService {
 
     await this.prisma.restockItem.delete({ where: { id: itemId } });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return {
       removedItemIds: [itemId],
       restockPlan: await this.getPlan(),
@@ -162,6 +166,7 @@ export class RestockService {
       },
     });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return { itemId: created.id, restockPlan: await this.getPlan() };
   }
 
@@ -198,6 +203,7 @@ export class RestockService {
       },
     });
 
+    await this.cache.invalidateFamilyAggregates(familyId);
     return { itemId: created.id, restockPlan: await this.getPlan() };
   }
 

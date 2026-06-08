@@ -85,4 +85,5 @@ pnpm dev:server-nest
 - [x] NestJS Jest 单测（products / pets / family / auth / guard，27/27 绿）
 - [x] 客户端 TabBar 实时提醒红点 + 全局 API 错误处理
 - [x] NestJS JWT 鉴权 + 多家庭隔离（`POST /api/auth/login` + `JwtAuthGuard` 全局守卫 + 请求级 `FamilyContextService`，`AUTH_REQUIRED` 开关控制是否强制）
-- [ ] Redis 缓存 / 队列接入
+- [x] Redis 缓存层（`CacheService` 包装 dashboard / statistics，写路径自动失效；REDIS_URL 缺失时回退到内存缓存）
+- [ ] 队列 / 异步任务（计划任务、提醒推送）

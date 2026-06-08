@@ -6,6 +6,9 @@ import type {
 } from "@family-inventory/shared-types";
 import { PrismaService } from "../prisma/prisma.service";
 import { FamilyContextService } from "../common/family-context.service";
+import { CacheService } from "../common/cache.service";
+
+const STATISTICS_TTL_SECONDS = 60;
 
 interface ExpenseRecord {
   id: string;
@@ -23,10 +26,22 @@ export class StatisticsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly context: FamilyContextService,
+    private readonly cache: CacheService,
   ) {}
 
   async getSummary(range: StatisticsRange): Promise<StatisticsSummary> {
     const familyId = await this.context.resolveFamilyId();
+    return this.cache.wrap(
+      `statistics:${familyId}:${range}`,
+      STATISTICS_TTL_SECONDS,
+      () => this.buildSummary(familyId, range),
+    );
+  }
+
+  private async buildSummary(
+    familyId: string,
+    range: StatisticsRange,
+  ): Promise<StatisticsSummary> {
     const now = new Date();
     const records = await this.loadRecords(familyId, range, now);
 

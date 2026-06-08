@@ -141,6 +141,7 @@ export class ProductsService {
         isOpened: payload.isOpened ?? false,
         stockInDate: this.parseDate(payload.stockInDate) ?? new Date(),
         notes: payload.notes,
+        archived: false,
         status: this.classify(payload.quantity),
         statusText: STATUS_TEXT[this.classify(payload.quantity)],
       },

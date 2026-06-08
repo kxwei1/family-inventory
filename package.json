@@ -12,6 +12,7 @@
     "dev:server-nest": "pnpm --filter @family-inventory/server-nest start:dev",
     "smoke:api": "pnpm --filter @family-inventory/server smoke:api",
     "test": "pnpm --filter @family-inventory/server-nest test",
+    "test:e2e": "pnpm --filter @family-inventory/server-nest test:e2e",
     "prisma:generate": "pnpm --filter @family-inventory/server-nest prisma:generate",
     "prisma:migrate": "pnpm --filter @family-inventory/server-nest prisma:migrate",
     "prisma:seed": "pnpm --filter @family-inventory/server-nest prisma:seed",

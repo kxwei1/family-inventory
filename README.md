@@ -63,6 +63,9 @@ pnpm smoke:api
 # 运行 NestJS 单元测试
 pnpm test
 
+# 运行 NestJS e2e 测试（supertest，不依赖真实 MySQL）
+pnpm test:e2e
+
 # NestJS 正式后端（需先准备 MySQL + Redis）
 docker compose -f apps/server-nest/docker-compose.yml up -d
 pnpm prisma:generate
@@ -82,8 +85,11 @@ pnpm dev:server-nest
 - [x] NestJS / Prisma schema + 全部域模块（family / products / pets / stock-logs / dashboard / reminders / restock / statistics / profile / notification-settings）
 - [x] NestJS 端点与 scaffold 对齐（共 30+ 路由，含 mutations / consume / stock-in / dismiss / read-all 等）
 - [x] NestJS 生产化（全局 ExceptionFilter + 请求日志 + Swagger /api-docs）
-- [x] NestJS Jest 单测（products / pets / family / auth / guard，27/27 绿）
+- [x] NestJS Jest 单测（46/46 绿，覆盖 products / pets / family / auth / guard / cache / scheduler）
+- [x] NestJS e2e 测试（supertest，6/6 绿，覆盖 register → login → me → 多家庭隔离 → 缓存失效 → 错误格式）
 - [x] 客户端 TabBar 实时提醒红点 + 全局 API 错误处理
 - [x] NestJS JWT 鉴权 + 多家庭隔离（`POST /api/auth/login` + `JwtAuthGuard` 全局守卫 + 请求级 `FamilyContextService`，`AUTH_REQUIRED` 开关控制是否强制）
+- [x] 凭证存储（bcryptjs hash + Credential 表）+ 注册（`/api/auth/register`）+ 邀请码（`/api/auth/invite` + `/api/auth/invite/redeem`）
 - [x] Redis 缓存层（`CacheService` 包装 dashboard / statistics，写路径自动失效；REDIS_URL 缺失时回退到内存缓存）
-- [ ] 队列 / 异步任务（计划任务、提醒推送）
+- [x] 后台调度（`@nestjs/schedule` 定时扫描，自动生成低库存 / 临期 / 已过期提醒；按 externalKey upsert 去重）
+- [ ] 队列 / 异步任务（BullMQ + 推送 webhook）

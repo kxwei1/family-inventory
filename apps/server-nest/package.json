@@ -10,6 +10,7 @@
     "start:prod": "node dist/main.js",
     "lint": "echo 'lint not configured yet'",
     "test": "jest --config jest.config.cjs",
+    "test:e2e": "jest --config jest.e2e.config.cjs --runInBand",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
@@ -41,8 +42,10 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.0",
+    "@types/supertest": "^6.0.2",
     "jest": "^29.7.0",
     "prisma": "^5.20.0",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"

@@ -211,6 +211,8 @@ export interface PrismaMock {
   family: ReturnType<typeof createTable>;
   familyMember: ReturnType<typeof createTable>;
   familyAddress: ReturnType<typeof createTable>;
+  credential: ReturnType<typeof createTable>;
+  inviteCode: ReturnType<typeof createTable>;
   product: ReturnType<typeof createTable>;
   productBatch: ReturnType<typeof createTable>;
   pet: ReturnType<typeof createTable>;
@@ -226,6 +228,8 @@ export function createPrismaMock(initial: {
   family?: AnyRow[];
   familyMember?: AnyRow[];
   familyAddress?: AnyRow[];
+  credential?: AnyRow[];
+  inviteCode?: AnyRow[];
   product?: AnyRow[];
   productBatch?: AnyRow[];
   pet?: AnyRow[];
@@ -239,6 +243,8 @@ export function createPrismaMock(initial: {
     family: createTable(initial.family ?? []),
     familyMember: createTable(initial.familyMember ?? []),
     familyAddress: createTable(initial.familyAddress ?? [], { generateId: false }),
+    credential: createTable(initial.credential ?? []),
+    inviteCode: createTable(initial.inviteCode ?? []),
     product: createTable(initial.product ?? []),
     productBatch: createTable(initial.productBatch ?? []),
     pet: createTable(initial.pet ?? []),
@@ -274,6 +280,66 @@ export function createPrismaMock(initial: {
           mock.familyAddress.rows.find((addr) => addr.familyId === familyId) ?? null;
       }
       return next;
+    },
+  );
+
+  // credential.findUnique handles `include: { member: { include: { family } } }`
+  // for AuthService.loginWithPassword.
+  mock.credential.findUnique.mockImplementation(
+    async (args: { where: Where; include?: Record<string, unknown> }) => {
+      const row = mock.credential.rows.find((candidate) => matches(candidate, args.where));
+      if (!row) return null;
+      if (!args.include) return row;
+      const next: Record<string, unknown> = { ...row };
+      if (args.include.member) {
+        const member = mock.familyMember.rows.find((m) => m.id === row.memberId);
+        if (member) {
+          const includedMember: Record<string, unknown> = { ...member };
+          const memberInclude = args.include.member as { include?: { family?: unknown } };
+          if (memberInclude.include?.family) {
+            includedMember.family =
+              mock.family.rows.find((f) => f.id === member.familyId) ?? null;
+          }
+          next.member = includedMember;
+        }
+      }
+      return next;
+    },
+  );
+
+  // familyMember.findUnique handles `include: { family }` for loginAsMember.
+  mock.familyMember.findUnique.mockImplementation(
+    async (args: { where: Where; include?: { family?: unknown } }) => {
+      const row = mock.familyMember.rows.find((candidate) => matches(candidate, args.where));
+      if (!row) return null;
+      if (!args.include?.family) return row;
+      return { ...row, family: mock.family.rows.find((f) => f.id === row.familyId) ?? null };
+    },
+  );
+
+  // inviteCode.findUnique handles `include: { family }` for peekInvite.
+  mock.inviteCode.findUnique.mockImplementation(
+    async (args: { where: Where; include?: { family?: unknown } }) => {
+      const row = mock.inviteCode.rows.find((candidate) => matches(candidate, args.where));
+      if (!row) return null;
+      if (!args.include?.family) return row;
+      return { ...row, family: mock.family.rows.find((f) => f.id === row.familyId) ?? null };
+    },
+  );
+
+  // inviteCode.update writes to the row matched by `code` (the unique key).
+  const originalInviteUpdate = mock.inviteCode.update.getMockImplementation();
+  mock.inviteCode.update.mockImplementation(
+    async (args: { where: Where; data: Record<string, unknown> }) => {
+      if (typeof args.where === "object" && "code" in args.where) {
+        const idx = mock.inviteCode.rows.findIndex(
+          (row) => row.code === (args.where as { code: string }).code,
+        );
+        if (idx === -1) throw new Error("Record not found");
+        mock.inviteCode.rows[idx] = { ...mock.inviteCode.rows[idx], ...args.data };
+        return mock.inviteCode.rows[idx];
+      }
+      return originalInviteUpdate!(args);
     },
   );
 

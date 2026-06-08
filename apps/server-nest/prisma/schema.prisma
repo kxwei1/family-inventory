@@ -67,6 +67,7 @@ model Family {
   reminders    Reminder[]
   restock      RestockItem[]
   notification NotificationSettings?
+  inviteCodes  InviteCode[]
 
   @@map("families")
 }
@@ -82,11 +83,43 @@ model FamilyMember {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
-  family       Family     @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  family       Family       @relation(fields: [familyId], references: [id], onDelete: Cascade)
   stockLogs    StockLog[]
+  credentials  Credential[]
 
   @@index([familyId])
   @@map("family_members")
+}
+
+model Credential {
+  id           String   @id @default(cuid())
+  memberId     String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  member FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId])
+  @@map("credentials")
+}
+
+model InviteCode {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  familyId    String
+  role        FamilyRole @default(MEMBER)
+  inviterId   String?
+  redeemedBy  String?
+  redeemedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@map("invite_codes")
 }
 
 model FamilyAddress {

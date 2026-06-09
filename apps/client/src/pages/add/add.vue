@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
+import AppTabBar from "@/components/AppTabBar.vue";
 import { createProduct } from "@/services/inventoryApi";
 
 const productName = ref("");
@@ -300,6 +301,8 @@ function goBack() {
       <button class="secondary" :disabled="isSaving" @click="save(true)">保存并继续添加</button>
       <button class="primary" :disabled="isSaving" @click="save(false)">保存</button>
     </view>
+
+    <AppTabBar active="add" />
   </view>
 </template>
 
@@ -351,7 +354,7 @@ function goBack() {
 .content {
   box-sizing: border-box;
   height: calc(100vh - 96rpx);
-  padding: 40rpx 32rpx 196rpx;
+  padding: 40rpx 32rpx 296rpx;
 }
 
 .upload-wrap {
@@ -586,11 +589,11 @@ function goBack() {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 128rpx;
   z-index: $z-fixed;
   display: flex;
   gap: 24rpx;
-  padding: 24rpx 32rpx calc(24rpx + env(safe-area-inset-bottom));
+  padding: 24rpx 32rpx;
   border-top: 2rpx solid $color-border;
   background: #ffffff;
   box-shadow: 0 -8rpx 32rpx rgba(21, 61, 53, 0.06);

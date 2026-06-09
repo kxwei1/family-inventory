@@ -152,20 +152,12 @@ function onStockInDateChange(event: { detail: { value: string } }) {
     stockInDate.value = event.detail.value;
   }
 }
-
-function goBack() {
-  uni.navigateBack({
-    fail: () => uni.switchTab({ url: "/pages/inventory/inventory" }),
-  });
-}
 </script>
 
 <template>
   <view class="add-page">
     <view class="topbar">
-      <button class="icon-button" @click="goBack">
-        <wd-icon name="arrow-left" size="38rpx" />
-      </button>
+      <view class="icon-button" />
       <text class="topbar-title">添加商品</text>
       <button class="save-link" :disabled="isSaving" @click="save(false)">保存</button>
     </view>

@@ -140,12 +140,6 @@ function selectRange(range: StatisticsRange) {
   void loadStatistics(range);
 }
 
-function goBack() {
-  uni.navigateBack({
-    fail: () => uni.switchTab({ url: "/pages/home/home" }),
-  });
-}
-
 function goRecords() {
   uni.navigateTo({ url: "/pages/records/records" });
 }
@@ -194,9 +188,7 @@ function buildReportText() {
 <template>
   <view class="statistics-page">
     <view class="topbar">
-      <button class="topbar-button" @click="goBack">
-        <wd-icon name="arrow-left" size="42rpx" />
-      </button>
+      <view class="topbar-button" />
       <text class="topbar-title">数据洞察</text>
       <button class="topbar-button right" @click="exportReport">
         <wd-icon name="download" size="42rpx" />

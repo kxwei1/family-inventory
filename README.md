@@ -92,4 +92,5 @@ pnpm dev:server-nest
 - [x] 凭证存储（bcryptjs hash + Credential 表）+ 注册（`/api/auth/register`）+ 邀请码（`/api/auth/invite` + `/api/auth/invite/redeem`）
 - [x] Redis 缓存层（`CacheService` 包装 dashboard / statistics，写路径自动失效；REDIS_URL 缺失时回退到内存缓存）
 - [x] 后台调度（`@nestjs/schedule` 定时扫描，自动生成低库存 / 临期 / 已过期提醒；按 externalKey upsert 去重）
-- [ ] 队列 / 异步任务（BullMQ + 推送 webhook）
+- [x] BullMQ 队列 + Webhook 推送（扫描结束后异步 fan-out 到家庭配置的 webhookUrl；REDIS 缺失时回退到内联 fire-and-forget）
+- [ ] 后台 worker 拆出独立进程（`node dist/main.js --worker`）

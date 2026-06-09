@@ -317,7 +317,6 @@ function buildReportText() {
         </view>
       </view>
     </scroll-view>
-
     <AppTabBar active="statistics" />
   </view>
 </template>

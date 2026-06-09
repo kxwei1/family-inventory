@@ -6,6 +6,8 @@ import { HttpExceptionFilter } from "../src/common/http-exception.filter";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { CacheService } from "../src/common/cache.service";
 import { ReminderScheduler } from "../src/reminders/reminder.scheduler";
+import { NotificationDispatcher } from "../src/notifications/notification.dispatcher";
+import { ReminderWebhookWorker } from "../src/notifications/reminder-webhook.worker";
 import { createPrismaMock, PrismaMock } from "./prisma.mock";
 
 describe("Family Inventory API (e2e)", () => {
@@ -40,6 +42,20 @@ describe("Family Inventory API (e2e)", () => {
         scanFamily: jest.fn().mockResolvedValue(0),
         runScheduledScan: jest.fn().mockResolvedValue(undefined),
       } as unknown as ReminderScheduler)
+      .overrideProvider(NotificationDispatcher)
+      .useValue({
+        onModuleInit: jest.fn(),
+        onModuleDestroy: jest.fn(),
+        dispatchReminderUpdate: jest.fn().mockResolvedValue(null),
+        deliverSync: jest.fn().mockResolvedValue(undefined),
+        resolveWebhookUrl: jest.fn().mockResolvedValue(undefined),
+        setFallbackWebhookUrl: jest.fn(),
+      } as unknown as NotificationDispatcher)
+      .overrideProvider(ReminderWebhookWorker)
+      .useValue({
+        onModuleInit: jest.fn(),
+        onModuleDestroy: jest.fn(),
+      } as unknown as ReminderWebhookWorker)
       .compile();
 
     app = moduleRef.createNestApplication();

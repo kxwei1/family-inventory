@@ -8,6 +8,7 @@ import { Cron } from "@nestjs/schedule";
 import { Product, ProductBatch, ReminderCategory, ReminderTone } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { CacheService } from "../common/cache.service";
+import { NotificationDispatcher } from "../notifications/notification.dispatcher";
 
 const SCAN_BATCH_SIZE = 200;
 
@@ -45,6 +46,7 @@ export class ReminderScheduler implements OnModuleInit {
     private readonly prisma: PrismaService,
     private readonly cache: CacheService,
     private readonly config: ConfigService,
+    private readonly dispatcher: NotificationDispatcher,
   ) {
     this.enabled = this.config.get<string>("SCHEDULE_ENABLED") !== "false";
     const raw = Number.parseInt(this.config.get<string>("STOCK_LOW_THRESHOLD") ?? "3", 10);
@@ -84,12 +86,19 @@ export class ReminderScheduler implements OnModuleInit {
     const drafts = await this.collectDrafts(familyId);
     if (drafts.length === 0) return 0;
 
-    const upserted = await this.applyDrafts(drafts);
-    if (upserted > 0) {
+    const upsertedIds = await this.applyDrafts(drafts);
+    if (upsertedIds.length > 0) {
       await this.cache.invalidateFamilyAggregates(familyId);
-      this.logger.log(`Refreshed ${upserted} reminders for family ${familyId}`);
+      this.logger.log(`Refreshed ${upsertedIds.length} reminders for family ${familyId}`);
+      await this.dispatcher
+        .dispatchReminderUpdate({ familyId, reminderIds: upsertedIds })
+        .catch((error) => {
+          this.logger.warn(
+            `Failed to dispatch reminder webhook for family ${familyId}: ${(error as Error).message}`,
+          );
+        });
     }
-    return upserted;
+    return upsertedIds.length;
   }
 
   private async collectDrafts(familyId: string): Promise<ReminderDraft[]> {
@@ -181,15 +190,15 @@ export class ReminderScheduler implements OnModuleInit {
     };
   }
 
-  private async applyDrafts(drafts: ReminderDraft[]): Promise<number> {
-    let touched = 0;
+  private async applyDrafts(drafts: ReminderDraft[]): Promise<string[]> {
+    const touchedIds: string[] = [];
     for (const draft of drafts) {
       const existing = await this.prisma.reminder.findFirst({
         where: { familyId: draft.familyId, externalKey: draft.externalKey },
       });
 
       if (existing) {
-        await this.prisma.reminder.update({
+        const updated = await this.prisma.reminder.update({
           where: { id: existing.id },
           data: {
             tone: draft.tone,
@@ -202,8 +211,9 @@ export class ReminderScheduler implements OnModuleInit {
             dismissed: false,
           },
         });
+        touchedIds.push(updated.id);
       } else {
-        await this.prisma.reminder.create({
+        const created = await this.prisma.reminder.create({
           data: {
             familyId: draft.familyId,
             productId: draft.productId ?? undefined,
@@ -218,10 +228,10 @@ export class ReminderScheduler implements OnModuleInit {
             externalKey: draft.externalKey,
           },
         });
+        touchedIds.push(created.id);
       }
-      touched += 1;
     }
-    return touched;
+    return touchedIds;
   }
 
   private formatTimeText(date: Date): string {

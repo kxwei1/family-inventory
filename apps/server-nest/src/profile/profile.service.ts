@@ -104,11 +104,16 @@ export class ProfileService {
         familyId,
         stockWarningEnabled: payload.stockWarningEnabled ?? true,
         expiryReminderEnabled: payload.expiryReminderEnabled ?? true,
+        webhookUrl: payload.webhookUrl ?? null,
       },
       update: {
         stockWarningEnabled: payload.stockWarningEnabled ?? existing?.stockWarningEnabled ?? true,
         expiryReminderEnabled:
           payload.expiryReminderEnabled ?? existing?.expiryReminderEnabled ?? true,
+        webhookUrl:
+          payload.webhookUrl !== undefined
+            ? payload.webhookUrl || null
+            : existing?.webhookUrl ?? null,
       },
     });
 

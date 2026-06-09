@@ -3,18 +3,58 @@
 // =========================================
 @use "./tokens.scss" as *;
 
+html,
+body,
 page {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
   font-family: $font-family-base;
   font-size: $font-size-base;
   color: $color-text-primary;
   background-color: $color-bg-page;
   line-height: $line-height-base;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+uni-app,
+uni-page,
+uni-page-wrapper,
+uni-page-body {
+  width: 100%;
+  min-height: 100%;
+}
+
+uni-page-body {
+  background-color: $color-bg-page;
+}
+
+// Keep uni-app tab page routing, but hide the built-in H5 tabbar layer
+// because the product uses a custom AppTabBar component instead.
+uni-tabbar,
+.uni-tabbar,
+.uni-tabbar ~ .uni-placeholder,
+.uni-app--showtabbar uni-page-wrapper::after {
+  display: none !important;
+}
+
+.uni-app--showtabbar uni-page-wrapper,
+.uni-app--showtabbar uni-page-head[uni-page-head-type="default"] ~ uni-page-wrapper {
+  height: 100% !important;
+}
+
 // reset some browser defaults (H5)
-view, text, image, button {
+view,
+text,
+image,
+button,
+scroll-view,
+swiper,
+swiper-item,
+input,
+textarea {
   box-sizing: border-box;
 }
 
@@ -52,5 +92,5 @@ button {
 .flex-1 { flex: 1; }
 
 .safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
 }

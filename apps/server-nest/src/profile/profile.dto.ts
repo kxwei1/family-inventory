@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsOptional, IsString, IsUrl } from "class-validator";
 
 export class UpdateProfileDto {
   @IsOptional() @IsString() name?: string;
@@ -8,4 +8,5 @@ export class UpdateProfileDto {
 export class UpdateNotificationSettingsDto {
   @IsOptional() @IsBoolean() stockWarningEnabled?: boolean;
   @IsOptional() @IsBoolean() expiryReminderEnabled?: boolean;
+  @IsOptional() @IsUrl({ require_tld: false }) webhookUrl?: string;
 }

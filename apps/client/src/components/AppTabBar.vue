@@ -73,7 +73,7 @@ function goTab(tab: TabItem) {
 </script>
 
 <template>
-  <view class="app-tabbar safe-area-bottom">
+  <view class="app-tabbar">
     <view
       v-for="tab in tabs"
       :key="tab.key"
@@ -98,31 +98,36 @@ function goTab(tab: TabItem) {
 
 <style lang="scss" scoped>
 .app-tabbar {
+  --tabbar-track-height: 128rpx;
+
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: $z-fixed;
-  min-height: 128rpx;
+  height: calc(var(--tabbar-track-height) + max(env(safe-area-inset-bottom), 0px));
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4rpx 24rpx 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 8rpx 12rpx max(env(safe-area-inset-bottom), 0px);
   border-top: 2rpx solid $color-border;
-  border-radius: 28rpx 28rpx 0 0;
+  border-radius: 24rpx 24rpx 0 0;
   background: $color-bg-card;
   box-shadow: 0 -8rpx 24rpx rgba(21, 61, 53, 0.08);
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 .tabbar-item {
   min-width: 0;
-  height: 112rpx;
+  height: calc(var(--tabbar-track-height) - 16rpx);
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4rpx;
+  gap: 6rpx;
+  padding: 12rpx 0 10rpx;
   color: $color-text-secondary;
 }
 
@@ -132,8 +137,8 @@ function goTab(tab: TabItem) {
 
 .tabbar-icon-wrap {
   position: relative;
-  width: 48rpx;
-  height: 48rpx;
+  width: 44rpx;
+  height: 44rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,20 +172,22 @@ function goTab(tab: TabItem) {
 }
 
 .tabbar-label {
-  font-size: 22rpx;
+  font-size: 20rpx;
   font-weight: $font-weight-semibold;
-  line-height: 30rpx;
+  line-height: 28rpx;
   color: inherit;
   letter-spacing: 0;
 }
 
 .tabbar-item.raised {
-  transform: translateY(-34rpx);
+  padding-top: 0;
+  padding-bottom: 0;
+  transform: translateY(-28rpx);
 }
 
 .tabbar-item.raised .tabbar-icon-wrap {
-  width: 96rpx;
-  height: 96rpx;
+  width: 88rpx;
+  height: 88rpx;
   border-radius: $radius-full;
   color: $color-text-inverse;
   background: $color-primary;

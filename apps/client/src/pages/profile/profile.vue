@@ -257,9 +257,7 @@ function copySupportEmail() {
         <text class="version">当前版本 v1.0.0</text>
       </view>
     </scroll-view>
-
     <AppTabBar active="profile" />
-
     <view v-if="isProfileSheetVisible" class="sheet-mask" @click="closeProfileSheet">
       <view class="profile-sheet safe-area-bottom" @click.stop>
         <view class="sheet-handle" />

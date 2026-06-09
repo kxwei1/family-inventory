@@ -35,6 +35,19 @@ reached the scaffold can be retired.
   `cache.invalidateFamilyAggregates(familyId)` so the next read recomputes.
   When `REDIS_URL` is unset, the cache falls back to an in-memory backend so
   dev still works without docker.
+- **Reminder scheduler** (`@nestjs/schedule`) walks every active family on a
+  cron schedule (default every 30m) and upserts low-stock + expiring-batch
+  reminders by `(familyId, externalKey)`. Mutations call back into
+  `cache.invalidateFamilyAggregates`.
+- **Webhook fan-out** via `NotificationDispatcher`. After every scheduler
+  scan that touched reminders, the dispatcher posts the refreshed reminder
+  set to the family's webhook URL (`NotificationSettings.webhookUrl`, with
+  `NOTIFICATION_WEBHOOK_URL` env as a tenant-wide fallback).
+  - When `REDIS_URL` is set and `QUEUE_ENABLED != "false"` the dispatcher
+    enqueues a BullMQ job (queue: `family-inventory:reminders`); a
+    `ReminderWebhookWorker` consumes it with exponential backoff (5 attempts).
+  - Otherwise it falls back to inline fire-and-forget POSTs so dev / test
+    works without Redis.
 - **Swagger UI** mounted at `GET /api-docs` (disable with
   `SWAGGER_ENABLED=false` in `.env.local`).
 

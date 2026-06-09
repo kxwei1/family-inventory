@@ -1,6 +1,7 @@
 import { ConfigService } from "@nestjs/config";
 import { ReminderScheduler } from "./reminder.scheduler";
 import { CacheService } from "../common/cache.service";
+import { NotificationDispatcher } from "../notifications/notification.dispatcher";
 import { createPrismaMock, PrismaMock } from "../../test/prisma.mock";
 
 const FAMILY_ID = "fam_demo";
@@ -22,9 +23,16 @@ function buildCache(): CacheService {
   } as unknown as CacheService;
 }
 
+function buildDispatcher(): NotificationDispatcher {
+  return {
+    dispatchReminderUpdate: jest.fn().mockResolvedValue(null),
+  } as unknown as NotificationDispatcher;
+}
+
 describe("ReminderScheduler", () => {
   let prisma: PrismaMock;
   let cache: CacheService;
+  let dispatcher: NotificationDispatcher;
   let scheduler: ReminderScheduler;
 
   beforeEach(() => {
@@ -36,10 +44,12 @@ describe("ReminderScheduler", () => {
       createdAt: new Date("2024-01-01"),
     });
     cache = buildCache();
+    dispatcher = buildDispatcher();
     scheduler = new ReminderScheduler(
       prisma as unknown as ConstructorParameters<typeof ReminderScheduler>[0],
       cache,
       buildConfig(),
+      dispatcher,
     );
   });
 
@@ -65,6 +75,16 @@ describe("ReminderScheduler", () => {
       externalKey: "stock:prod_low",
     });
     expect(cache.invalidateFamilyAggregates).toHaveBeenCalledWith(FAMILY_ID);
+    expect(dispatcher.dispatchReminderUpdate).toHaveBeenCalledWith({
+      familyId: FAMILY_ID,
+      reminderIds: [prisma.reminder.rows[0].id],
+    });
+  });
+
+  it("does not dispatch when nothing changed", async () => {
+    const touched = await scheduler.scanFamily(FAMILY_ID);
+    expect(touched).toBe(0);
+    expect(dispatcher.dispatchReminderUpdate).not.toHaveBeenCalled();
   });
 
   it("flags an empty product as DANGER tone", async () => {
@@ -196,6 +216,7 @@ describe("ReminderScheduler", () => {
       prisma as unknown as ConstructorParameters<typeof ReminderScheduler>[0],
       cache,
       buildConfig({ SCHEDULE_ENABLED: "false" }),
+      dispatcher,
     );
 
     prisma.product.rows.push({

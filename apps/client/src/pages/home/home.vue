@@ -188,7 +188,6 @@ function onAlert(id: string) {
         </button>
       </scroll-view>
     </scroll-view>
-
     <AppTabBar active="home" />
   </view>
 </template>
@@ -197,6 +196,7 @@ function onAlert(id: string) {
 .home-page {
   min-height: 100vh;
   background: $color-bg-page;
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -204,9 +204,10 @@ function onAlert(id: string) {
   top: 0;
   z-index: $z-sticky;
   height: 96rpx;
-  display: flex;
+  display: grid;
+  grid-template-columns: 72rpx minmax(0, 1fr) 72rpx;
   align-items: center;
-  justify-content: space-between;
+  column-gap: 16rpx;
   padding: 0 32rpx;
   background: $color-bg-page;
   color: $color-primary;
@@ -217,11 +218,14 @@ function onAlert(id: string) {
   font-weight: $font-weight-bold;
   line-height: 60rpx;
   letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .topbar-brand,
 .topbar-icon {
   width: 72rpx;
+  min-width: 72rpx;
   height: 72rpx;
   display: flex;
   align-items: center;
@@ -238,7 +242,10 @@ function onAlert(id: string) {
 
 .content {
   height: calc(100vh - 96rpx);
-  padding: 32rpx 32rpx 220rpx;
+  width: 100%;
+  padding: 32rpx 32rpx calc(220rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .greeting-card {
@@ -276,6 +283,7 @@ function onAlert(id: string) {
 .alert-scroll {
   margin: 40rpx -32rpx 0;
   padding: 0 32rpx 16rpx;
+  box-sizing: border-box;
   white-space: nowrap;
 }
 
@@ -352,21 +360,33 @@ function onAlert(id: string) {
 }
 
 .action-grid {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24rpx;
 }
 
 .action-card {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
   height: 144rpx;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 24rpx;
+  margin: 0;
   padding: 0 32rpx;
   border-radius: 24rpx;
   background: #ffffff;
   box-shadow: $shadow-md;
+  line-height: normal;
   text-align: left;
+  appearance: none;
+}
+
+.action-card::after {
+  border: 0;
 }
 
 .action-icon,
@@ -403,16 +423,19 @@ function onAlert(id: string) {
 }
 
 .action-label {
+  flex: 1;
   min-width: 0;
   font-size: 30rpx;
   font-weight: $font-weight-bold;
   line-height: 40rpx;
   color: $color-text-primary;
+  white-space: nowrap;
 }
 
 .category-scroll {
   margin: 0 -32rpx;
   padding: 0 32rpx 20rpx;
+  box-sizing: border-box;
   white-space: nowrap;
 }
 

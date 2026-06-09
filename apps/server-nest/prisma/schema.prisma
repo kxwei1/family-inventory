@@ -299,6 +299,7 @@ model NotificationSettings {
   familyId               String   @unique
   stockWarningEnabled    Boolean  @default(true)
   expiryReminderEnabled  Boolean  @default(true)
+  webhookUrl             String?
   updatedAt              DateTime @updatedAt
 
   family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)

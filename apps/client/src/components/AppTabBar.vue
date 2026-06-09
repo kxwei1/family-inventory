@@ -86,7 +86,7 @@ function goTab(tab: TabItem) {
         <text
           v-if="badgeFor(tab) > 0 && !isRaised(tab)"
           class="tabbar-badge"
-          :class="{ dot: badgeFor(tab) > 99 }"
+          :class="{ wide: badgeFor(tab) > 9 }"
         >
           {{ badgeText(badgeFor(tab)) }}
         </text>
@@ -132,6 +132,8 @@ function goTab(tab: TabItem) {
 
 .tabbar-icon-wrap {
   position: relative;
+  width: 48rpx;
+  height: 48rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,27 +142,28 @@ function goTab(tab: TabItem) {
 
 .tabbar-badge {
   position: absolute;
-  top: -6rpx;
-  right: -16rpx;
-  min-width: 32rpx;
-  height: 32rpx;
+  top: 0;
+  left: calc(50% + 12rpx);
+  min-width: 28rpx;
+  height: 28rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 8rpx;
+  padding: 0 6rpx;
+  border: 2rpx solid $color-bg-card;
   border-radius: $radius-full;
   background: $color-danger;
   color: $color-text-inverse;
-  font-size: 20rpx;
+  font-size: 18rpx;
   font-weight: $font-weight-bold;
-  line-height: 28rpx;
+  line-height: 24rpx;
+  white-space: nowrap;
+  pointer-events: none;
 }
 
-.tabbar-badge.dot {
-  min-width: 24rpx;
-  height: 24rpx;
-  padding: 0 6rpx;
-  font-size: 18rpx;
+.tabbar-badge.wide {
+  min-width: 44rpx;
+  font-size: 16rpx;
 }
 
 .tabbar-label {

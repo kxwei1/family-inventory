@@ -96,7 +96,6 @@ const topExpenses = computed(() =>
 );
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadStatistics(activeRange.value);
 });
 

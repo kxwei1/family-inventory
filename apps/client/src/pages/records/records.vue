@@ -53,7 +53,6 @@ const groupedLogs = computed(() => {
 });
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadLogs();
 });
 

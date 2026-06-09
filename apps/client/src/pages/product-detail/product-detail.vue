@@ -122,7 +122,6 @@ const trendLineSegments = computed(() => {
 });
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
 
   if (productId.value && hasLoadedDetail) {
     void loadDetail(productId.value);

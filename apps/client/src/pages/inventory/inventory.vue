@@ -44,7 +44,6 @@ const hasActiveFilters = computed(() => inventoryStore.hasActiveFilters);
 const displayedProducts = computed(() => products.value);
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
 
   applyPendingInventoryFilter();
   void loadProducts();

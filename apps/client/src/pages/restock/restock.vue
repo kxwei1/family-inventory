@@ -25,7 +25,6 @@ const purchaseButtonLabel = computed(() => {
 });
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadPlan();
 });
 

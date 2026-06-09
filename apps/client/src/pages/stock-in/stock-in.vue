@@ -61,7 +61,6 @@ const demoByMode: Record<ScanMode, RecognizedProduct> = {
 };
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadRecentProducts();
 });
 

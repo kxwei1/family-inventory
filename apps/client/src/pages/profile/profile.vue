@@ -63,7 +63,6 @@ const panelTitle = computed(() => {
 });
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadProfileData();
 });
 

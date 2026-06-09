@@ -30,7 +30,6 @@ const foodEstimateLabel = computed(() => (selectedPet.value?.species === "猫" ?
 const litterEstimateLabel = computed(() => (selectedPet.value?.species === "猫" ? "猫砂可用" : "清洁用品可用"));
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadPets();
 });
 

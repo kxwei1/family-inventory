@@ -28,7 +28,6 @@ const unitByCategory: Record<string, string> = {
   用品: "件",
 };
 onShow(() => {
-  uni.hideTabBar({ animation: false });
 });
 
 function todayDate() {

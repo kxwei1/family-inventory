@@ -50,7 +50,6 @@ const canRemoveSelectedMember = computed(() => {
 });
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadFamily();
 });
 

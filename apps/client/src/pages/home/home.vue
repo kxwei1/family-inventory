@@ -18,7 +18,6 @@ const actions = [
 ];
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadDashboard();
 });
 

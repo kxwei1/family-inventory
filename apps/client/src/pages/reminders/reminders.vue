@@ -29,7 +29,6 @@ const visibleItems = computed(() =>
 );
 
 onShow(() => {
-  uni.hideTabBar({ animation: false });
   void loadReminders();
 });
 

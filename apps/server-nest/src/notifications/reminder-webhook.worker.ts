@@ -35,8 +35,13 @@ export class ReminderWebhookWorker implements OnModuleInit, OnModuleDestroy {
   async onModuleInit(): Promise<void> {
     const redisUrl = this.config.get<string>("REDIS_URL");
     const enabled = this.config.get<string>("QUEUE_ENABLED") !== "false";
-    if (!redisUrl || !enabled) {
-      this.logger.log("Reminder webhook worker disabled (no REDIS_URL or QUEUE_ENABLED=false)");
+    const inProcess = this.config.get<string>("WORKER_INPROCESS") !== "false";
+    if (!redisUrl || !enabled || !inProcess) {
+      this.logger.log(
+        !inProcess
+          ? "WORKER_INPROCESS=false; in-process worker disabled (run `node dist/worker.js` separately)"
+          : "Reminder webhook worker disabled (no REDIS_URL or QUEUE_ENABLED=false)",
+      );
       return;
     }
 

@@ -93,4 +93,5 @@ pnpm dev:server-nest
 - [x] Redis 缓存层（`CacheService` 包装 dashboard / statistics，写路径自动失效；REDIS_URL 缺失时回退到内存缓存）
 - [x] 后台调度（`@nestjs/schedule` 定时扫描，自动生成低库存 / 临期 / 已过期提醒；按 externalKey upsert 去重）
 - [x] BullMQ 队列 + Webhook 推送（扫描结束后异步 fan-out 到家庭配置的 webhookUrl；REDIS 缺失时回退到内联 fire-and-forget）
-- [ ] 后台 worker 拆出独立进程（`node dist/main.js --worker`）
+- [x] 独立 Worker 入口（`pnpm dev:worker` / `node dist/src/worker.js`，`WORKER_INPROCESS=false` 关闭 API 进程内的同进程 worker）
+- [x] CI（GitHub Actions：typecheck + smoke + 52 单测 + 6 e2e + nest build + h5 build）

@@ -10,6 +10,7 @@
     "build:mp-weixin": "pnpm --filter @family-inventory/client build:mp-weixin",
     "dev:server": "pnpm --filter @family-inventory/server start:dev",
     "dev:server-nest": "pnpm --filter @family-inventory/server-nest start:dev",
+    "dev:worker": "pnpm --filter @family-inventory/server-nest start:worker:dev",
     "smoke:api": "pnpm --filter @family-inventory/server smoke:api",
     "test": "pnpm --filter @family-inventory/server-nest test",
     "test:e2e": "pnpm --filter @family-inventory/server-nest test:e2e",

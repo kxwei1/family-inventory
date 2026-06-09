@@ -65,6 +65,32 @@ Send the token on every subsequent call as `Authorization: Bearer <token>`.
 On the client, call `setAuthToken(token)` after login — the apiClient picks
 it up automatically and clears it on 401/403.
 
+## Standalone worker
+
+In production you'll usually want to run the BullMQ consumer as a separate
+process so a webhook outage or slow downstream doesn't slow HTTP traffic.
+
+```bash
+# build once
+pnpm --filter @family-inventory/server-nest build
+
+# API process — turn off the in-process worker
+WORKER_INPROCESS=false node apps/server-nest/dist/src/main.js
+
+# Worker process — boots WorkerModule (Prisma + Notifications only)
+node apps/server-nest/dist/src/worker.js
+```
+
+In development:
+
+```bash
+pnpm dev:server-nest    # API
+pnpm dev:worker         # worker, with watch
+```
+
+`WORKER_INPROCESS=true` (default) keeps the worker inside the API process so
+single-binary dev/QA setups still work without any extra orchestration.
+
 ## Endpoints currently implemented
 
 | Method | Path                                       | Notes                                          |

@@ -619,7 +619,7 @@ async function removeAlbumPhoto(petId: string, image: string) {
 .content {
   box-sizing: border-box;
   height: calc(100vh - 96rpx);
-  padding: 32rpx 32rpx 196rpx;
+  padding: 32rpx 32rpx calc(160rpx + env(safe-area-inset-bottom));
 }
 
 .pet-switcher {

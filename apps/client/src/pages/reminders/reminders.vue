@@ -268,7 +268,7 @@ function handleSecondary(item: ReminderItem) {
 
 .content {
   height: calc(100vh - 96rpx);
-  padding: 28rpx 28rpx 220rpx;
+  padding: 28rpx 28rpx calc(128rpx + env(safe-area-inset-bottom));
 }
 
 .summary-card {

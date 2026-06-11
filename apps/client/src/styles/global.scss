@@ -72,6 +72,21 @@ button {
   }
 }
 
+scroll-view,
+.uni-scroll-view,
+.uni-scroll-view-scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+scroll-view::-webkit-scrollbar,
+.uni-scroll-view::-webkit-scrollbar,
+.uni-scroll-view-scrollbar-hidden::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 // utility classes
 .card {
   background-color: $color-bg-card;
@@ -93,4 +108,44 @@ button {
 
 .safe-area-bottom {
   padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+
+// =========================================
+// Animations & Effects
+// =========================================
+
+.glass-panel {
+  background-color: $color-bg-glass;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.hover-scale {
+  transition: transform $transition-fast;
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.active-scale {
+  transition: transform $transition-fast, box-shadow $transition-fast;
+  &:active {
+    transform: scale(0.96);
+    box-shadow: $shadow-sm;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp $transition-base forwards;
 }

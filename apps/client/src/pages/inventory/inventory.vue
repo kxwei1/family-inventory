@@ -193,7 +193,7 @@ function goReminders() {
 
 <template>
   <view class="inventory-page">
-    <view class="topbar">
+    <view class="topbar glass-panel">
       <view class="topbar-brand">
         <PetPawMark />
       </view>
@@ -249,9 +249,10 @@ function goReminders() {
 
       <view v-else class="product-list">
         <view
-          v-for="product in displayedProducts"
+          v-for="(product, index) in displayedProducts"
           :key="product.id"
-          class="product-card"
+          class="product-card fade-in-up active-scale"
+          :style="{ animationDelay: `${index * 50}ms` }"
           :class="`status-${product.status}`"
           @click="openDetail(product)"
         >
@@ -271,7 +272,7 @@ function goReminders() {
       </view>
     </scroll-view>
 
-    <button class="fab" @click="addProduct">
+    <button class="fab active-scale" @click="addProduct">
       <wd-icon name="add" size="52rpx" />
     </button>
 
@@ -323,7 +324,7 @@ function goReminders() {
   align-items: center;
   justify-content: space-between;
   padding: 0 32rpx;
-  background: $color-bg-page;
+  background: transparent;
   color: $color-primary;
 }
 
@@ -353,7 +354,7 @@ function goReminders() {
 
 .content {
   height: calc(100vh - 96rpx);
-  padding: 32rpx 32rpx 230rpx;
+  padding: 32rpx 32rpx calc(128rpx + env(safe-area-inset-bottom));
 }
 
 .search-bar {
@@ -619,7 +620,7 @@ function goReminders() {
   border-radius: $radius-full;
   background: $color-primary-light;
   color: #ffffff;
-  box-shadow: 0 16rpx 40rpx rgba(24, 185, 129, 0.32);
+  box-shadow: $shadow-brand;
 }
 
 .sheet-mask {

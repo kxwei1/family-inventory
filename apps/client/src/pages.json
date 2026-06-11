@@ -94,7 +94,7 @@
   "tabBar": {
     "custom": true,
     "color": "#6B7280",
-    "selectedColor": "#006C49",
+    "selectedColor": "#FF7F50",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [
@@ -124,6 +124,6 @@
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "宠物管家",
     "navigationBarBackgroundColor": "#FFFFFF",
-    "backgroundColor": "#F8FBFA"
+    "backgroundColor": "#FFF8F5"
   }
 }

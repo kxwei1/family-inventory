@@ -4,42 +4,57 @@
 // =========================================
 
 // ---------- Colors ----------
-// Brand
-$color-primary: #006C49;
-$color-primary-light: #18B981;
-$color-primary-dark: #00422B;
-$color-primary-bg: #E8F8F2;
+// Brand - Coral/Orange
+$color-primary: #FF7F50;
+$color-primary-light: #FF9E80;
+$color-primary-dark: #F4511E;
+$color-primary-bg: #FFF5F0;
+$color-primary-gradient: linear-gradient(135deg, #FF9E80 0%, #FF7F50 100%);
+$color-primary-gradient-light: linear-gradient(147deg, #FFF5F0 0%, #FFF8F5 100%);
+
+// Accent Pastels (Macaron)
+$color-pastel-pink: #FFF0F5;
+$color-pastel-pink-text: #E91E63;
+$color-pastel-yellow: #FFFFF0;
+$color-pastel-yellow-text: #FFB300;
+$color-pastel-purple: #F8F0FF;
+$color-pastel-purple-text: #9C27B0;
+$color-pastel-blue: #F0F8FF;
+$color-pastel-blue-text: #2196F3;
+$color-pastel-green: #F0FFF0;
+$color-pastel-green-text: #4CAF50;
 
 // Accent
-$color-accent: #005CBA;
-$color-accent-bg: #EAF3FF;
-$color-accent-yellow: #FFE066;
+$color-accent: #FF7F50; 
+$color-accent-bg: #FFF5F0;
+$color-accent-yellow: #FFCA28;
 
 // Semantic
-$color-success: #16A34A;
-$color-success-bg: #E8F8F2;
-$color-warning: #D97706;
-$color-warning-bg: #FFF7E0;
-$color-danger: #DC2626;
-$color-danger-bg: #FFE9E6;
-$color-info: #005CBA;
-$color-info-bg: #EAF3FF;
+$color-success: #10B981;
+$color-success-bg: #D1FAE5;
+$color-warning: #FF8F00;
+$color-warning-bg: #FFF8E1;
+$color-danger: #F44336;
+$color-danger-bg: #FFEBEE;
+$color-info: #03A9F4;
+$color-info-bg: #E1F5FE;
 
 // Neutral
-$color-text-primary: #0A1F21;
-$color-text-secondary: #6B7280;
-$color-text-tertiary: #6C7A71;
-$color-text-disabled: #D1D5DB;
+$color-text-primary: #212121;
+$color-text-secondary: #757575;
+$color-text-tertiary: #9E9E9E;
+$color-text-disabled: #E0E0E0;
 $color-text-inverse: #FFFFFF;
 
-$color-bg-page: #F8FBFA;
+$color-bg-page: #FFF8F5; // Warm Peach
 $color-bg-card: #FFFFFF;
-$color-bg-muted: #E9FDFF;
-$color-bg-mask: rgba(0, 0, 0, 0.5);
+$color-bg-muted: #F5F5F5;
+$color-bg-mask: rgba(33, 33, 33, 0.4);
+$color-bg-glass: rgba(255, 255, 255, 0.85);
 
-$color-border: #E5E7EB;
-$color-border-light: #BBCABF;
-$color-divider: #E5E7EB;
+$color-border: #F5F5F5;
+$color-border-light: #FAFAFA;
+$color-divider: #EEEEEE;
 
 // ---------- Typography ----------
 $font-family-base: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
@@ -86,9 +101,10 @@ $radius-2xl: 40rpx;
 $radius-full: 9999rpx;
 
 // ---------- Shadows ----------
-$shadow-sm: 0 4rpx 16rpx rgba(21, 61, 53, 0.04);
-$shadow-md: 0 8rpx 32rpx rgba(21, 61, 53, 0.06);
-$shadow-lg: 0 16rpx 48rpx rgba(21, 61, 53, 0.08);
+$shadow-sm: 0 4rpx 16rpx rgba(99, 102, 241, 0.04);
+$shadow-md: 0 8rpx 32rpx rgba(99, 102, 241, 0.08);
+$shadow-lg: 0 16rpx 48rpx rgba(99, 102, 241, 0.12);
+$shadow-brand: 0 16rpx 40rpx rgba(99, 102, 241, 0.32);
 
 // ---------- Z-index ----------
 $z-base: 1;

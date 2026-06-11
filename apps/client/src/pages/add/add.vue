@@ -345,7 +345,7 @@ function onStockInDateChange(event: { detail: { value: string } }) {
 .content {
   box-sizing: border-box;
   height: calc(100vh - 96rpx);
-  padding: 40rpx 32rpx 296rpx;
+  padding: 40rpx 32rpx calc(272rpx + env(safe-area-inset-bottom));
 }
 
 .upload-wrap {

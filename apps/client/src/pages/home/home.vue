@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { onShow } from "@dcloudio/uni-app";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import AppTabBar from "@/components/AppTabBar.vue";
 import PetPawMark from "@/components/PetPawMark.vue";
 import { fetchProducts } from "@/services/inventoryApi";
 import { useDashboardStore } from "@/stores";
+import type { DashboardSummary } from "@family-inventory/shared-types";
 
 const PENDING_INVENTORY_FILTER_KEY = "fi:inventory:pending_filter";
+const HOME_ALERT_ORDER = ["expiring", "warning", "restock"];
+type DashboardAlert = DashboardSummary["alerts"][number];
 const dashboardStore = useDashboardStore();
 const { dashboard } = storeToRefs(dashboardStore);
+const visibleAlerts = computed<DashboardAlert[]>(() =>
+  HOME_ALERT_ORDER
+    .map((id) => dashboard.value.alerts.find((alert) => alert.id === id))
+    .filter((alert): alert is DashboardAlert => Boolean(alert)),
+);
 
 const actions = [
-  { id: "scan", label: "扫码入库", icon: "scan", tone: "mint" },
-  { id: "manual", label: "手动添加", icon: "add-circle", tone: "lake" },
-  { id: "out", label: "出库消耗", icon: "minus-circle", tone: "rose" },
+  { id: "scan", label: "扫码入库", icon: "scan", tone: "blue" },
+  { id: "manual", label: "手动添加", icon: "add-circle", tone: "purple" },
+  { id: "out", label: "出库消耗", icon: "minus-circle", tone: "orange" },
   { id: "list", label: "购物清单", icon: "list", tone: "yellow" },
 ];
 
@@ -98,46 +107,59 @@ function onAlert(id: string) {
 
   uni.navigateTo({ url: "/pages/reminders/reminders?category=soon" });
 }
+
+function getProgressWidth(days: number) {
+  // Max out at 100% for 60 days
+  const percentage = Math.min((days / 60) * 100, 100);
+  return `${percentage}%`;
+}
 </script>
 
 <template>
   <view class="home-page">
     <view class="topbar">
       <view class="topbar-brand">
-        <PetPawMark />
+        <view class="paw-icon-bg">
+          <PetPawMark />
+        </view>
       </view>
       <text class="topbar-title">宠物管家</text>
       <button class="topbar-icon" @click="goReminders">
-        <wd-icon name="notification" size="48rpx" />
+        <wd-icon name="notification" size="44rpx" />
       </button>
     </view>
 
     <scroll-view class="content" scroll-y :show-scrollbar="false">
+      <!-- Greeting Card -->
       <view class="greeting-card">
         <view>
           <view class="eyebrow">{{ dashboard.greeting }}</view>
           <view class="family-title">{{ dashboard.familyName }}</view>
         </view>
-        <image class="cat-avatar" :src="dashboard.avatar" mode="aspectFill" />
+        <view class="avatar-container">
+          <image class="cat-avatar" :src="dashboard.avatar" mode="aspectFill" />
+          <view class="online-dot"></view>
+        </view>
       </view>
 
-      <scroll-view class="alert-scroll" scroll-x :show-scrollbar="false">
+      <!-- Alert Grid -->
+      <view class="alert-grid">
         <view
-          v-for="alert in dashboard.alerts"
+          v-for="alert in visibleAlerts"
           :key="alert.id"
-          class="alert-card"
+          class="alert-card active-scale"
           :class="`tone-${alert.tone}`"
           @click="onAlert(alert.id)"
         >
           <view class="alert-row">
-            <wd-icon :name="alert.icon" size="48rpx" />
+            <wd-icon :name="alert.icon" size="36rpx" />
             <text class="alert-count">{{ alert.count }}</text>
           </view>
           <text class="alert-title">{{ alert.title }}</text>
-          <wd-icon class="alert-watermark" :name="alert.icon" size="128rpx" />
         </view>
-      </scroll-view>
+      </view>
 
+      <!-- Quick Actions -->
       <view class="section-head">
         <text>快捷操作</text>
       </view>
@@ -145,48 +167,67 @@ function onAlert(id: string) {
         <button
           v-for="action in actions"
           :key="action.id"
-          class="action-card"
+          class="action-card active-scale"
           @click="onQuickAction(action.id)"
         >
-          <view class="action-icon" :class="`tone-${action.tone}`">
-            <wd-icon :name="action.icon" size="48rpx" />
+          <view class="action-icon" :class="`bg-${action.tone}`">
+            <wd-icon :name="action.icon" size="40rpx" :class="`text-${action.tone}`" />
           </view>
           <text class="action-label">{{ action.label }}</text>
         </button>
       </view>
 
+      <!-- Category Overview -->
       <view class="section-head has-link">
         <text>分类总览</text>
-        <button @click="goInventory()">查看全部</button>
+        <button @click="goInventory()" class="view-all-btn">查看全部</button>
       </view>
-      <scroll-view class="category-scroll" scroll-x :show-scrollbar="false">
+      
+      <view class="category-list">
         <button
           v-for="category in dashboard.categories"
           :key="category.id"
-          class="category-card"
+          class="category-card active-scale"
           @click="goInventory(category.id)"
         >
           <view class="category-top">
-            <view class="category-icon" :class="`tone-${category.tone}`">
-              <wd-icon :name="category.icon" size="48rpx" />
+            <view class="category-left">
+              <view class="category-icon" :class="`bg-${category.tone}`">
+                <wd-icon :name="category.icon" size="60rpx" :class="`text-${category.tone}`" />
+              </view>
+              <view class="category-info">
+                <text class="category-name">{{ category.name }}</text>
+                <text class="muted">总数量</text>
+              </view>
             </view>
-            <text class="category-name">{{ category.name }}</text>
-          </view>
-          <view class="category-bottom">
-            <view>
-              <text class="muted">总数量</text>
+            <view class="category-right">
               <view class="category-number">
                 {{ category.total }}
                 <text>{{ category.unit }}</text>
               </view>
             </view>
-            <view class="category-days">
-              <text class="muted">预计可用</text>
-              <text>{{ category.days }}</text>
+          </view>
+          
+          <view class="category-progress-container">
+            <view class="progress-labels">
+              <text class="progress-status muted">
+                {{ category.days > 14 ? '库存充足' : '低库存提醒' }}
+              </text>
+              <view class="progress-days-col">
+                <text class="progress-days-label">预计可用</text>
+                <text class="progress-days-value" :class="category.days > 14 ? 'text-success' : 'text-warning'">约{{ category.days }}天</text>
+              </view>
+            </view>
+            <view class="progress-track">
+              <view 
+                class="progress-bar" 
+                :class="category.days > 14 ? 'bg-success' : 'bg-warning'"
+                :style="{ width: getProgressWidth(category.days) }"
+              ></view>
             </view>
           </view>
         </button>
-      </scroll-view>
+      </view>
     </scroll-view>
     <AppTabBar active="home" />
   </view>
@@ -204,120 +245,132 @@ function onAlert(id: string) {
   top: 0;
   z-index: $z-sticky;
   height: 96rpx;
-  display: grid;
-  grid-template-columns: 72rpx minmax(0, 1fr) 72rpx;
+  display: flex;
   align-items: center;
-  column-gap: 16rpx;
+  justify-content: space-between;
   padding: 0 32rpx;
-  background: $color-bg-page;
-  color: $color-primary;
+  background: transparent;
+  color: $color-text-primary;
 }
 
 .topbar-title {
-  font-size: 48rpx;
+  font-size: 36rpx;
   font-weight: $font-weight-bold;
-  line-height: 60rpx;
-  letter-spacing: 0;
+  line-height: 50rpx;
+  letter-spacing: 2rpx;
   text-align: center;
-  white-space: nowrap;
 }
 
-.topbar-brand,
-.topbar-icon {
+.paw-icon-bg {
   width: 72rpx;
-  min-width: 72rpx;
   height: 72rpx;
   display: flex;
   align-items: center;
-}
-
-.topbar-brand {
-  justify-content: flex-start;
+  justify-content: center;
+  background: #FFF0F5;
+  border-radius: 50%;
+  color: $color-primary;
 }
 
 .topbar-icon {
-  justify-content: flex-end;
-  color: $color-primary;
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border-radius: 50%;
+  color: $color-text-primary;
+  box-shadow: $shadow-sm;
 }
 
 .content {
   height: calc(100vh - 96rpx);
   width: 100%;
-  padding: 32rpx 32rpx calc(220rpx + env(safe-area-inset-bottom));
+  padding: 24rpx 32rpx calc(148rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
   overflow: hidden;
 }
 
 .greeting-card {
-  min-height: 160rpx;
+  min-height: 180rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 32rpx;
-  border-radius: 24rpx;
+  padding: 40rpx 48rpx;
+  border-radius: 48rpx;
   background: #ffffff;
-  box-shadow: $shadow-md;
+  box-shadow: $shadow-sm;
 }
 
 .eyebrow {
-  font-size: 28rpx;
-  line-height: 40rpx;
+  font-size: 26rpx;
+  line-height: 36rpx;
   color: $color-text-secondary;
 }
 
 .family-title {
-  margin-top: 6rpx;
-  font-size: 38rpx;
+  margin-top: 8rpx;
+  font-size: 44rpx;
   font-weight: $font-weight-bold;
-  line-height: 50rpx;
+  line-height: 56rpx;
   color: $color-text-primary;
 }
 
+.avatar-container {
+  position: relative;
+}
+
 .cat-avatar {
-  width: 96rpx;
-  height: 96rpx;
-  border: 4rpx solid $color-primary-light;
+  width: 120rpx;
+  height: 120rpx;
+  border: 4rpx solid $color-primary;
   border-radius: $radius-full;
 }
 
-.alert-scroll {
-  margin: 40rpx -32rpx 0;
-  padding: 0 32rpx 16rpx;
-  box-sizing: border-box;
-  white-space: nowrap;
+.online-dot {
+  position: absolute;
+  right: 6rpx;
+  bottom: 6rpx;
+  width: 24rpx;
+  height: 24rpx;
+  background-color: $color-success;
+  border: 4rpx solid #ffffff;
+  border-radius: 50%;
+}
+
+.alert-grid {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 16rpx;
+  margin: 40rpx 0 0;
 }
 
 .alert-card {
-  position: relative;
-  width: 320rpx;
-  height: 224rpx;
-  display: inline-flex;
+  flex: 1;
+  min-width: 0;
+  height: 140rpx;
+  display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  margin-right: 32rpx;
-  padding: 32rpx;
-  border-radius: 24rpx;
-  overflow: hidden;
-}
-
-.alert-watermark {
-  position: absolute;
-  right: -22rpx;
-  bottom: -28rpx;
-  opacity: 0.1;
-  transform: rotate(-2deg);
+  justify-content: center;
+  align-items: center;
+  gap: 12rpx;
+  padding: 20rpx 8rpx;
+  border-radius: 32rpx;
 }
 
 .alert-row {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
 }
 
 .alert-count {
-  font-size: 56rpx;
+  font-size: 38rpx;
   font-weight: $font-weight-bold;
-  line-height: 64rpx;
+  line-height: 46rpx;
 }
 
 .alert-title {
@@ -327,35 +380,56 @@ function onAlert(id: string) {
 }
 
 .tone-danger {
-  background: #fff0ed;
-  color: $color-danger;
+  background: $color-pastel-pink;
+  color: $color-pastel-pink-text;
 }
 
 .tone-warning {
-  background: #fffbea;
-  color: $color-warning;
+  background: $color-pastel-yellow;
+  color: $color-pastel-yellow-text;
 }
 
 .tone-info {
-  background: $color-accent-bg;
-  color: $color-accent;
+  background: $color-pastel-purple;
+  color: $color-pastel-purple-text;
 }
 
 .section-head {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 40rpx 0 24rpx;
+  margin: 50rpx 0 30rpx;
   font-size: 36rpx;
   font-weight: $font-weight-bold;
   line-height: 48rpx;
   color: $color-text-primary;
 }
 
-.section-head button {
-  font-size: 26rpx;
+.section-head.has-link {
+  gap: 24rpx;
+}
+
+.section-head.has-link text {
+  flex: 1;
+  min-width: 0;
+}
+
+.view-all-btn {
+  width: auto;
+  min-width: 140rpx;
+  height: 56rpx;
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 127, 80, 0.1);
+  font-size: 28rpx;
   font-weight: $font-weight-medium;
-  line-height: 34rpx;
+  line-height: 1;
   color: $color-primary;
 }
 
@@ -370,18 +444,17 @@ function onAlert(id: string) {
   width: 100%;
   max-width: none;
   min-width: 0;
-  height: 144rpx;
+  height: 160rpx;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 24rpx;
+  justify-content: center;
+  gap: 20rpx;
   margin: 0;
-  padding: 0 32rpx;
-  border-radius: 24rpx;
+  padding: 0 24rpx;
+  border-radius: 40rpx;
   background: #ffffff;
-  box-shadow: $shadow-md;
+  box-shadow: $shadow-sm;
   line-height: normal;
-  text-align: left;
   appearance: none;
 }
 
@@ -394,7 +467,7 @@ function onAlert(id: string) {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 18rpx;
+  border-radius: 32rpx;
 }
 
 .action-icon {
@@ -402,110 +475,172 @@ function onAlert(id: string) {
   height: 80rpx;
 }
 
-.tone-mint {
-  background: $color-primary-bg;
-  color: $color-primary;
-}
-
-.tone-lake {
-  background: $color-accent-bg;
-  color: $color-accent;
-}
-
-.tone-rose {
-  background: $color-danger-bg;
-  color: $color-danger;
-}
-
-.tone-yellow {
-  background: $color-warning-bg;
-  color: $color-warning;
-}
-
 .action-label {
-  flex: 1;
-  min-width: 0;
   font-size: 30rpx;
   font-weight: $font-weight-bold;
-  line-height: 40rpx;
   color: $color-text-primary;
-  white-space: nowrap;
 }
 
-.category-scroll {
-  margin: 0 -32rpx;
-  padding: 0 32rpx 20rpx;
-  box-sizing: border-box;
-  white-space: nowrap;
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
 }
 
 .category-card {
-  width: 384rpx;
-  height: 256rpx;
-  display: inline-flex;
+  width: 100%;
+  display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  margin-right: 32rpx;
-  padding: 32rpx;
-  border: 2rpx solid rgba(229, 231, 235, 0.7);
-  border-radius: 24rpx;
+  margin: 0;
+  padding: 40rpx;
+  border-radius: 64rpx;
   background: #ffffff;
-  box-shadow: $shadow-md;
+  border: 2rpx solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20rpx 50rpx -10rpx rgba(0, 0, 0, 0.05), 0 16rpx 20rpx -12rpx rgba(0, 0, 0, 0.05);
+  text-align: left;
+  line-height: normal;
+  appearance: none;
+}
+
+.category-card::after {
+  border: 0;
 }
 
 .category-top {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 32rpx;
+}
+
+.category-left {
+  display: flex;
   align-items: center;
-  gap: 24rpx;
+  gap: 32rpx;
 }
 
 .category-icon {
-  width: 80rpx;
-  height: 80rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 32rpx;
+}
+
+.category-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .category-name {
   font-size: 36rpx;
   font-weight: $font-weight-bold;
-  line-height: 44rpx;
   color: $color-text-primary;
-}
-
-.category-bottom {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  margin-bottom: 4rpx;
 }
 
 .muted {
-  display: block;
   font-size: 24rpx;
-  line-height: 32rpx;
-  color: $color-text-secondary;
+  color: $color-text-tertiary;
+}
+
+.category-right {
+  display: flex;
+  align-items: baseline;
 }
 
 .category-number {
-  margin-top: 8rpx;
-  font-size: 56rpx;
+  font-size: 48rpx;
   font-weight: $font-weight-bold;
-  line-height: 64rpx;
+  line-height: 1;
   color: $color-text-primary;
 }
 
 .category-number text {
-  margin-left: 6rpx;
+  margin-left: 8rpx;
   font-size: 24rpx;
-  font-weight: $font-weight-regular;
+  font-weight: $font-weight-medium;
   color: $color-text-secondary;
 }
 
-.category-days {
+.category-progress-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.progress-status {
+  font-size: 24rpx;
+  color: $color-text-secondary;
+}
+
+.progress-days-col {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  color: $color-success;
-  font-size: 30rpx;
-  font-weight: $font-weight-bold;
-  line-height: 38rpx;
 }
+
+.progress-days-label {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  text-transform: uppercase;
+  letter-spacing: 1rpx;
+}
+
+.progress-days-value {
+  font-size: 28rpx;
+  font-weight: $font-weight-bold;
+}
+
+.progress-track {
+  width: 100%;
+  height: 16rpx;
+  background: #F1F5F9;
+  border-radius: 999rpx;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 999rpx;
+  transition: width 0.3s ease;
+}
+
+// Utility background/text classes for pastel tones
+.bg-blue { background: $color-pastel-blue; }
+.text-blue { color: $color-pastel-blue-text; }
+.bg-purple { background: $color-pastel-purple; }
+.text-purple { color: $color-pastel-purple-text; }
+.bg-orange { background: #FFF5F0; }
+.text-orange { color: #FF7F50; }
+.bg-yellow { background: $color-pastel-yellow; }
+.text-yellow { color: $color-pastel-yellow-text; }
+.bg-pink { background: $color-pastel-pink; }
+.text-pink { color: $color-pastel-pink-text; }
+.bg-green { background: $color-pastel-green; }
+.text-green { color: $color-pastel-green-text; }
+
+.bg-success { background: $color-success; }
+.text-success { color: $color-success; }
+.bg-warning { background: $color-warning; }
+.text-warning { color: $color-warning; }
+
+// Tone mapping overrides for categories since they use tone from data
+.bg-tone-mint { background: $color-pastel-blue; }
+.text-tone-mint { color: $color-pastel-blue-text; }
+.bg-tone-lake { background: #EEF2FF; }
+.text-tone-lake { color: #6366F1; }
+.bg-tone-rose { background: #FDF2F8; }
+.text-tone-rose { color: #EC4899; }
+.bg-tone-yellow { background: #FFFBEB; }
+.text-tone-yellow { color: #F59E0B; }
+
 </style>
+

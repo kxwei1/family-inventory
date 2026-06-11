@@ -226,7 +226,7 @@ function copySupportEmail() {
       </view>
 
       <view class="stats-grid">
-        <button v-for="stat in stats" :key="stat.label" class="stat-card" @click="onStat(stat.id)">
+        <button v-for="stat in stats" :key="stat.label" class="stat-card active-scale" @click="onStat(stat.id)">
           <view class="stat-value">{{ stat.value }}</view>
           <view class="stat-label">{{ stat.label }}</view>
         </button>
@@ -239,7 +239,7 @@ function copySupportEmail() {
           <view
             v-for="(item, index) in group.items"
             :key="item.id"
-            class="menu-item"
+            class="menu-item active-scale"
             :class="{ divided: index > 0 }"
             @click="onMenuItem(item.id)"
           >
@@ -253,7 +253,7 @@ function copySupportEmail() {
       </view>
 
       <view class="logout-area">
-        <button class="logout-button" @click="logout">退出登录</button>
+        <button class="logout-button active-scale" @click="logout">退出登录</button>
         <text class="version">当前版本 v1.0.0</text>
       </view>
     </scroll-view>
@@ -376,7 +376,7 @@ function copySupportEmail() {
 .content {
   box-sizing: border-box;
   height: 100vh;
-  padding: 40rpx 32rpx 230rpx;
+  padding: 40rpx 32rpx calc(128rpx + env(safe-area-inset-bottom));
 }
 
 .hero-card {
@@ -387,7 +387,7 @@ function copySupportEmail() {
   padding: 48rpx 32rpx 42rpx;
   border: 2rpx solid #ffffff;
   border-radius: 24rpx;
-  background: linear-gradient(147deg, #e8f8f2 0%, #f8fbfa 100%);
+  background: $color-primary-gradient-light;
   box-shadow: $shadow-md;
 }
 

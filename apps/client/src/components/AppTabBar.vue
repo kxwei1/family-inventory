@@ -73,7 +73,7 @@ function goTab(tab: TabItem) {
 </script>
 
 <template>
-  <view class="app-tabbar">
+  <view class="app-tabbar glass-panel">
     <view
       v-for="tab in tabs"
       :key="tab.key"
@@ -112,8 +112,8 @@ function goTab(tab: TabItem) {
   padding: 8rpx 12rpx max(env(safe-area-inset-bottom), 0px);
   border-top: 2rpx solid $color-border;
   border-radius: 24rpx 24rpx 0 0;
-  background: $color-bg-card;
-  box-shadow: 0 -8rpx 24rpx rgba(21, 61, 53, 0.08);
+  background: transparent;
+  box-shadow: 0 -8rpx 24rpx rgba(255, 127, 80, 0.06);
   box-sizing: border-box;
   overflow: visible;
 }
@@ -143,6 +143,11 @@ function goTab(tab: TabItem) {
   align-items: center;
   justify-content: center;
   color: inherit;
+  transition: transform $transition-fast;
+}
+
+.tabbar-item.active .tabbar-icon-wrap {
+  transform: scale(1.15);
 }
 
 .tabbar-badge {
@@ -191,6 +196,6 @@ function goTab(tab: TabItem) {
   border-radius: $radius-full;
   color: $color-text-inverse;
   background: $color-primary;
-  box-shadow: 0 16rpx 32rpx rgba(0, 108, 73, 0.28);
+  box-shadow: 0 16rpx 32rpx rgba(255, 127, 80, 0.32);
 }
 </style>

@@ -20,6 +20,12 @@ const ranges: Array<{ id: StatisticsRange; label: string }> = [
 const donutColors = ["#006C49", "#FFE066", "#005CBA", "#DFF8FB"];
 
 const visibleRatios = computed(() => statistics.value.categoryRatio.slice(0, 3));
+const topExpenses = computed(() => statistics.value.topExpenses.slice(0, 5));
+const topExpensesTitle = "\u5355\u7b14\u652f\u51fa Top 5";
+const topExpensesActionText = "\u67e5\u770b\u5168\u90e8";
+const topExpensesEmptyText = "\u6682\u65e0\u652f\u51fa\u8bb0\u5f55";
+const productArchivedToast = "\u5546\u54c1\u5df2\u5f52\u6863";
+const topExpenseDetailToast = "\u6682\u65e0\u5546\u54c1\u8be6\u60c5";
 const bars = computed(() =>
   statistics.value.trendSeries.map((item) => ({
     ...item,
@@ -82,19 +88,6 @@ const insightText = computed(() => {
   return `本月「${topCategory}」支出较上月增加，建议关注余粮情况；「零食」支出明显下降，控糖计划执行良好。`;
 });
 
-const topExpenses = computed(() =>
-  statistics.value.topExpenses
-    .slice(0, 5)
-    .map((item, index) => ({
-      ...item,
-      meta: `${item.category} · ${item.date}`,
-      amountText: formatMoney(item.amount),
-      image: item.productImage ?? (index === 0 ? "/static/products/orijen.png" : undefined),
-      icon: index === 1 ? "scan" : "edit",
-      tone: index === 0 ? "gold" : index === 1 ? "blue" : "rose",
-    })),
-);
-
 onShow(() => {
   void loadStatistics(activeRange.value);
 });
@@ -139,24 +132,41 @@ function selectRange(range: StatisticsRange) {
   void loadStatistics(range);
 }
 
-function goRecords() {
+function openExpenseList() {
   uni.navigateTo({ url: "/pages/records/records" });
 }
 
-function openTopExpense(item: StatisticsSummary["topExpenses"][number]) {
-  if (!item.productId) {
-    goRecords();
+function openExpenseItem(item: StatisticsSummary["topExpenses"][number]) {
+  if (item.productId && !item.productArchived) {
+    uni.navigateTo({
+      url: `/pages/product-detail/product-detail?id=${encodeURIComponent(item.productId)}`,
+    });
     return;
   }
 
   if (item.productArchived) {
-    uni.showToast({ title: "商品已归档，历史记录已保留", icon: "none" });
+    uni.showToast({ title: productArchivedToast, icon: "none" });
     return;
   }
 
-  uni.navigateTo({
-    url: `/pages/product-detail/product-detail?id=${encodeURIComponent(item.productId)}`,
-  });
+  uni.showToast({ title: topExpenseDetailToast, icon: "none" });
+}
+
+function expenseRankClass(rank: number) {
+  if (rank === 1) return "gold";
+  if (rank === 2) return "blue";
+  return "rose";
+}
+
+function expenseIconClass(rank: number) {
+  return rank === 3 ? "rose" : "blue";
+}
+
+function expenseIconName(category: string) {
+  if (category.includes("\u533b\u7597")) return "warning";
+  if (category.includes("\u670d\u52a1")) return "edit";
+  if (category.includes("\u96f6\u98df")) return "shop";
+  return "goods";
 }
 
 function exportReport() {
@@ -297,24 +307,43 @@ function buildReportText() {
 
       <view class="top-card">
         <view class="top-card-head">
-          <text>单笔支出 Top 5</text>
-          <button @click="goRecords">查看全部 <wd-icon name="arrow-right" size="24rpx" /></button>
+          <text>{{ topExpensesTitle }}</text>
+          <button @click="openExpenseList">
+            {{ topExpensesActionText }}
+            <wd-icon name="arrow-right" size="28rpx" />
+          </button>
         </view>
 
-        <view class="expense-list">
-          <view v-for="item in topExpenses" :key="item.id" class="expense-row" @click="openTopExpense(item)">
-            <view class="rank" :class="item.tone">{{ item.rank }}</view>
-            <image v-if="item.image" class="row-image" :src="item.image" mode="aspectFill" />
-            <view v-else class="row-icon" :class="item.tone">
-              <wd-icon :name="item.icon" size="38rpx" />
+        <view v-if="topExpenses.length" class="expense-list">
+          <view
+            v-for="item in topExpenses"
+            :key="item.id"
+            class="expense-row"
+            @click="openExpenseItem(item)"
+          >
+            <view class="rank" :class="expenseRankClass(item.rank)">
+              {{ item.rank }}
             </view>
+
+            <image
+              v-if="item.productImage"
+              class="row-image"
+              :src="item.productImage"
+              mode="aspectFill"
+            />
+            <view v-else class="row-icon" :class="expenseIconClass(item.rank)">
+              <wd-icon :name="expenseIconName(item.category)" size="32rpx" />
+            </view>
+
             <view class="row-main">
               <view class="row-title">{{ item.name }}</view>
-              <view class="row-meta">{{ item.meta }}</view>
+              <view class="row-meta">{{ item.category }} 路 {{ item.date }}</view>
             </view>
-            <view class="row-amount">{{ item.amountText }}</view>
+
+            <view class="row-amount">{{ formatMoney(item.amount) }}</view>
           </view>
         </view>
+        <view v-else class="expense-empty">{{ topExpensesEmptyText }}</view>
       </view>
     </scroll-view>
     <AppTabBar active="statistics" />
@@ -363,7 +392,7 @@ function buildReportText() {
 .content {
   box-sizing: border-box;
   height: calc(100vh - 96rpx);
-  padding: 32rpx 32rpx 230rpx;
+  padding: 32rpx 32rpx calc(128rpx + env(safe-area-inset-bottom));
 }
 
 .range-tabs {
@@ -725,6 +754,14 @@ function buildReportText() {
   margin-top: 26rpx;
 }
 
+.expense-empty {
+  margin-top: 26rpx;
+  padding: 24rpx 0 4rpx;
+  color: $color-text-secondary;
+  font-size: 24rpx;
+  line-height: 34rpx;
+}
+
 .expense-row {
   min-height: 100rpx;
   display: flex;
@@ -812,3 +849,4 @@ function buildReportText() {
   color: $color-text-primary;
 }
 </style>
+

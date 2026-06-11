@@ -211,18 +211,18 @@ function getProgressWidth(days: number) {
           <view class="category-progress-container">
             <view class="progress-labels">
               <text class="progress-status muted">
-                {{ category.days > 14 ? '库存充足' : '低库存提醒' }}
+                {{ Number(category.days) > 14 ? '库存充足' : '低库存提醒' }}
               </text>
               <view class="progress-days-col">
                 <text class="progress-days-label">预计可用</text>
-                <text class="progress-days-value" :class="category.days > 14 ? 'text-success' : 'text-warning'">约{{ category.days }}天</text>
+                <text class="progress-days-value" :class="Number(category.days) > 14 ? 'text-success' : 'text-warning'">约{{ category.days }}天</text>
               </view>
             </view>
             <view class="progress-track">
               <view 
                 class="progress-bar" 
-                :class="category.days > 14 ? 'bg-success' : 'bg-warning'"
-                :style="{ width: getProgressWidth(category.days) }"
+                :class="Number(category.days) > 14 ? 'bg-success' : 'bg-warning'"
+                :style="{ width: getProgressWidth(Number(category.days)) }"
               ></view>
             </view>
           </view>

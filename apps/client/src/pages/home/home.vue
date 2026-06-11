@@ -13,6 +13,9 @@ const HOME_ALERT_ORDER = ["expiring", "warning", "restock"];
 type DashboardAlert = DashboardSummary["alerts"][number];
 const dashboardStore = useDashboardStore();
 const { dashboard } = storeToRefs(dashboardStore);
+const notificationCount = computed(() =>
+  dashboard.value.alerts.reduce((sum, alert) => sum + alert.count, 0),
+);
 const visibleAlerts = computed<DashboardAlert[]>(() =>
   HOME_ALERT_ORDER
     .map((id) => dashboard.value.alerts.find((alert) => alert.id === id))
@@ -113,20 +116,44 @@ function getProgressWidth(days: number) {
   const percentage = Math.min((days / 60) * 100, 100);
   return `${percentage}%`;
 }
+
+function extractCategoryDays(days: string) {
+  const match = days.match(/\d+(?:\.\d+)?/);
+  return match ? Number(match[0]) : 0;
+}
+
+function formatCategoryDays(days: string) {
+  const trimmed = days.trim();
+
+  if (!trimmed) return "0天";
+  if (/^\d+(?:\.\d+)?$/.test(trimmed)) return `约${trimmed}天`;
+  return trimmed;
+}
 </script>
 
 <template>
   <view class="home-page">
     <view class="topbar">
-      <view class="topbar-brand">
-        <view class="paw-icon-bg">
-          <PetPawMark />
+      <view class="topbar-main">
+        <view class="topbar-brand">
+          <view class="paw-icon-bg">
+            <PetPawMark />
+          </view>
         </view>
+        <text class="topbar-title">宠物管家</text>
       </view>
-      <text class="topbar-title">宠物管家</text>
-      <button class="topbar-icon" @click="goReminders">
-        <wd-icon name="notification" size="44rpx" />
-      </button>
+      <view class="topbar-icon-wrap">
+        <button class="topbar-icon" @click="goReminders">
+          <wd-icon name="notification" size="44rpx" />
+        </button>
+        <text
+          v-if="notificationCount > 0"
+          class="topbar-badge"
+          :class="{ wide: notificationCount > 9 }"
+        >
+          {{ notificationCount > 99 ? "99+" : notificationCount }}
+        </text>
+      </view>
     </view>
 
     <scroll-view class="content" scroll-y :show-scrollbar="false">
@@ -211,18 +238,20 @@ function getProgressWidth(days: number) {
           <view class="category-progress-container">
             <view class="progress-labels">
               <text class="progress-status muted">
-                {{ Number(category.days) > 14 ? '库存充足' : '低库存提醒' }}
+                {{ extractCategoryDays(category.days) > 14 ? '库存充足' : '低库存提醒' }}
               </text>
               <view class="progress-days-col">
                 <text class="progress-days-label">预计可用</text>
-                <text class="progress-days-value" :class="Number(category.days) > 14 ? 'text-success' : 'text-warning'">约{{ category.days }}天</text>
+                <text class="progress-days-value" :class="extractCategoryDays(category.days) > 14 ? 'text-success' : 'text-warning'">
+                  {{ formatCategoryDays(category.days) }}
+                </text>
               </view>
             </view>
             <view class="progress-track">
               <view 
                 class="progress-bar" 
-                :class="Number(category.days) > 14 ? 'bg-success' : 'bg-warning'"
-                :style="{ width: getProgressWidth(Number(category.days)) }"
+                :class="extractCategoryDays(category.days) > 14 ? 'bg-success' : 'bg-warning'"
+                :style="{ width: getProgressWidth(extractCategoryDays(category.days)) }"
               ></view>
             </view>
           </view>
@@ -253,12 +282,20 @@ function getProgressWidth(days: number) {
   color: $color-text-primary;
 }
 
+.topbar-main {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
 .topbar-title {
   font-size: 36rpx;
   font-weight: $font-weight-bold;
   line-height: 50rpx;
   letter-spacing: 2rpx;
-  text-align: center;
+  text-align: left;
 }
 
 .paw-icon-bg {
@@ -273,6 +310,8 @@ function getProgressWidth(days: number) {
 }
 
 .topbar-icon {
+  position: relative;
+  z-index: 1;
   width: 72rpx;
   height: 72rpx;
   display: flex;
@@ -282,6 +321,41 @@ function getProgressWidth(days: number) {
   border-radius: 50%;
   color: $color-text-primary;
   box-shadow: $shadow-sm;
+}
+
+.topbar-icon-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: 72rpx;
+  height: 72rpx;
+  overflow: visible;
+}
+
+.topbar-badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  z-index: 2;
+  width: 28rpx;
+  height: 28rpx;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  background: #ff4d4f;
+  color: #ffffff;
+  font-size: 16rpx;
+  font-weight: $font-weight-bold;
+  line-height: 28rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.topbar-badge.wide {
+  width: auto;
+  min-width: 36rpx;
+  padding: 0 6rpx;
 }
 
 .content {
@@ -398,7 +472,7 @@ function getProgressWidth(days: number) {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin: 50rpx 0 30rpx;
   font-size: 36rpx;
   font-weight: $font-weight-bold;
@@ -420,7 +494,6 @@ function getProgressWidth(days: number) {
   min-width: 140rpx;
   height: 56rpx;
   flex: 0 0 auto;
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -236,13 +236,13 @@ function handleSecondary(item: ReminderItem) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 34rpx;
+  padding: 0 16rpx;
+  box-sizing: border-box;
   background: $color-bg-page;
 }
 
 .icon-button,
 .read-button {
-  min-width: 86rpx;
   height: 72rpx;
   display: flex;
   align-items: center;
@@ -250,20 +250,30 @@ function handleSecondary(item: ReminderItem) {
 }
 
 .icon-button {
+  width: 72rpx;
+  flex: 0 0 72rpx;
   justify-content: flex-start;
 }
 
 .read-button {
+  flex: 0 0 auto;
   justify-content: flex-end;
+  padding: 0 8rpx;
   font-size: 24rpx;
   font-weight: $font-weight-bold;
 }
 
 .topbar-title {
+  flex: 1;
+  min-width: 0;
   font-size: 48rpx;
   font-weight: $font-weight-bold;
   line-height: 60rpx;
   color: $color-primary;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .content {
@@ -312,7 +322,7 @@ function handleSecondary(item: ReminderItem) {
 }
 
 .summary-row {
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-end;
   gap: 20rpx;
   font-size: 26rpx;
@@ -320,6 +330,7 @@ function handleSecondary(item: ReminderItem) {
 }
 
 .summary-count-row {
+  flex: 1;
   min-width: 0;
   align-items: flex-end;
   gap: 10rpx;

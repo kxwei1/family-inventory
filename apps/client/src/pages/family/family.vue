@@ -575,6 +575,7 @@ async function dissolveCurrentFamily() {
   align-items: center;
   justify-content: space-between;
   padding: 0 32rpx;
+  box-sizing: border-box;
   background: $color-bg-page;
   color: $color-primary;
 }
@@ -585,17 +586,25 @@ async function dissolveCurrentFamily() {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  flex: 0 0 80rpx;
 }
 
 .icon-button.right {
   justify-content: flex-end;
+  flex: 0 0 80rpx;
 }
 
 .topbar-title {
+  flex: 1;
+  min-width: 0;
   font-size: 46rpx;
   font-weight: $font-weight-bold;
   line-height: 58rpx;
   letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .content {

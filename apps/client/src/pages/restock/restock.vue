@@ -312,38 +312,40 @@ function sharePlan() {
   align-items: center;
   justify-content: space-between;
   padding: 0 32rpx;
+  box-sizing: border-box;
   background: $color-bg-page;
 }
 
 .icon-button {
-  position: relative;
-  z-index: 1;
   width: 80rpx;
   height: 80rpx;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  flex: 0 0 80rpx;
   color: $color-primary;
 }
 
 .topbar-title {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  flex: 1;
+  min-width: 0;
   font-size: 46rpx;
   font-weight: $font-weight-bold;
   line-height: 58rpx;
   color: $color-primary;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .generate-button {
-  position: relative;
-  z-index: 1;
   min-width: 126rpx;
   height: 54rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   border-radius: $radius-full;
   background: $color-primary-bg;
   color: $color-primary;
@@ -549,6 +551,7 @@ function sharePlan() {
   width: 280rpx;
   display: inline-flex;
   flex-direction: column;
+  vertical-align: top;
   margin-right: 24rpx;
   padding: 24rpx;
   border-radius: 20rpx;

@@ -365,6 +365,7 @@ function buildReportText() {
   align-items: center;
   justify-content: space-between;
   padding: 0 32rpx;
+  box-sizing: border-box;
   background: $color-bg-page;
   color: $color-primary;
 }
@@ -374,19 +375,27 @@ function buildReportText() {
   height: 80rpx;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  flex: 0 0 80rpx;
   color: $color-primary;
 }
 
 .topbar-button.right {
-  justify-content: flex-end;
+  justify-content: center;
+  flex: 0 0 80rpx;
 }
 
 .topbar-title {
+  flex: 1;
+  min-width: 0;
   font-size: 48rpx;
   font-weight: $font-weight-bold;
   line-height: 60rpx;
   letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .content {
@@ -648,8 +657,15 @@ function buildReportText() {
   color: $color-text-secondary;
 }
 
+.legend-row text:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .legend-row text:last-child {
-  margin-left: auto;
   color: $color-text-primary;
   font-weight: $font-weight-bold;
 }
@@ -732,22 +748,34 @@ function buildReportText() {
 .top-card-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 24rpx;
 }
 
 .top-card-head > text {
+  flex: 1;
+  min-width: 0;
   font-size: 34rpx;
   font-weight: $font-weight-bold;
   line-height: 44rpx;
 }
 
 .top-card-head button {
-  display: flex;
+  flex: 0 0 auto;
+  min-width: 148rpx;
+  height: 56rpx;
+  display: inline-flex;
   align-items: center;
-  gap: 4rpx;
+  justify-content: center;
+  gap: 6rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 127, 80, 0.1);
   color: $color-primary;
-  font-size: 24rpx;
+  font-size: 28rpx;
   font-weight: $font-weight-medium;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .expense-list {

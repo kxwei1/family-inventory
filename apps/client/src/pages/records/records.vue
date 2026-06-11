@@ -255,6 +255,7 @@ function formatDateKey(value: string) {
   align-items: center;
   justify-content: space-between;
   padding: 0 34rpx;
+  box-sizing: border-box;
   background: $color-bg-page;
 }
 
@@ -264,18 +265,26 @@ function formatDateKey(value: string) {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  flex: 0 0 72rpx;
   color: $color-primary;
 }
 
 .icon-button.right {
   justify-content: flex-end;
+  flex: 0 0 72rpx;
 }
 
 .topbar-title {
+  flex: 1;
+  min-width: 0;
   font-size: 48rpx;
   font-weight: $font-weight-bold;
   line-height: 60rpx;
   color: $color-primary;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .content {

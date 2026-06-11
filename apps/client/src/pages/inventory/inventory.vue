@@ -9,12 +9,14 @@ import type {
 } from "@family-inventory/shared-types";
 import AppTabBar from "@/components/AppTabBar.vue";
 import PetPawMark from "@/components/PetPawMark.vue";
-import { useInventoryStore } from "@/stores";
+import { useInventoryStore, useRemindersStore } from "@/stores";
 
 const PENDING_INVENTORY_FILTER_KEY = "fi:inventory:pending_filter";
 const inventoryStore = useInventoryStore();
+const remindersStore = useRemindersStore();
 const { products, isLoading, activeCategory, activeStatus, searchQuery } =
   storeToRefs(inventoryStore);
+const { summary: reminderSummary } = storeToRefs(remindersStore);
 const isFilterSheetVisible = ref(false);
 let searchTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -38,14 +40,15 @@ const statusOptions: Array<{ id: InventoryStockStatus | "all"; label: string; de
 const activeStatusLabel = computed(
   () => statusOptions.find((status) => status.id === activeStatus.value)?.label ?? "全部状态",
 );
+const notificationCount = computed(() => reminderSummary.value.total);
 
 const hasActiveFilters = computed(() => inventoryStore.hasActiveFilters);
 
 const displayedProducts = computed(() => products.value);
 
 onShow(() => {
-
   applyPendingInventoryFilter();
+  void remindersStore.refresh().catch(() => undefined);
   void loadProducts();
 });
 
@@ -198,9 +201,18 @@ function goReminders() {
         <PetPawMark />
       </view>
       <text class="topbar-title">宠物管家</text>
-      <button class="topbar-icon" @click="goReminders">
-        <wd-icon name="notification" size="44rpx" />
-      </button>
+      <view class="topbar-icon-wrap">
+        <button class="topbar-icon" @click="goReminders">
+          <wd-icon name="notification" size="44rpx" />
+        </button>
+        <text
+          v-if="notificationCount > 0"
+          class="topbar-badge"
+          :class="{ wide: notificationCount > 9 }"
+        >
+          {{ notificationCount > 99 ? "99+" : notificationCount }}
+        </text>
+      </view>
     </view>
 
     <scroll-view class="content" scroll-y :show-scrollbar="false">
@@ -322,34 +334,84 @@ function goReminders() {
   height: 96rpx;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 16rpx;
   padding: 0 32rpx;
+  box-sizing: border-box;
   background: transparent;
   color: $color-primary;
 }
 
 .topbar-title {
+  flex: 1;
+  min-width: 0;
   font-size: 48rpx;
   font-weight: $font-weight-bold;
   line-height: 60rpx;
   letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .topbar-brand,
-.topbar-icon {
+.topbar-icon-wrap {
   width: 72rpx;
   height: 72rpx;
   display: flex;
   align-items: center;
+  flex: 0 0 72rpx;
 }
 
 .topbar-brand {
   justify-content: flex-start;
 }
 
+.topbar-icon-wrap {
+  position: relative;
+  overflow: visible;
+}
+
 .topbar-icon {
-  justify-content: flex-end;
-  color: $color-primary;
+  position: relative;
+  z-index: 1;
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 50%;
+  color: $color-text-primary;
+  box-shadow: $shadow-sm;
+}
+
+.topbar-badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  z-index: 2;
+  width: 28rpx;
+  height: 28rpx;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  background: #ff4d4f;
+  color: #ffffff;
+  font-size: 16rpx;
+  font-weight: $font-weight-bold;
+  line-height: 28rpx;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.topbar-badge.wide {
+  width: auto;
+  min-width: 36rpx;
+  padding: 0 6rpx;
 }
 
 .content {
@@ -408,28 +470,35 @@ function goReminders() {
   min-height: 58rpx;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 20rpx;
   margin-top: 20rpx;
-  padding: 0 18rpx;
-  border-radius: 12rpx;
-  background: $color-primary-bg;
-  color: $color-primary;
+  padding: 0;
+  color: $color-text-primary;
 }
 
 .filter-summary text {
+  flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 24rpx;
+  font-size: 30rpx;
   font-weight: $font-weight-bold;
+  line-height: 40rpx;
+  color: $color-text-primary;
 }
 
 .filter-summary button {
   flex: 0 0 auto;
-  font-size: 24rpx;
-  font-weight: $font-weight-bold;
+  min-width: 132rpx;
+  height: 56rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 127, 80, 0.1);
+  color: $color-primary;
+  font-size: 28rpx;
+  font-weight: $font-weight-medium;
 }
 
 .chip-scroll {

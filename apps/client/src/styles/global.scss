@@ -72,6 +72,12 @@ button {
   }
 }
 
+uni-button,
+button {
+  margin-left: initial !important;
+  margin-right: initial !important;
+}
+
 scroll-view,
 .uni-scroll-view,
 .uni-scroll-view-scrollbar-hidden {

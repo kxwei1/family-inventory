@@ -20,7 +20,6 @@ interface RecognizedProduct {
 const activeMode = ref<ScanMode>("barcode");
 const isScanning = ref(false);
 const isSaving = ref(false);
-const isTorchOn = ref(false);
 const recognizedProduct = ref<RecognizedProduct | null>(null);
 const recentProducts = ref<InventoryProductSummary[]>([]);
 
@@ -120,52 +119,6 @@ function simulateRecognition() {
   }, 650);
 }
 
-function recognizeFromAlbum() {
-  if (isScanning.value) return;
-
-  isScanning.value = true;
-
-  if (typeof uni.chooseImage === "function") {
-    uni.chooseImage({
-      count: 1,
-      sourceType: ["album"],
-      success: (result) => {
-        const image = Array.isArray(result.tempFilePaths) ? result.tempFilePaths[0] : "";
-        recognizedProduct.value = {
-          ...demoByMode[activeMode.value],
-          image: image || demoByMode[activeMode.value].image,
-          spec: `${demoByMode[activeMode.value].spec} · 相册识别`,
-        };
-      },
-      fail: () => {
-        recognizedProduct.value = {
-          ...demoByMode[activeMode.value],
-          spec: `${demoByMode[activeMode.value].spec} · 相册识别`,
-        };
-        uni.showToast({ title: "已使用示例识别结果", icon: "none" });
-      },
-      complete: () => {
-        isScanning.value = false;
-      },
-    });
-    return;
-  }
-
-  setTimeout(() => {
-    recognizedProduct.value = {
-      ...demoByMode[activeMode.value],
-      spec: `${demoByMode[activeMode.value].spec} · 相册识别`,
-    };
-    uni.showToast({ title: "已使用示例识别结果", icon: "none" });
-    isScanning.value = false;
-  }, 500);
-}
-
-function toggleTorch() {
-  isTorchOn.value = !isTorchOn.value;
-  uni.showToast({ title: isTorchOn.value ? "手电筒已开启" : "手电筒已关闭", icon: "none" });
-}
-
 async function confirmStockIn() {
   if (!recognizedProduct.value || isSaving.value) return;
 
@@ -215,7 +168,7 @@ function openProduct(product: InventoryProductSummary) {
 </script>
 
 <template>
-  <view class="stock-in-page" :class="{ torch: isTorchOn }">
+  <view class="stock-in-page">
     <view class="camera-bg">
       <image class="camera-product" src="/static/products/royal-kitten-food.jpg" mode="aspectFill" />
     </view>
@@ -261,27 +214,6 @@ function openProduct(product: InventoryProductSummary) {
       </view>
       <button :disabled="isSaving" @click="confirmStockIn">
         {{ isSaving ? "入库中" : "确认入库" }}
-      </button>
-    </view>
-
-    <view class="action-row">
-      <button @click="recognizeFromAlbum">
-        <view>
-          <wd-icon name="picture" size="52rpx" />
-        </view>
-        <text>相册</text>
-      </button>
-      <button :class="{ active: isTorchOn }" @click="toggleTorch">
-        <view>
-          <wd-icon name="browse" size="52rpx" />
-        </view>
-        <text>手电筒</text>
-      </button>
-      <button @click="goManualInput">
-        <view>
-          <wd-icon name="edit" size="52rpx" />
-        </view>
-        <text>手动输入</text>
       </button>
     </view>
 
@@ -345,16 +277,6 @@ function openProduct(product: InventoryProductSummary) {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.62);
-  -webkit-mask-image: radial-gradient(circle at center, transparent 0 260rpx, #000 262rpx);
-  mask-image: radial-gradient(circle at center, transparent 0 260rpx, #000 262rpx);
-}
-
-.stock-in-page.torch .camera-overlay {
-  background: rgba(0, 0, 0, 0.42);
-}
-
-.stock-in-page.torch .scan-frame {
-  filter: drop-shadow(0 0 18rpx rgba(255, 255, 255, 0.5));
 }
 
 .topbar {
@@ -426,7 +348,7 @@ function openProduct(product: InventoryProductSummary) {
   z-index: 0;
   width: 500rpx;
   height: 500rpx;
-  border-radius: $radius-full;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.44);
   box-shadow:
     inset 0 0 70rpx rgba(255, 255, 255, 0.18),
@@ -590,26 +512,6 @@ function openProduct(product: InventoryProductSummary) {
   font-weight: $font-weight-bold;
 }
 
-.action-row {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  gap: 94rpx;
-  margin: 22rpx 0 40rpx;
-}
-
-.action-row button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14rpx;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 24rpx;
-  font-weight: $font-weight-bold;
-}
-
-.action-row button view,
 .recent-add {
   width: 112rpx;
   height: 112rpx;
@@ -620,11 +522,6 @@ function openProduct(product: InventoryProductSummary) {
   border-radius: $radius-full;
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(16rpx);
-}
-
-.action-row button.active view {
-  border-color: rgba(255, 255, 255, 0.72);
-  background: rgba(255, 255, 255, 0.26);
 }
 
 .recent-card {

@@ -312,6 +312,7 @@ function onStockInDateChange(event: { detail: { value: string } }) {
   align-items: center;
   justify-content: space-between;
   padding: 0 32rpx;
+  box-sizing: border-box;
   background: $color-bg-page;
 }
 
@@ -325,21 +326,29 @@ function onStockInDateChange(event: { detail: { value: string } }) {
 
 .icon-button {
   justify-content: flex-start;
+  flex: 0 0 auto;
   color: $color-text-primary;
 }
 
 .save-link {
   justify-content: flex-end;
+  flex: 0 0 auto;
   color: $color-primary-light;
   font-size: 24rpx;
   font-weight: $font-weight-bold;
 }
 
 .topbar-title {
+  flex: 1;
+  min-width: 0;
   font-size: 36rpx;
   font-weight: $font-weight-bold;
   line-height: 48rpx;
   color: $color-text-primary;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .content {

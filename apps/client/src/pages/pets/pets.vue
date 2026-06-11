@@ -593,6 +593,7 @@ async function removeAlbumPhoto(petId: string, image: string) {
   align-items: center;
   justify-content: space-between;
   padding: 0 32rpx;
+  box-sizing: border-box;
   background: $color-bg-page;
   color: $color-primary;
 }
@@ -602,18 +603,21 @@ async function removeAlbumPhoto(petId: string, image: string) {
   height: 80rpx;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-}
-
-.icon-button.right {
-  justify-content: flex-end;
+  justify-content: center;
+  flex: 0 0 80rpx;
 }
 
 .topbar-title {
+  flex: 1;
+  min-width: 0;
   font-size: 46rpx;
   font-weight: $font-weight-bold;
   line-height: 58rpx;
   color: $color-primary;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .content {
@@ -629,7 +633,7 @@ async function removeAlbumPhoto(petId: string, image: string) {
 }
 
 .pet-tab {
-  min-width: 144rpx;
+  width: 144rpx;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
@@ -861,18 +865,20 @@ async function removeAlbumPhoto(petId: string, image: string) {
 }
 
 .module-chevron {
+  flex: 0 0 auto;
   width: 54rpx;
   height: 54rpx;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   color: $color-text-secondary;
 }
 
 .album-count {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   font-size: 24rpx !important;
   color: $color-text-secondary !important;
 }

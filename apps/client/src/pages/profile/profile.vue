@@ -447,33 +447,34 @@ function copySupportEmail() {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24rpx;
-  margin-top: 40rpx;
+  gap: 12rpx;
+  margin-top: 28rpx;
 }
 
 .stat-card {
-  height: 176rpx;
+  min-height: 156rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2rpx solid $color-border;
-  border-radius: 24rpx;
+  padding: 18rpx 12rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.55);
+  border-radius: 28rpx;
   background: #ffffff;
-  box-shadow: $shadow-sm;
+  box-shadow: 0 20rpx 50rpx -10rpx rgba(0, 0, 0, 0.05), 0 16rpx 20rpx -12rpx rgba(0, 0, 0, 0.05);
 }
 
 .stat-value {
-  font-size: 56rpx;
+  font-size: 52rpx;
   font-weight: $font-weight-bold;
-  line-height: 66rpx;
+  line-height: 60rpx;
   color: $color-primary;
 }
 
 .stat-label {
-  margin-top: 10rpx;
-  font-size: 26rpx;
-  line-height: 34rpx;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  line-height: 32rpx;
   color: $color-text-secondary;
 }
 

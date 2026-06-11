@@ -828,6 +828,7 @@ function clampTrendValue(value: number) {
   align-items: center;
   justify-content: space-between;
   padding: 0 40rpx;
+  box-sizing: border-box;
   background: $color-bg-page;
   color: $color-primary;
 }
@@ -838,21 +839,25 @@ function clampTrendValue(value: number) {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  flex: 0 0 72rpx;
 }
 
 .icon-button.right {
   justify-content: flex-end;
+  flex: 0 0 72rpx;
 }
 
 .topbar-title {
-  max-width: 480rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
   font-size: 32rpx;
   font-weight: $font-weight-bold;
   line-height: 42rpx;
   color: $color-text-primary;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .content {
